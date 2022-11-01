@@ -1,0 +1,3 @@
+assets : mettre les images ici
+src : mettre les .py
+saved_maze : mettre les layouts prédefinis / enregistrés
