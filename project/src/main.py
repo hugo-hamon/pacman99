@@ -1,6 +1,9 @@
 from .game import app
 
-def run() -> None:
+
+def run(graphics_enable: bool) -> None:
     """Run the app"""
-    application = app.App()
-    # app.run() quelque chose du genre
+    application = app.App(
+        graphics_enable=graphics_enable
+    )
+    # application.run() quelque chose du genre
