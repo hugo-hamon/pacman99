@@ -1,5 +1,6 @@
-from src import app
+from .game import app
 
-
-if __name__ == '__main__':
+def run() -> None:
+    """Run the app"""
     application = app.App()
+    # app.run() quelque chose du genre
