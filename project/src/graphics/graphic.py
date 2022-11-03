@@ -1,4 +1,4 @@
-from ..game.sprites import Sprite
+from .sprites import Sprite
 from typing import List, Union
 import pygame as pg
 

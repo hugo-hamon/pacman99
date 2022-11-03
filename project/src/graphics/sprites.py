@@ -1,6 +1,7 @@
+from ..game.direction import Direction
 from typing import Tuple
 import pygame as pg
-from .direction import Direction
+
 
 
 class Sprite(pg.sprite.Sprite):
