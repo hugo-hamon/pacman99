@@ -3,7 +3,6 @@ from typing import Tuple
 import pygame as pg
 
 
-
 class Sprite(pg.sprite.Sprite):
 
     def __init__(self, width: int, height: int, pos_x: int, pos_y: int, direction: Direction) -> None:
