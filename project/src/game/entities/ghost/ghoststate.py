@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ghoststate(Enum):
+class Ghoststate(Enum):
     CHASE = 0
     SCATTER = 1
     FRIGHTENED = 2
