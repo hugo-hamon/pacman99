@@ -1,7 +1,7 @@
 import abc
-import .ghoststate as gs
+from .ghoststate import Ghoststate as gs
 
-class generalGhost(abc.ABC) :
+class GeneralGhost(abc.ABC) :
     
     def __init__(self, pacman_ref) :
         super().__init__()
