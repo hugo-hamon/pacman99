@@ -35,7 +35,7 @@ class Game:
         # self.maze.reset()
         # self.pacman.reset()
         pass
-    
+
     def update(self) -> None:
         """Update the game"""
         pass
