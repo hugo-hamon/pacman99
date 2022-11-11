@@ -3,6 +3,7 @@ from typing import Tuple
 import numpy as np
 import itertools
 
+
 class Maze():
 
     def __init__(self, filename: str):
@@ -32,7 +33,8 @@ class Maze():
                 for i in range(self.height):
                     self.maze[i, j] = self.get_component_type(lines[i][j])
             self.packman_start = tuple(map(int, lines[-1].split(" ")))
-            self.total_dots = np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+            self.total_dots = np.count_nonzero(
+                self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
     def get_component_type(self, symbol: str) -> Components:
         """
@@ -55,15 +57,15 @@ class Maze():
     def display(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
-                if self.get_cell(x,y) == Components.WALL:
+                if self.get_cell(x, y) == Components.WALL:
                     print("0", end='')
-                elif self.get_cell(x,y) == Components.EMPTY:
+                elif self.get_cell(x, y) == Components.EMPTY:
                     print("1", end='')
-                elif self.get_cell(x,y) == Components.DOT:
+                elif self.get_cell(x, y) == Components.DOT:
                     print("2", end='')
-                elif self.get_cell(x,y) == Components.SUPERDOT:
+                elif self.get_cell(x, y) == Components.SUPERDOT:
                     print("3", end='')
-                elif self.get_cell(x,y) == Components.FRUIT:
+                elif self.get_cell(x, y) == Components.FRUIT:
                     print("4", end='')
             print()
 
@@ -79,13 +81,13 @@ class Maze():
 
     def get_cell(self, x: int, y: int) -> Components:
         '''Return the cell at the position (x,y)'''
-        return self.maze[y,x]
+        return self.maze[y, x]
 
     def get_neighbors(self, x: int, y: int) -> np.ndarray:
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
         For cells on the border, the neighbors outside the maze are considered as EMPTY
         '''
-        neighbors = np.zeros((3,3), dtype=Components)
+        neighbors = np.zeros((3, 3), dtype=Components)
         for j, i in itertools.product(range(-1, 2), range(-1, 2)):
             neighbors[i + 1, j + 1] = (
                 Components.EMPTY
@@ -107,5 +109,5 @@ class Maze():
     def get_total_remain_dots(self) -> int:
         return np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
-    def set_component(self, c: Components,x: int, y: int) -> None:
-        self.maze[x,y] = c
+    def set_component(self, c: Components, x: int, y: int) -> None:
+        self.maze[x, y] = c
