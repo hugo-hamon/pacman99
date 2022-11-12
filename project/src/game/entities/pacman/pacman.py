@@ -1,5 +1,5 @@
 import abc
-from directions import Directions
+from ...direction import Direction
 
 class Pacman(abc.ABC):
 
@@ -15,7 +15,7 @@ class Pacman(abc.ABC):
 
 
     # Set-up la prochaine direction que pac-man devra prendre quand il le pourra
-    def set_next_direction(self, dir : Directions):
+    def set_next_direction(self, dir : Direction):
         self.next_dir = dir
 
     # Change l'état de pac-man lorsqu'il ramasse un boost ou que celui-ci se termine
