@@ -19,9 +19,9 @@ class Graphic:
         """Draw the sprites on the screen"""
         self.group.draw(self.screen)
 
-    def update_sprites(self, sprites: Union[List[Sprite], Sprite]) -> None:
-        """Update a sprite or a list of sprites"""
-        self.group.update(sprites)
+    def update_sprites(self) -> None:
+        """Update the sprites"""
+        self.group.update()
 
     def play_sound(self, sound_path: str, loop_enable: bool) -> None:
         """Play a sound in loop or not"""
