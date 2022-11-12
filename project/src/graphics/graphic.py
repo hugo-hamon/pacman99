@@ -28,8 +28,14 @@ class Graphic:
         self.game = game
         self.run = False
 
+<<<<<<< HEAD
         self.maze_sprites = self.create_maze_sprites()
         self.pacman_sprite = self.create_pacman_sprite()
+=======
+    def update_sprites(self) -> None:
+        """Update the sprites"""
+        self.group.update()
+>>>>>>> 008b897 (maze)
 
     # REQUESTS
     def play_sound(self, sound_path: str, loop_enable: bool) -> None:
