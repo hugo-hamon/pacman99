@@ -1,0 +1,24 @@
+{
+    "frames": {
+        "left_corner_wall": {
+            "frame": {"x": 772, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "right_corner_wall": {
+            "frame": {"x": 790, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "left_border_wall": {
+            "frame": {"x": 772, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "top_border_wall": {
+            "frame": {"x": 781, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        }
+    }
+}

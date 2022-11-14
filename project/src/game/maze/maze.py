@@ -1,8 +1,8 @@
-from components import Components 
+from .components import Components 
 import numpy as np
 
 class Maze():
-    def __init__(self, file):
+    def __init__(self, file: str):
         '''Create a maze from a text file
         The text file must be a matrix of 0, 1, 2, 3, 4
         0: Wall
@@ -15,7 +15,6 @@ class Maze():
         lines = f.readlines()
         self.width = len(lines[0]) - 1
         self.height = len(lines)
-        print("width: ", self.width, "height: ", self.height)
         self.maze = np.zeros((self.height, self.width), dtype=Components)
         for j in range(0, self.width):
             for i in range(0, self.height):
@@ -34,8 +33,8 @@ class Maze():
         self.total_dots = np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
     def display(self) -> None:
-        for y in range(0, self.height):
-            for x in range(0, self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 if self.get_cell(x,y) == Components.WALL:
                     print("0", end='')
                 elif self.get_cell(x,y) == Components.EMPTY:
@@ -54,7 +53,7 @@ class Maze():
     def get_height(self) -> int:
         return self.height
 
-    def get_maze(self) -> np.array:
+    def get_maze(self) -> np.ndarray:
         '''Return a copy of a np.array representing the maze'''
         return self.maze.copy()
 
@@ -62,7 +61,7 @@ class Maze():
         '''Return the cell at the position (x,y)'''
         return self.maze[y,x]
 
-    def get_neighbors (self, x: int, y: int) -> np.array:
+    def get_neighbors (self, x: int, y: int) -> np.ndarray:
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
         For cells on the border, the neighbors outside the maze are considered as walls'''
         neighbors = np.zeros((3,3), dtype=Components)
