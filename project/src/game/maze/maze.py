@@ -69,10 +69,19 @@ class Maze():
             for j in range(-1, 2):
                 if x+i >= 0 and x+i < self.height and y+j >= 0 and y+j < self.width:
                     neighbors[i+1,j+1] = self.maze[x+i,y+j]
+                else:
+                    neighbors[i+1,j+1] = Components.WALL
         return neighbors
 
     def is_intersection(self, x: int, y: int) -> bool:
-        return self.get_cell(x, y) != Components.WALL and np.count_nonzero(self.get_neighbors(x, y) == Components.WALL) <= 2
+        '''Return True if the cell (x,y) is an intersection'''
+        neighbors = self.get_neighbors(x,y)
+        count_paths = 0
+        paths = [[1,0], [1,2], [0,1], [2,1]]
+        for path in paths:
+            if neighbors[path[0], path[1]] != Components.WALL:
+                count_paths += 1
+        return count_paths > 2
 
     def get_total_dots(self) -> int:
         return self.total_dots
@@ -82,3 +91,14 @@ class Maze():
 
     def set_component(self, c: Components,x: int, y: int) -> None:
         self.maze[x,y] = c
+
+if __name__ == "__main__":
+    maze = Maze("maze.txt")
+    maze.display()
+    print(maze.get_cell(1,1))
+    print(maze.get_neighbors(1,1))
+    intersection = np.zeros((maze.get_height(), maze.get_width()), dtype=bool)
+    for i in range(0, maze.get_height()):
+        for j in range(0, maze.get_width()):
+            intersection[i,j] = maze.is_intersection(i,j)
+    print(intersection)
