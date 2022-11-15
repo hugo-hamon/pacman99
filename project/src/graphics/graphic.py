@@ -1,5 +1,6 @@
 from ..game.maze.components import Components
 from .spritesheet import SpriteSheet
+from .wall_func import get_wall_name
 from ..game.maze.maze import Maze
 from typing import List, Union
 from ..game.game import Game
@@ -50,11 +51,23 @@ class Graphic:
         k = 0
         for i in range(maze.get_height()):
             for j in range(maze.get_width()):
+                sprite = self.rescale(
+                    self.spritesheet.parse_sprite(sprite_name="void")
+                )
                 if maze.get_cell(j, i) == Components.WALL:
                     sprite = self.maze_sprites[k]
-                    self.canvas.blit(
-                        sprite, (j * sprite.get_width(), i * sprite.get_height()))
                     k += 1
+                elif maze.get_cell(j, i) == Components.DOT:
+                    sprite = self.rescale(
+                        self.spritesheet.parse_sprite(sprite_name="dot")
+                    )
+                elif maze.get_cell(j, i) == Components.SUPERDOT:
+                    sprite = self.rescale(
+                        self.spritesheet.parse_sprite(sprite_name="super_dot")
+                    )
+                self.canvas.blit(
+                    sprite, (j * sprite.get_width(), i * sprite.get_height())
+                )
 
     def rescale(self, element: pg.surface.Surface) -> pg.surface.Surface:
         """Rescale the element size"""
@@ -89,16 +102,11 @@ class Graphic:
         maze = self.game.get_maze()
         for i in range(maze.get_height()):
             for j in range(maze.get_width()):
+                sprite_name = "void"
                 if maze.get_cell(j, i) == Components.WALL:
-                    wall_name = self.get_wall_name(j, i, maze)
-                    self.maze_sprites.append(
-                        self.rescale(
-                            self.spritesheet.parse_sprite(
-                                wall_name
-                            )
+                    sprite_name = get_wall_name(j, i, maze)
+                    self.maze_sprites.append(self.rescale(
+                        self.spritesheet.parse_sprite(
+                            sprite_name=sprite_name
                         )
-                    )
-
-    def get_wall_name(self, x: int, y: int, maze: Maze) -> str:
-        """Return the name of the wall"""
-        return "left_border_wall"
+                    ))
