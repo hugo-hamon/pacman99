@@ -1,42 +1,7 @@
 {
     "frames": {
-        "left_top_corner_wall": {
-            "frame": {"x": 745, "y": 187, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "left_bottom_corner_wall": {
-            "frame": {"x": 745, "y": 205, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "right_top_corner_wall": {
-            "frame": {"x": 763, "y": 187, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "right_bottom_corner_wall": {
-            "frame": {"x": 763, "y": 205, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "left_wall": {
-            "frame": {"x": 745, "y": 196, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "right_wall": {
-            "frame": {"x": 763, "y": 196, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "top_wall": {
-            "frame": {"x": 754, "y": 187, "w": 8, "h": 8},
-            "rotated": false,
-            "trimmed": false
-        },
-        "bottom_wall": {
-            "frame": {"x": 754, "y": 205, "w": 8, "h": 8},
+        "wall": {
+            "frame": {"x": 201, "y": 187, "w": 8, "h": 8},
             "rotated": false,
             "trimmed": false
         },
