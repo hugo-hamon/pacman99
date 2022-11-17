@@ -1,7 +1,82 @@
 {
     "frames": {
-        "wall": {
-            "frame": {"x": 201, "y": 187, "w": 8, "h": 8},
+        "wall_0": {
+            "frame": {"x": 210, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_1": {
+            "frame": {"x": 219, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_2": {
+            "frame": {"x": 228, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_3": {
+            "frame": {"x": 237, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_4": {
+            "frame": {"x": 219, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_5": {
+            "frame": {"x": 246, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_6": {
+            "frame": {"x": 237, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_7": {
+            "frame": {"x": 255, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_8": {
+            "frame": {"x": 228, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_9": {
+            "frame": {"x": 237, "y": 205, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_10": {
+            "frame": {"x": 246, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_11": {
+            "frame": {"x": 255, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_12": {
+            "frame": {"x": 237, "y": 214, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_13": {
+            "frame": {"x": 255, "y": 205, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_14": {
+            "frame": {"x": 255, "y": 214, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "wall_15": {
+            "frame": {"x": 210, "y": 187, "w": 8, "h": 8},
             "rotated": false,
             "trimmed": false
         },

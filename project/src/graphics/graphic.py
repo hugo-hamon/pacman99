@@ -1,10 +1,12 @@
 from ..game.maze.components import Components
 from .spritesheet import SpriteSheet
+from .wall_func import get_wall_name
 from typing import List, Union
 from ..game.game import Game
 from ..config import Config
 from .sprites import Sprite
 import pygame as pg
+
 
 
 spritesheet_path = "assets/images/palettes.png"
@@ -82,14 +84,19 @@ class Graphic:
         """Create the sprites of the maze"""
         maze = self.game.get_maze()
         sprites = {
-            Components.WALL: "wall",
             Components.EMPTY: "void",
             Components.DOT: "dot",
             Components.SUPERDOT: "super_dot",
             Components.FRUIT: "fruit",
         }
         for i in range(maze.get_height()):
-            new_sprites = [self.rescale(self.spritesheet.parse_sprite(
-                sprite_name=sprites[maze.get_cell(j, i)])) for j in range(maze.get_width())
-            ]
+            new_sprites = []
+            for j in range(maze.get_width()):
+                cell = maze.get_cell(j, i)
+                sprite_name = ""
+                if cell == Components.WALL:
+                    sprite_name = get_wall_name(j, i, maze)
+                else:
+                    sprite_name = sprites[cell]
+                new_sprites.append(self.rescale(self.spritesheet.parse_sprite(sprite_name)))
             self.maze_sprites.append(new_sprites)

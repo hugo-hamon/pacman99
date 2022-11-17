@@ -63,12 +63,12 @@ class Maze():
 
     def get_neighbors (self, x: int, y: int) -> np.ndarray:
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
-        For cells on the border, the neighbors outside the maze are considered as walls'''
+        For cells on the border, the neighbors outside the maze are considered as EMPTY'''
         neighbors = np.zeros((3,3), dtype=Components)
         for j in range(-1, 2):
             for i in range(-1, 2):
                 if x+j < 0 or x+j >= self.width or y+i < 0 or y+i >= self.height:
-                    neighbors[i+1,j+1] = Components.WALL
+                    neighbors[i+1,j+1] = Components.EMPTY
                 else:
                     neighbors[i+1,j+1] = self.maze[y+i,x+j]
         return neighbors
