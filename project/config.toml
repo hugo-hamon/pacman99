@@ -1,2 +1,9 @@
 [user]
 enable_graphics = true
+enable_random_maze = false
+
+[graphics]
+width = 720
+height = 720
+fps = 60
+title = "PacMan99"

@@ -1,0 +1,24 @@
+{
+    "frames": {
+        "wall": {
+            "frame": {"x": 201, "y": 187, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "void": {
+            "frame": {"x": 754, "y": 196, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "dot": {
+            "frame": {"x": 536, "y": 568, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
+        "super_dot": {
+            "frame": {"x": 536, "y": 577, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        }
+    }
+}

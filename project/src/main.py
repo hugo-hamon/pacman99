@@ -1,9 +1,11 @@
 from .game import app
+from .config import load_config
 
+config_path = "config.toml"
 
-def run(graphics_enable: bool) -> None:
+def run() -> None:
     """Run the app"""
-    application = app.App(
-        graphics_enable=graphics_enable
-    )
-    # application.run() quelque chose du genre
+    config = load_config(config_path)
+    application = app.App(config=config)
+    application.create_random_maze()
+    application.run()
