@@ -1,7 +1,5 @@
 from ..game.maze.components import Components
 from .spritesheet import SpriteSheet
-from .wall_func import get_wall_name
-from ..game.maze.maze import Maze
 from typing import List, Union
 from ..game.game import Game
 from ..config import Config
@@ -48,26 +46,9 @@ class Graphic:
     def display_maze(self) -> None:
         """Display the maze"""
         maze = self.game.get_maze()
-        k = 0
         for i in range(maze.get_height()):
             for j in range(maze.get_width()):
-                sprite = self.rescale(
-                    self.spritesheet.parse_sprite(sprite_name="void")
-                )
-                if maze.get_cell(j, i) == Components.WALL:
-                    sprite = self.maze_sprites[k]
-                    k += 1
-                elif maze.get_cell(j, i) == Components.DOT:
-                    sprite = self.rescale(
-                        self.spritesheet.parse_sprite(sprite_name="dot")
-                    )
-                elif maze.get_cell(j, i) == Components.SUPERDOT:
-                    sprite = self.rescale(
-                        self.spritesheet.parse_sprite(sprite_name="super_dot")
-                    )
-                self.canvas.blit(
-                    sprite, (j * sprite.get_width(), i * sprite.get_height())
-                )
+                self.canvas.blit(self.maze_sprites[i][j], (j * self.maze_sprites[i][j].get_width(), i * self.maze_sprites[i][j].get_height()))
 
     def rescale(self, element: pg.surface.Surface) -> pg.surface.Surface:
         """Rescale the element size"""
@@ -100,13 +81,15 @@ class Graphic:
     def create_maze_sprites(self) -> None:
         """Create the sprites of the maze"""
         maze = self.game.get_maze()
+        sprites = {
+            Components.WALL: "wall",
+            Components.EMPTY: "void",
+            Components.DOT: "dot",
+            Components.SUPERDOT: "super_dot",
+            Components.FRUIT: "fruit",
+        }
         for i in range(maze.get_height()):
-            for j in range(maze.get_width()):
-                sprite_name = "void"
-                if maze.get_cell(j, i) == Components.WALL:
-                    sprite_name = get_wall_name(j, i, maze)
-                    self.maze_sprites.append(self.rescale(
-                        self.spritesheet.parse_sprite(
-                            sprite_name=sprite_name
-                        )
-                    ))
+            new_sprites = [self.rescale(self.spritesheet.parse_sprite(
+                sprite_name=sprites[maze.get_cell(j, i)])) for j in range(maze.get_width())
+            ]
+            self.maze_sprites.append(new_sprites)

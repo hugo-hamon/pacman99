@@ -65,10 +65,12 @@ class Maze():
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
         For cells on the border, the neighbors outside the maze are considered as walls'''
         neighbors = np.zeros((3,3), dtype=Components)
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                if x+i >= 0 and x+i < self.height and y+j >= 0 and y+j < self.width:
-                    neighbors[i+1,j+1] = self.maze[x+i,y+j]
+        for j in range(-1, 2):
+            for i in range(-1, 2):
+                if x+j < 0 or x+j >= self.width or y+i < 0 or y+i >= self.height:
+                    neighbors[i+1,j+1] = Components.WALL
+                else:
+                    neighbors[i+1,j+1] = self.maze[y+i,x+j]
         return neighbors
 
     def is_intersection(self, x: int, y: int) -> bool:

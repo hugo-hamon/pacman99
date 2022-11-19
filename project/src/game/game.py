@@ -2,7 +2,7 @@ from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
 
-MAZE_FILE_PATH = "assets/data/maze.txt"
+MAZE_FILE_PATH = "assets/data/random.txt"
 
 
 class Game:

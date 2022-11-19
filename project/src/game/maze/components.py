@@ -8,3 +8,5 @@ class Components(Enum):
     SUPERDOT = 3
     FRUIT = 4
     
+    def __str__(self):
+        return str(self.value)
