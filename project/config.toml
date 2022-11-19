@@ -3,7 +3,7 @@ enable_graphics = true
 enable_random_maze = false
 
 [graphics]
-width = 720
-height = 720
+width = 807
+height = 600
 fps = 60
 title = "PacMan99"

@@ -27,12 +27,9 @@ directions = {
 }
 
 def get_wall_name(x: int, y: int, maze: Maze) -> str:
-    cell = maze.get_cell(x, y)
     neighbors = maze.get_neighbors(x, y)
     neighbors = np.array([neighbors[0, 1], neighbors[1, 2], neighbors[2, 1], neighbors[1, 0]])
     direction = get_direction_from_neighbors(neighbors)
-    print(direction)
-    print([k for k, v in directions.items() if np.array_equal(v, direction)][0])
     return [k for k, v in directions.items() if np.array_equal(v, direction)][0]
     
 
