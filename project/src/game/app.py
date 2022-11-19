@@ -26,4 +26,4 @@ class App:
 
     def create_random_maze(self) -> None:
         """Create a random maze"""
-        RandomMazeFactory(width=WIDTH, height=HEIGHT).create()
+        RandomMazeFactory(width=WIDTH, height=HEIGHT, intersection_step=3).create()
