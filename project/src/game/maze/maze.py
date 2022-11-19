@@ -1,5 +1,6 @@
 from components import Components 
 import numpy as np
+
 class Maze():
     def __init__(self, file):
         '''Create a maze from a text file
