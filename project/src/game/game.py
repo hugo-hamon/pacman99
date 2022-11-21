@@ -1,12 +1,16 @@
 from .direction import Direction
-# from maze.maze import Maze
+from .maze.maze import Maze
+from ..config import Config
+
+MAZE_FILE_PATH = "assets/data/random.txt"
+
 
 class Game:
 
-    def __init__(self) -> None:
-        # self.maze = Maze(filepath)
+    def __init__(self, config: Config) -> None:
         # self.pacman = Pacman(self.maze.get_start_pos())
-        pass
+        # Sera ajouté plus tard la génération aléatoire
+        self.maze = Maze(file=MAZE_FILE_PATH)
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -28,6 +32,10 @@ class Game:
         """Return the distance"""
         # return self.pacman.get_distance()
         return 0
+
+    def get_maze(self) -> Maze:
+        """Return the maze"""
+        return self.maze
 
     # COMMANDS
     def reset(self) -> None:
