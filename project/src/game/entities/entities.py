@@ -31,12 +31,14 @@ class Entities(ABC):
 
     def move(self, timestep : int) -> None:
         self.movedistance += (int) (self.speed / timestep) * UNITSPERCELL
-        while self.movedistance > 0:
-            self.__moveToNextStep()
+        self.__moveToNextStep()
+        while self.movedistance > 0 and self.direction is not None:
             self.direction = self.__get_next_direction()
+            self.__moveToNextStep()
+        self.movedistance = 0
             
     def __moveToNextStep(self) -> None:
-        xd, xy = self.direction.to_vector()
+        xd, xy = self.direction.to_vector() if self.direction is not None else 0,0
         distanceToMove = min(self.movedistance, (xd * self.x + xy * self.y) % UNITSPERCELL)
         self.movedistance -= distanceToMove
         self.x += distanceToMove * xd
