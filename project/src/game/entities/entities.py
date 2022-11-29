@@ -2,29 +2,46 @@ from abc import ABC, abstractmethod
 from ..direction import Direction
 from typing import Tuple
 
-
+UNITSPERCELL = 1000
 class Entities(ABC):
-
-    def __init__(self, speed=0, direction=Direction.WEST, coordinate=(0, 0)) -> None:
+    
+    
+    def __init__(self, speed : float = 0, direction : Direction = Direction.WEST,
+                 coordinate : (float, float) = (0,0)) -> None:
         super().__init__()
-        self.coordinates = coordinate
+        self.x, self.y = (int) (coordinate[0] * UNITSPERCELL), 
+        (int) (coordinate[1] * UNITSPERCELL)
         self.direction = direction
-        self.speed = speed
+        self.speed = (int) (speed * UNITSPERCELL)
+        self.movedistance = 0
 
     # REQUESTS
     def get_speed(self) -> int:
-        return self.speed
+        return self.speed / UNITSPERCELL
 
     def get_position(self) -> Tuple[int, int]:
-        return self.coordinates
+        return self.x / UNITSPERCELL, self.y / UNITSPERCELL
 
     def get_direction(self) -> Direction:
         return self.direction
 
     # COMMANDS
     def set_speed(self, speed: int) -> None:
-        self.speed = speed
+        self.speed = speed * UNITSPERCELL
 
+    def move(self, timestep : int) -> None:
+        self.movedistance += (int) (self.speed / timestep) * UNITSPERCELL
+        while self.movedistance > 0:
+            self.__moveToNextStep()
+            self.direction = self.__get_next_direction()
+            
+    def __moveToNextStep(self) -> None:
+        xd, xy = self.direction.to_vector()
+        distanceToMove = min(self.movedistance, (xd * self.x + xy * self.y) % UNITSPERCELL)
+        self.movedistance -= distanceToMove
+        self.x += distanceToMove * xd
+        self.y += distanceToMove * xy
+        
     @abstractmethod
-    def move(self, direction: Direction) -> None:
+    def __get_next_direction(self) -> None:
         pass
