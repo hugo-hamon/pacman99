@@ -5,9 +5,8 @@ from typing import Tuple
 UNITSPERCELL = 1000
 class Entities(ABC):
     
-    
     def __init__(self, speed : float = 0, direction : Direction = Direction.WEST,
-                 coordinate : (float, float) = (0,0)) -> None:
+                 coordinate : Tuple(float, float) = (0,0)) -> None:
         super().__init__()
         self.x, self.y = (int) (coordinate[0] * UNITSPERCELL), 
         (int) (coordinate[1] * UNITSPERCELL)
@@ -33,7 +32,7 @@ class Entities(ABC):
         self.movedistance += (int) (self.speed / timestep) * UNITSPERCELL
         self.__moveToNextStep()
         while self.movedistance > 0 and self.direction is not None:
-            self.direction = self.__get_next_direction()
+            self.direction = self._get_next_direction()
             self.__moveToNextStep()
         self.movedistance = 0
             
@@ -45,5 +44,5 @@ class Entities(ABC):
         self.y += distanceToMove * xy
         
     @abstractmethod
-    def __get_next_direction(self) -> None:
+    def _get_next_direction(self) -> None:
         pass

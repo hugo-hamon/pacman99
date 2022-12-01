@@ -6,19 +6,27 @@ class Pacman(abc.ABC):
     def __init__(self):
         super().__init__()
         self.boost_state = False
-        self.actual_dir = None
         self.next_dir = None
     
+    # Requêtes
 
-    def check_collision(self):
+    def _get_next_direction(self) -> Direction:
+        # J'aurais ici besoin d'accéder aux données du maze
+        # pour savoir si pac-man est à une intersection et peut tourner, ou non TODO
         pass
 
 
-    # Set-up la prochaine direction que pac-man devra prendre quand il le pourra
-    def set_next_direction(self, dir : Direction):
+    # Commandes
+
+    def set_next_direction(self, dir : Direction) -> None:
+        """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
         self.next_dir = dir
 
-    # Change l'état de pac-man lorsqu'il ramasse un boost ou que celui-ci se termine
-    def change_state(self):
-        self.boost_state = not self.boost_state
+    def accept_next_direction(self) -> None:
+        """Effectue le changement de direction"""
+        self.direction = self.next_dir
+        self.next_dir = None
 
+    def change_state(self) -> None:
+        """Switch l'état de pac-man pour les super pac-gum"""
+        self.boost_state = not self.boost_state
