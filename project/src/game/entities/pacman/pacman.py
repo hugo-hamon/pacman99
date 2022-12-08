@@ -6,7 +6,6 @@ class Pacman(abc.ABC):
     def __init__(self):
         super().__init__()
         self.boost_state = False
-        self.next_dir = None
     
     # Requêtes
 
