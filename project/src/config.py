@@ -13,6 +13,7 @@ class GraphicConfig:
     height: int
     title: str
     fps: int
+    maze_path: str
 
 @dataclass
 class Config:

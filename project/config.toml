@@ -6,4 +6,5 @@ enable_random_maze = false
 width = 807
 height = 600
 fps = 60
-title = "PacMan99"
+title = "PacMan"
+maze_path = "assets/data/maze.txt"

@@ -2,15 +2,13 @@ from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
 
-MAZE_FILE_PATH = "assets/data/maze2.txt"
-
 
 class Game:
 
     def __init__(self, config: Config) -> None:
         # self.pacman = Pacman(self.maze.get_start_pos())
         # Sera ajouté plus tard la génération aléatoire
-        self.maze = Maze(file=MAZE_FILE_PATH)
+        self.maze = Maze(file=config.graphics.maze_path)
 
     # REQUESTS
     def is_game_over(self) -> bool:
