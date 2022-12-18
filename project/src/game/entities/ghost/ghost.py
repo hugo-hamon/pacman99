@@ -1,6 +1,8 @@
-import abc
-from ...direction import Direction
 from .ghoststate import Ghoststate as gs
+from ...direction import Direction
+from typing import Tuple
+import abc
+
 
 class GeneralGhost(abc.ABC) :
     
@@ -18,22 +20,12 @@ class GeneralGhost(abc.ABC) :
         """Set l'état du fantome"""
         self.state = ghoststate
         if ghoststate == gs.SCATTER :
-            __turnaround()
+            self.__turnaround()
             
-    def __turnaround() -> None :
+    def __turnaround(self) -> None :
         #self.direction = self.direction.opposite TODO
         pass
     
-    def convert_to_xy(way : int) -> Tuple(int, int) :
-        """Converti la direction en coordonées x, y)"""
-        match way :
-            case NORTH :
-                return (0,1)
-            case SOUTH :
-                return (0,-1)
-            case EAST :
-                return (1, 0)
-            case WEST :
-                return (-1, 0)
-            case other :
-                raise ValueError("Direction non supportée")
+    def convert_to_xy(self, way : Direction) -> Tuple[int, int] :
+        """Convertie la direction en coordonées (x, y)"""
+        return Direction.to_vector(way)
