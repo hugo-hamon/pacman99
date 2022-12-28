@@ -7,4 +7,8 @@ width = 807
 height = 600
 fps = 60
 title = "PacMan"
-maze_path = "assets/data/maze.txt"
+maze_path = "assets/data/maze2.txt"
+
+[game]
+game_speed = 1
+pacman_lives = 3

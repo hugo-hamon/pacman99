@@ -27,6 +27,7 @@ directions = {
 }
 
 def get_wall_name(x: int, y: int, maze: Maze) -> str:
+    """Return the name of the wall at the given position in the maze"""
     neighbors = maze.get_neighbors(x, y)
     neighbors = np.array([neighbors[0, 1], neighbors[1, 2], neighbors[2, 1], neighbors[1, 0]])
     direction = get_direction_from_neighbors(neighbors)
