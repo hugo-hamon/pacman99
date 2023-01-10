@@ -7,10 +7,11 @@ from .entities.pacman import Pacman
 class Game:
 
     def __init__(self, config: Config) -> None:
-        self.maze = Maze(file=config.graphics.maze_path)
+        self.maze = Maze(filename=config.graphics.maze_path)
         self.pacman = Pacman(
-            self.maze, config.game.game_speed, Direction.WEST, (1, 1), config.game.pacman_lives
+            self.maze, config.game.game_speed, Direction.NORTH, (0, 0), config.game.pacman_lives
         )
+        self.pacman.set_position(self.maze.get_packman_start())
         self.score = 0
 
     # REQUESTS
@@ -43,7 +44,8 @@ class Game:
 
     def update(self) -> None:
         """Update the game"""
-        pass
+        print("Pacman position: ", self.pacman.get_position())
+        self.pacman.move(60)
 
     def go(self, direction: Direction) -> None:
         """Go in a direction"""

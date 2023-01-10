@@ -1,10 +1,10 @@
 from ..game.maze.components import Components
+from ..game.direction import Direction
 from .spritesheet import SpriteSheet
 from .wall_func import get_wall_name
-from typing import List, Union
 from ..game.game import Game
 from ..config import Config
-from .sprites import Sprite
+from typing import List
 import pygame as pg
 
 
@@ -45,6 +45,15 @@ class Graphic:
                 self.canvas.blit(self.maze_sprites[i][j], (
                     j * self.maze_sprites[i][j].get_width(), i * self.maze_sprites[i][j].get_height()))
 
+    def display_pacman(self) -> None:
+        """Display pacman"""
+        pacman_position = self.game.get_pacman().get_position()
+        pacman_position = (
+            pacman_position[0] * self.pacman_sprite.get_width(),
+            pacman_position[1] * self.pacman_sprite.get_height()
+        )
+        self.canvas.blit(self.pacman_sprite, pacman_position)
+
     def rescale(self, element: pg.surface.Surface) -> pg.surface.Surface:
         """Rescale the element size"""
         w = self.screen.get_width() / self.game.get_maze().get_width()
@@ -63,8 +72,19 @@ class Graphic:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.run = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_q:
+                        self.game.get_pacman().set_next_direction(Direction.WEST)
+                    if event.key == pg.K_d:
+                        self.game.get_pacman().set_next_direction(Direction.EAST)
+                    if event.key == pg.K_z:
+                        self.game.get_pacman().set_next_direction(Direction.NORTH)
+                    if event.key == pg.K_s:
+                        self.game.get_pacman().set_next_direction(Direction.SOUTH)
+                    self.game.get_pacman().accept_next_direction()
+            self.game.update()
             self.display_maze()
-            self.canvas.blit(self.pacman_sprite, (0, 0))
+            self.display_pacman()
             self.screen.blit(self.canvas, (0, 0))
             pg.display.update()
 

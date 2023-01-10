@@ -37,6 +37,11 @@ class Entities():
         return self.distance
 
     # COMMANDS
+    def set_position(self, position: Tuple[int, int]) -> None:
+        """Set the position of the entity"""
+        self.x, self.y = position[0] * UNITSPERCELL, position[1] * UNITSPERCELL
+        print(self.x, self.y)
+
     def set_speed(self, speed: int) -> None:
         """Set the speed of the entity"""
         self.speed = speed * UNITSPERCELL
@@ -66,3 +71,4 @@ class Entities():
             check = (1, 1) + self.next_direction.to_vector()
             if area[check[0]][check[1]] != 0:
                 return self.next_direction
+        
