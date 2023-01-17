@@ -20,13 +20,13 @@ class Entities():
         self.maze = maze
 
     # REQUESTS
-    def get_speed(self) -> int:
+    def get_speed(self) -> float:
         """Return the speed of the entity"""
-        return int(self.speed / UNITSPERCELL)
+        return self.speed / UNITSPERCELL
 
-    def get_position(self) -> Tuple[int, int]:
+    def get_position(self) -> Tuple[float, float]:
         """Return the position of the entity"""
-        return int(self.x / UNITSPERCELL), int(self.y / UNITSPERCELL)
+        return self.x / UNITSPERCELL, self.y / UNITSPERCELL
 
     def get_direction(self) -> Union[None, Direction]:
         """Return the direction of the entity"""
@@ -48,7 +48,7 @@ class Entities():
 
     def move(self, timestep: int) -> None:
         """Move the entity"""
-        self.movedistance += (int)(self.speed / timestep) * UNITSPERCELL
+        self.movedistance += self.speed / timestep
         self.__moveToNextStep()
         while self.movedistance > 0 and self.direction is not None:
             self.direction = self.__get_next_direction()
@@ -58,16 +58,17 @@ class Entities():
 
     def __moveToNextStep(self) -> None:
         """Move the entity to the next step"""
-        xd, xy = self.direction.to_vector() if self.direction is not None else (0, 0)
-        self.movedistance -= UNITSPERCELL
-        self.x += UNITSPERCELL * xd
-        self.y += UNITSPERCELL * xy
+        xd, xy = self.direction.to_vector() if self.direction is not None else (0,0)
+        distanceToMove = min(self.movedistance, UNITSPERCELL - ((xd * self.x + xy * self.y) % UNITSPERCELL))
+        self.movedistance -= distanceToMove
+        self.x += distanceToMove * xd
+        self.y += distanceToMove * xy
 
     def __get_next_direction(self) -> Union[None, Direction]:
         """Get the next direction of the entity"""
         position = self.get_position()
-        if self.maze.is_intersection(position[0], position[1]):
-            area = self.maze.get_neighbors(position[0], position[1])
+        if self.maze.is_intersection(int(position[0]), int(position[1])):
+            area = self.maze.get_neighbors(int(position[0]), int(position[1]))
             check = (1, 1) + self.next_direction.to_vector()
             if area[check[0]][check[1]] != 0:
                 return self.next_direction

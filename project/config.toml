@@ -10,5 +10,5 @@ title = "PacMan"
 maze_path = "assets/data/maze.txt"
 
 [game]
-game_speed = 1
+game_speed = 5
 pacman_lives = 3
