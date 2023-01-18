@@ -1,8 +1,9 @@
+from .maze.components import Components
+from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
-from .entities.pacman import Pacman
-from .maze.components import Components
+
 
 class Game:
 
@@ -61,7 +62,3 @@ class Game:
             self.pacman.set_position((0, pacman_position[1]))
         if self.is_game_won():
             print("You won")
-        
-    def go(self, direction: Direction) -> None:
-        """Go in a direction"""
-        pass
