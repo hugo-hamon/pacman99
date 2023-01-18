@@ -27,23 +27,15 @@ class Pacman(Entities):
     def get_distance(self) -> int:
         return self.distance
 
-<<<<<<< HEAD
     def is_wall(self, dir: Direction) -> bool:
         """retourne vrai si il y a un mur dans la direction dir"""
-=======
-    def is_wall(self, dir: Direction, debug) -> bool:
-        """retourne vrai si le pacman peut aller dans la direction dir"""
->>>>>>> 7fb117a (update)
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
-        if debug:
-            print(area, dir, checkw)
         return area[checkw[1]][checkw[0]] == Components.WALL
 
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
-<<<<<<< HEAD
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
         if self.direction.opposite() == dir:
             self.direction = dir
@@ -53,10 +45,6 @@ class Pacman(Entities):
             self.next_direction = Direction.NONE
         else:
             self.next_direction = dir
-=======
-        """Change la direction du pacman"""
-        # si 
->>>>>>> 7fb117a (update)
 
     def change_state(self) -> None:
         """Switch l'état de pac-man pour les super pac-gum"""
@@ -73,29 +61,14 @@ class Pacman(Entities):
             Sinon null"""
         """Get the next direction of the entity"""
         position = self.get_position()
-<<<<<<< HEAD
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
         check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
-=======
-        area = self.maze.get_neighbors(int(position[0]), int(position[1]))
-        check = tuple(
-            map(operator.add, self.next_direction.to_vector(), (1, 1)))
-        print("Un mur ?", self.is_wall(self.direction, False), position)
->>>>>>> 7fb117a (update)
         if area[check[1]][check[0]] != Components.WALL and self.next_direction != Direction.NONE:
             self.direction = self.next_direction
-        elif self.is_wall(self.direction, True):
+        elif self.is_wall(self.direction):
             self.direction = Direction.NONE
             self.next_direction = Direction.NONE
         if self.direction != Direction.NONE:
             self.distance += 1
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
         
-
->>>>>>> 7fb117a (update)
-=======
-        print("Direction suivante:", self.next_direction)
->>>>>>> e4b856e (update)
         return self.direction

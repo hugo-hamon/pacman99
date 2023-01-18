@@ -1,7 +1,8 @@
+from .maze.random_maze_factory import RandomMazeFactory
 from ..graphics.graphic import Graphic
 from ..config import Config
 from .game import Game
-from .maze.random_maze_factory import RandomMazeFactory
+
 
 class App:
 
@@ -20,7 +21,3 @@ class App:
     def reset(self) -> None:
         """Reset the app"""
         pass
-
-    def create_random_maze(self) -> None:
-        """Create a random maze"""
-        RandomMazeFactory().create()
