@@ -94,6 +94,11 @@
             "frame": {"x": 536, "y": 577, "w": 8, "h": 8},
             "rotated": false,
             "trimmed": false
+        },
+        "pacman_0": {
+            "frame": {"x": 503, "y": 337, "w": 16, "h": 16},
+            "rotated": false,
+            "trimmed": false
         }
     }
 }
