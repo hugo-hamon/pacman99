@@ -44,7 +44,6 @@ class Game:
 
     def update(self) -> None:
         """Update the game"""
-        print("Pacman position: ", self.pacman.get_position())
         self.pacman.move(60)
 
     def go(self, direction: Direction) -> None:
