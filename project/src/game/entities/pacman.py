@@ -28,7 +28,7 @@ class Pacman(Entities):
         return self.distance
 
     def is_wall(self, dir: Direction) -> bool:
-        """retourne vrai si le pacman peut aller dans la direction dir"""
+        """retourne vrai si il y a un mur dans la direction dir"""
         position = self.get_position()
         area = self.maze.get_neighbors(int(position[0]), int(position[1]))
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
@@ -37,9 +37,10 @@ class Pacman(Entities):
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
-        if self.is_wall(dir):
-            return
-        elif self.direction.opposite() == dir or self.direction == Direction.NONE:
+        if self.direction.opposite() == dir:
+            self.direction = dir
+            self.next_direction = Direction.NONE
+        elif self.direction == Direction.NONE and not self.is_wall(dir):
             self.direction = dir
             self.next_direction = Direction.NONE
         else:
@@ -59,7 +60,6 @@ class Pacman(Entities):
             Sinon on peut continuer tout droit, tout droit
             Sinon null"""
         """Get the next direction of the entity"""
-        print("SAMA LES KOUM")
         position = self.get_position()
         area = self.maze.get_neighbors(int(position[0]), int(position[1]))
         check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
@@ -72,4 +72,5 @@ class Pacman(Entities):
         if self.direction != Direction.NONE:
             self.distance += 1
         print(self.get_position())
+        print("Direction suivante:", self.next_direction)
         return self.direction

@@ -18,7 +18,8 @@ class Entities(ABC):
         self.direction = direction
         self.movedistance: int = 0
         self.maze = maze
-
+        self.isInIntersection = True
+        
     # REQUESTS
     def get_speed(self) -> float:
         """Return the speed of the entity"""
@@ -44,18 +45,24 @@ class Entities(ABC):
     def move(self, timestep: int) -> None:
         """Move the entity"""
         self.movedistance += int(self.speed / timestep)
-        self.__moveToNextStep()
-        print(self.movedistance, self.direction)
         while self.movedistance > 0 and self.direction != Direction.NONE:
-            self.direction = self._get_next_direction()
-            self.__moveToNextStep()
+            if self.isInIntersection:
+                self.direction = self._get_next_direction()
+                self.isInIntersection = False
+            else :
+                self.__moveToNextStep()
         self.movedistance = 0
 
     def __moveToNextStep(self) -> None:
         """Move the entity to the next step"""
         xd, xy = self.direction.to_vector() if self.direction != Direction.NONE else (0, 0)
+        # UNITSPERCELL - ((xd * self.x + xy * self.y) % UNITSPERCELL)
+        # est la distance à la prochaine intersection
         distanceToMove = min(self.movedistance, UNITSPERCELL -
                              ((xd * self.x + xy * self.y) % UNITSPERCELL))
+        if self.movedistance >= (UNITSPERCELL -
+            ((xd * self.x + xy * self.y) % UNITSPERCELL)):
+            self.isInIntersection = True
         self.movedistance -= distanceToMove
         self.x += distanceToMove * xd
         self.y += distanceToMove * xy
