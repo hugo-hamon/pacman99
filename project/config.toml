@@ -10,5 +10,14 @@ title = "PacMan"
 maze_path = "assets/data/random.txt"
 
 [game]
-game_speed = 5
+game_speed = 1
 pacman_lives = 3
+
+[maze]
+width = 30
+height = 30
+density = 0.6
+seed = -1
+intersection_step = 3
+is_symetric = true
+random_maze_path = "assets/data/random.txt"

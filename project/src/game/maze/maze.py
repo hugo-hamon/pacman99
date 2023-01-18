@@ -83,7 +83,8 @@ class Maze():
 
     def get_neighbors(self, x: int, y: int) -> np.ndarray:
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
-        For cells on the border, the neighbors outside the maze are considered as EMPTY'''
+        For cells on the border, the neighbors outside the maze are considered as EMPTY
+        '''
         neighbors = np.zeros((3,3), dtype=Components)
         for j, i in itertools.product(range(-1, 2), range(-1, 2)):
             neighbors[i + 1, j + 1] = (
@@ -99,9 +100,6 @@ class Maze():
     def get_packman_start(self) -> Tuple[int, int]:
         """Return the position of the packman start"""
         return self.packman_start
-
-    def is_intersection(self, x: int, y: int) -> bool:
-        return self.get_cell(x, y) != Components.WALL and np.count_nonzero(self.get_neighbors(x, y) == Components.WALL) <= 2
 
     def get_total_dots(self) -> int:
         return self.total_dots

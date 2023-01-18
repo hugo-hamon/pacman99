@@ -30,12 +30,15 @@ class MazeGenerationConfig:
     density: float
     seed: int
     intersection_step: int
+    is_symetric: bool
+    random_maze_path: str
 
 @dataclass
 class Config:
     user: UserConfig
     graphics: GraphicConfig
     game: GameConfig
+    maze: MazeGenerationConfig
 
 
 def load_config(config_path: str) -> Config:

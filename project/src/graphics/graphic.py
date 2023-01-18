@@ -81,7 +81,6 @@ class Graphic:
                         self.game.get_pacman().set_next_direction(Direction.NORTH)
                     if event.key == pg.K_s:
                         self.game.get_pacman().set_next_direction(Direction.SOUTH)
-                    self.game.get_pacman().accept_next_direction()
             self.game.update()
             self.display_maze()
             self.display_pacman()

@@ -3,8 +3,6 @@ from ..config import Config
 from .game import Game
 from .maze.random_maze_factory import RandomMazeFactory
 
-WIDTH = 30
-HEIGHT = 30
 class App:
 
     def __init__(self, config: Config) -> None:
@@ -25,4 +23,4 @@ class App:
 
     def create_random_maze(self) -> None:
         """Create a random maze"""
-        RandomMazeFactory(width=WIDTH, height=HEIGHT,intersection_step=3).create()
+        RandomMazeFactory().create()

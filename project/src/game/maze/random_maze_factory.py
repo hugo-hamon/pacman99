@@ -2,44 +2,45 @@ import random
 from .components import Components
 import numpy as np
 from ..direction import Direction
-import copy
+from ...config import load_config
+from ...config import Config
 
-RANDOM_MAZE_FILE_PATH = "assets/data/random.txt"
+config_path = "config.toml"
+config = load_config(config_path)
 
 class RandomMazeFactory():
     ''' Create the text file representation of a random maze'''
 
-    DEFAULT_INTERSECTION_STEP = 3
-    DEFAULT_DENSITY = 0.1
-    DEFAULT_SEED = random.random()
-    DEFAULT_IS_SYMETRIC = False
-    # The ghost box is a predefined structure at the center of the maze
-    GHOST_BOX = [[2,2,2,2,2,2,2,2,2], [2,0,0,0,1,0,0,0,2], [2,0,1,1,1,1,1,0,2], [2,0,1,1,1,1,1,0,2],[2,0,1,1,1,1,1,0,2], [2,0,0,0,0,0,0,0,2], [2,1,1,1,1,1,1,1,2]]
+    RANDOM_SEED = random.random()
+    # Minimum size of the maze
     MIN_MAZE_HEIGHT = 15
     MIN_MAZE_WIDTH = 15
+    # The ghost box is a predefined structure at the center of the maze
+    GHOST_BOX = [[2,2,2,2,2,2,2,2,2], [2,0,0,0,1,0,0,0,2], [2,0,1,1,1,1,1,0,2], [2,0,1,1,1,1,1,0,2],[2,0,1,1,1,1,1,0,2], [2,0,0,0,0,0,0,0,2], [2,1,1,1,1,1,1,1,2]]
+    
     # CONSTRUCTOR
-
-    def __init__(self, width, height, intersection_step = DEFAULT_INTERSECTION_STEP, density=DEFAULT_DENSITY, seed=DEFAULT_SEED, is_symetric=DEFAULT_IS_SYMETRIC):
-        ''' seed and density are float between 0 and 1
-         width and height are multiples of intersection_step
-         (Even numbers multiple of 3 are recommended)
-         higher density means more paths
-         symetric means that the maze is symetric'''
-        self.intersection_step = intersection_step
-        if width < self.MIN_MAZE_WIDTH:
+    def __init__(self):
+        self.width = config.maze.width
+        self.height = config.maze.height
+        self.intersection_step = config.maze.intersection_step
+        self.density = config.maze.density
+        self.seed = config.maze.seed
+        self.is_symetric = config.maze.is_symetric
+        # Check conditions
+        if self.width < self.MIN_MAZE_WIDTH:
             raise ValueError(f"The maze width must be at least {self.MIN_MAZE_WIDTH}")
-        if height < self.MIN_MAZE_HEIGHT:
+        if self.height < self.MIN_MAZE_HEIGHT:
             raise ValueError(f"The maze height must be at least {self.MIN_MAZE_HEIGHT}")
-        if width % intersection_step != 0:
-            raise ValueError(f"The maze width must be a multiple of {intersection_step}")
-        if height % intersection_step != 0:
-            raise ValueError(f"The maze height must be a multiple of {intersection_step}")
-        self.width = width // intersection_step * intersection_step
-        self.height = height // intersection_step * intersection_step
-        self.seed = seed
-        self.density = density
-        self.intersection_step = intersection_step
-        self.is_symetric = is_symetric
+        if self.width % self.intersection_step != 0:
+            raise ValueError(f"The maze width must be a multiple of {self.intersection_step}")
+        if self.height % self.intersection_step != 0:
+            raise ValueError(f"The maze height must be a multiple of {self.intersection_step}")
+        self.width = self.width // self.intersection_step * self.intersection_step
+        self.height = self.height // self.intersection_step * self.intersection_step
+        if self.density < 0 or self.density > 1:
+            raise ValueError(f"The density must be between 0 and 1")
+        if self.seed < 0:
+            self.seed = self.RANDOM_SEED
 
     # COMMANDS
 
@@ -167,7 +168,7 @@ class RandomMazeFactory():
 
     def __write_maze_in_file(self, maze) -> None:
         # Write the maze in a file
-        with open(RANDOM_MAZE_FILE_PATH, 'w') as f:
+        with open(config.maze.random_maze_path, 'w') as f:
             if self.is_symetric:
                 for i in range(self.height):
                     for j in range(self.width // 2):
@@ -186,7 +187,7 @@ class RandomMazeFactory():
         It can be deduced from the position of the ghost box'''
         x = self.width // 2
         y = self.height // 2 + len(self.GHOST_BOX) // 2
-        with open(RANDOM_MAZE_FILE_PATH, 'a') as f:
+        with open(config.maze.random_maze_path, 'a') as f:
             f.write(str(x) + ' ' + str(y))
         f.close()
 
