@@ -42,6 +42,9 @@ class Graphic:
         maze = self.game.get_maze()
         for i in range(maze.get_height()):
             for j in range(maze.get_width()):
+                # Check if the state of a dot has changed to empty
+                if maze.get_cell(j, i) == Components.EMPTY:
+                    self.maze_sprites[i][j] = self.spritesheet.parse_sprite("void")
                 self.canvas.blit(self.maze_sprites[i][j], (
                     j * self.maze_sprites[i][j].get_width(), i * self.maze_sprites[i][j].get_height()))
 
@@ -81,6 +84,8 @@ class Graphic:
                         self.game.get_pacman().set_next_direction(Direction.NORTH)
                     if event.key == pg.K_s:
                         self.game.get_pacman().set_next_direction(Direction.SOUTH)
+                    if event.key == pg.K_SPACE:
+                        self.game.get_maze().set_component(Components.SUPERDOT, 1, 1)
             self.game.update()
             self.display_maze()
             self.display_pacman()

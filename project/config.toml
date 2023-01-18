@@ -7,17 +7,17 @@ width = 600
 height = 600
 fps = 60
 title = "PacMan"
-maze_path = "assets/data/random.txt"
+maze_path = "assets/data/maze.txt"
 
 [game]
-game_speed = 1
+game_speed = 20
 pacman_lives = 3
 
 [maze]
 width = 30
 height = 30
-density = 0.6
+density = 0.8
 seed = -1
 intersection_step = 3
-is_symetric = true
+is_symetric = false
 random_maze_path = "assets/data/random.txt"
