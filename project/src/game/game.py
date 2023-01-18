@@ -3,10 +3,6 @@ from .maze.maze import Maze
 from ..config import Config
 from .entities.pacman import Pacman
 
-MAZE_FILE_PATH = "assets/data/random.txt"
-
-
-
 class Game:
 
     def __init__(self, config: Config) -> None:

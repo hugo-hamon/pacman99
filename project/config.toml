@@ -7,7 +7,7 @@ width = 600
 height = 600
 fps = 60
 title = "PacMan"
-maze_path = "assets/data/maze.txt"
+maze_path = "assets/data/random.txt"
 
 [game]
 game_speed = 5

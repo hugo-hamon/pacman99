@@ -23,6 +23,13 @@ class GameConfig:
     game_speed: float
     pacman_lives: int
 
+@dataclass
+class MazeGenerationConfig:
+    width: int
+    height: int
+    density: float
+    seed: int
+    intersection_step: int
 
 @dataclass
 class Config:
