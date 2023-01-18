@@ -4,7 +4,7 @@ from ..maze.maze import Maze
 from typing import Tuple
 
 
-UNITSPERCELL = 1000
+UNITSPERCELL = 1009
 
 
 class Entities(ABC):
@@ -45,7 +45,6 @@ class Entities(ABC):
         """Move the entity"""
         self.movedistance += int(self.speed / timestep)
         self.__moveToNextStep()
-        print(self.movedistance, self.direction)
         while self.movedistance > 0 and self.direction != Direction.NONE:
             self.direction = self._get_next_direction()
             self.__moveToNextStep()
@@ -53,12 +52,12 @@ class Entities(ABC):
 
     def __moveToNextStep(self) -> None:
         """Move the entity to the next step"""
-        xd, xy = self.direction.to_vector() if self.direction != Direction.NONE else (0, 0)
+        vx, vy = self.direction.to_vector()
         distanceToMove = min(self.movedistance, UNITSPERCELL -
-                             ((xd * self.x + xy * self.y) % UNITSPERCELL))
+                             ((vx * self.x + vy * self.y) % UNITSPERCELL))
+        self.x += vx * distanceToMove
+        self.y += vy * distanceToMove
         self.movedistance -= distanceToMove
-        self.x += distanceToMove * xd
-        self.y += distanceToMove * xy
 
     @abstractmethod
     def _get_next_direction(self) -> Direction:
