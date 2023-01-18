@@ -70,5 +70,5 @@ class Pacman(Entities):
             self.next_direction = Direction.NONE
         if self.direction != Direction.NONE:
             self.distance += 1
-        
+
         return self.direction

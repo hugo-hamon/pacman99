@@ -1,6 +1,6 @@
 [user]
 enable_graphics = true
-enable_random_maze = true
+enable_random_maze = false
 
 [graphics]
 width = 800
