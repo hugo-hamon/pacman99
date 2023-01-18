@@ -9,7 +9,7 @@ class Game:
     def __init__(self, config: Config) -> None:
         self.maze = Maze(filename=config.graphics.maze_path)
         self.pacman = Pacman(
-            self.maze, config.game.game_speed, Direction.NONE, (0, 0), config.game.pacman_lives
+            self.maze, config.game.game_speed, Direction.NORTH, (0, 0), config.game.pacman_lives
         )
         self.pacman.set_position(self.maze.get_packman_start())
         self.score = 0

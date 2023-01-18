@@ -27,19 +27,24 @@ class Pacman(Entities):
     def get_distance(self) -> int:
         return self.distance
 
-    def is_wall(self, dir: Direction, debug) -> bool:
-        """retourne vrai si le pacman peut aller dans la direction dir"""
+    def is_wall(self, dir: Direction) -> bool:
+        """retourne vrai si il y a un mur dans la direction dir"""
         position = self.get_position()
         area = self.maze.get_neighbors(int(position[0]), int(position[1]))
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
-        if debug:
-            print(area, dir, checkw)
         return area[checkw[1]][checkw[0]] == Components.WALL
 
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
-        """Change la direction du pacman"""
-        # si 
+        """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
+        if self.direction.opposite() == dir:
+            self.direction = dir
+            self.next_direction = Direction.NONE
+        elif self.direction == Direction.NONE and not self.is_wall(dir):
+            self.direction = dir
+            self.next_direction = Direction.NONE
+        else:
+            self.next_direction = dir
 
     def change_state(self) -> None:
         """Switch l'état de pac-man pour les super pac-gum"""
@@ -59,14 +64,13 @@ class Pacman(Entities):
         area = self.maze.get_neighbors(int(position[0]), int(position[1]))
         check = tuple(
             map(operator.add, self.next_direction.to_vector(), (1, 1)))
-        print("Un mur ?", self.is_wall(self.direction, False), position)
         if area[check[1]][check[0]] != Components.WALL and self.next_direction != Direction.NONE:
             self.direction = self.next_direction
-        elif self.is_wall(self.direction, True):
+        elif self.is_wall(self.direction):
             self.direction = Direction.NONE
             self.next_direction = Direction.NONE
         if self.direction != Direction.NONE:
             self.distance += 1
-        
-
+        print(self.get_position())
+        print("Direction suivante:", self.next_direction)
         return self.direction
