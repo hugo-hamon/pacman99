@@ -72,7 +72,7 @@ class Maze():
                 else:
                     neighbors[i+1,j+1] = self.maze[y+i,x+j]
         return neighbors
-
+    
     def is_intersection(self, x: int, y: int) -> bool:
         return self.get_cell(x, y) != Components.WALL and np.count_nonzero(self.get_neighbors(x, y) == Components.WALL) <= 2
 
