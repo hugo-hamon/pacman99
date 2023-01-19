@@ -3,8 +3,8 @@ enable_graphics = true
 enable_random_maze = false
 
 [graphics]
-width = 600
-height = 600
+width = 800
+height = 800
 fps = 60
 title = "PacMan"
 maze_path = "assets/data/maze.txt"

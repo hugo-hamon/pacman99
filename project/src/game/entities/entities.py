@@ -4,7 +4,7 @@ from ..maze.maze import Maze
 from typing import Tuple
 
 
-UNITSPERCELL = 1009
+UNITSPERCELL = 1000
 
 
 class Entities(ABC):

@@ -90,8 +90,12 @@ class Pacman(Entities):
         if self.direction != Direction.NONE:
             self.distance += 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         
 
 >>>>>>> 7fb117a (update)
+=======
+        print("Direction suivante:", self.next_direction)
+>>>>>>> e4b856e (update)
         return self.direction
