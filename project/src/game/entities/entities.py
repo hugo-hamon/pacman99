@@ -4,7 +4,7 @@ from ..maze.maze import Maze
 from typing import Tuple
 
 
-UNITSPERCELL = 1009
+UNITSPERCELL = 1000
 
 
 class Entities(ABC):
@@ -64,8 +64,8 @@ class Entities(ABC):
                                  ((xd * self.x + xy * self.y) % UNITSPERCELL)):
             self.isInIntersection = True
         self.movedistance -= distanceToMove
-        self.x += xd * distanceToMove
-        self.y += xy * distanceToMove
+        self.x += distanceToMove * xd
+        self.y += distanceToMove * xy
 
     @abstractmethod
     def _get_next_direction(self) -> Direction:
