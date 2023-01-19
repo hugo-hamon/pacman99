@@ -3,7 +3,21 @@ enable_graphics = true
 enable_random_maze = false
 
 [graphics]
-width = 720
-height = 720
+width = 800
+height = 800
 fps = 60
-title = "PacMan99"
+title = "PacMan"
+maze_path = "assets/data/maze.txt"
+
+[game]
+game_speed = 5
+pacman_lives = 3
+
+[maze]
+width = 15
+height = 15
+density = 1
+seed = -1
+intersection_step = 3
+is_symetric = false
+random_maze_path = "assets/data/random.txt"

@@ -1,49 +1,71 @@
-from .components import Components 
+from .components import Components
+from typing import Tuple
 import numpy as np
+import itertools
+
 
 class Maze():
-    def __init__(self, file: str):
-        '''Create a maze from a text file
-        The text file must be a matrix of 0, 1, 2, 3, 4
+
+    def __init__(self, filename: str):
+        self.filename = filename
+        self.width = 0
+        self.height = 0
+        self.maze = np.zeros((0, 0), dtype=Components)
+        self.packman_start = (0, 0)
+        self.total_dots = 0
+        self.load_file()
+
+    def load_file(self) -> None:
+        """
+        Load the maze from a file
         0: Wall
         1: Empty
         2: Dot
         3: Superdot
         4: Fruit
-        '''
-        f = open(file, "r")
-        lines = f.readlines()
-        self.width = len(lines[0]) - 1
-        self.height = len(lines)
-        self.maze = np.zeros((self.height, self.width), dtype=Components)
-        for j in range(0, self.width):
-            for i in range(0, self.height):
-                match lines[i][j]:
-                    case '0':
-                        self.maze[i,j] = Components.WALL
-                    case '1':
-                        self.maze[i,j] = Components.EMPTY
-                    case '2':
-                        self.maze[i,j] = Components.DOT
-                    case '3':
-                        self.maze[i,j] = Components.SUPERDOT
-                    case '4':
-                        self.maze[i,j] = Components.FRUIT
-        f.close()
-        self.total_dots = np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+        """
+        with open(self.filename, "r") as f:
+            lines = f.readlines()
+            self.width = len(lines[0]) - 1
+            self.height = len(lines) - 1
+            self.maze = np.zeros((self.height, self.width), dtype=Components)
+            for j in range(self.width):
+                for i in range(self.height):
+                    self.maze[i, j] = self.get_component_type(lines[i][j])
+            self.packman_start = tuple(map(int, lines[-1].split(" ")))
+            self.total_dots = np.count_nonzero(
+                self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+
+    def get_component_type(self, symbol: str) -> Components:
+        """
+        Return the component type from a symbol
+        """
+        match symbol:
+            case '0':
+                return Components.WALL
+            case '1':
+                return Components.EMPTY
+            case '2':
+                return Components.DOT
+            case '3':
+                return Components.SUPERDOT
+            case '4':
+                return Components.FRUIT
+            case _:
+                raise ValueError("Invalid symbol")
 
     def display(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
-                if self.get_cell(x,y) == Components.WALL:
+                if self.get_cell(x, y) == Components.WALL:
                     print("0", end='')
-                elif self.get_cell(x,y) == Components.EMPTY:
+                elif self.get_cell(x, y) == Components.EMPTY:
                     print("1", end='')
-                elif self.get_cell(x,y) == Components.DOT:
+                elif self.get_cell(x, y) == Components.DOT:
                     print("2", end='')
-                elif self.get_cell(x,y) == Components.SUPERDOT:
+                elif self.get_cell(x, y) == Components.SUPERDOT:
                     print("3", end='')
-                elif self.get_cell(x,y) == Components.FRUIT:
+                elif self.get_cell(x, y) == Components.FRUIT:
                     print("4", end='')
             print()
 
@@ -59,22 +81,27 @@ class Maze():
 
     def get_cell(self, x: int, y: int) -> Components:
         '''Return the cell at the position (x,y)'''
-        return self.maze[y,x]
+        return self.maze[y, x]
 
-    def get_neighbors (self, x: int, y: int) -> np.ndarray:
+    def get_neighbors(self, x: int, y: int) -> np.ndarray:
         '''Return a 3x3 np.array of the neighbors of the cell (x,y)
-        For cells on the border, the neighbors outside the maze are considered as walls'''
-        neighbors = np.zeros((3,3), dtype=Components)
-        for j in range(-1, 2):
-            for i in range(-1, 2):
-                if x+j < 0 or x+j >= self.width or y+i < 0 or y+i >= self.height:
-                    neighbors[i+1,j+1] = Components.WALL
-                else:
-                    neighbors[i+1,j+1] = self.maze[y+i,x+j]
+        For cells on the border, the neighbors outside the maze are considered as EMPTY
+        '''
+        neighbors = np.zeros((3, 3), dtype=Components)
+        for j, i in itertools.product(range(-1, 2), range(-1, 2)):
+            neighbors[i + 1, j + 1] = (
+                Components.EMPTY
+                if x + j < 0
+                or x + j >= self.width
+                or y + i < 0
+                or y + i >= self.height
+                else self.maze[y + i, x + j]
+            )
         return neighbors
 
-    def is_intersection(self, x: int, y: int) -> bool:
-        return self.get_cell(x, y) != Components.WALL and np.count_nonzero(self.get_neighbors(x, y) == Components.WALL) <= 2
+    def get_packman_start(self) -> Tuple[int, int]:
+        """Return the position of the packman start"""
+        return self.packman_start
 
     def get_total_dots(self) -> int:
         return self.total_dots
@@ -82,5 +109,5 @@ class Maze():
     def get_total_remain_dots(self) -> int:
         return np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
-    def set_component(self, c: Components,x: int, y: int) -> None:
-        self.maze[x,y] = c
+    def set_component(self, c: Components, x: int, y: int) -> None:
+        self.maze[x, y] = c

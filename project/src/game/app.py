@@ -1,3 +1,4 @@
+from .maze.random_maze_factory import RandomMazeFactory
 from ..graphics.graphic import Graphic
 from ..config import Config
 from .game import Game

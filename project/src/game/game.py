@@ -1,53 +1,69 @@
+from .maze.random_maze_factory import RandomMazeFactory
+from .maze.components import Components
+from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
-
-MAZE_FILE_PATH = "assets/data/random.txt"
 
 
 class Game:
 
     def __init__(self, config: Config) -> None:
-        # self.pacman = Pacman(self.maze.get_start_pos())
-        # Sera ajouté plus tard la génération aléatoire
-        self.maze = Maze(file=MAZE_FILE_PATH)
+        path = config.graphics.maze_path
+        if config.user.enable_random_maze:
+            RandomMazeFactory(config).create()
+            path = config.maze.random_maze_path
+        self.maze = Maze(filename=path)
+        self.pacman = Pacman(
+            self.maze, config.game.game_speed, Direction.NONE, (0, 0), config.game.pacman_lives
+        )
+        self.pacman.set_position(self.maze.get_packman_start())
+        self.score = 0
 
     # REQUESTS
+
     def is_game_over(self) -> bool:
         """Return True if the game is over"""
-        # return self.maze.get_dots() == 0 or self.pacman.is_dead()
-        return False
+        return self.is_game_won() or self.pacman.is_dead()
 
     def is_game_won(self) -> bool:
         """Return True if the game is won"""
-        # return self.maze.get_dots() == 0
-        return False
+        return self.maze.get_total_remain_dots() == 0
 
     def get_score(self) -> int:
         """Return the score"""
-        # return self.pacman.get_score()
-        return 0
-
-    def get_distance(self) -> int:
-        """Return the distance"""
-        # return self.pacman.get_distance()
-        return 0
+        return self.score
 
     def get_maze(self) -> Maze:
         """Return the maze"""
         return self.maze
+    
+    def get_pacman(self) -> Pacman:
+        """Return the pacman"""
+        return self.pacman
 
     # COMMANDS
     def reset(self) -> None:
         """Reset the game"""
         # self.maze.reset()
         # self.pacman.reset()
-        pass
 
     def update(self) -> None:
         """Update the game"""
-        pass
-
-    def go(self, direction: Direction) -> None:
-        """Go in a direction"""
-        pass
+        self.pacman.move(60)
+        pacman_position = (round(self.pacman.get_position()[0]), round(self.pacman.get_position()[1]))
+        # if pacman is on a dot, eat it
+        if pacman_position[0] > 0 and pacman_position[0] < self.maze.get_width() and pacman_position[1] > 0 and pacman_position[1] < self.maze.get_height():
+            if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.DOT:
+                self.score += 1
+                self.maze.set_component(Components.EMPTY, pacman_position[1], pacman_position[0])
+            if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.SUPERDOT:
+                self.score += 1
+                self.maze.set_component(Components.EMPTY, pacman_position[1], pacman_position[0])
+        # if pacman is out of bounds on the left or right, teleport him to the other side
+        if pacman_position[0] < 0:
+            self.pacman.set_position((self.maze.get_width() - 1, pacman_position[1]))
+        if pacman_position[0] > self.maze.get_width():
+            self.pacman.set_position((0, pacman_position[1]))
+        if self.is_game_won():
+            print("You won")

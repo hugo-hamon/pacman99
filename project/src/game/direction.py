@@ -8,10 +8,17 @@ class Direction(Enum):
     EAST = 1
     SOUTH = 2
     WEST = 3
+    NONE = 4
 
     def opposite(self) -> Direction:
         """Return the opposite direction"""
-        return Direction((self.value + 2) % 4)
+        return {
+            Direction.NORTH: Direction.SOUTH,
+            Direction.EAST: Direction.WEST,
+            Direction.SOUTH: Direction.NORTH,
+            Direction.WEST: Direction.EAST,
+            Direction.NONE: Direction.NONE
+        }[self]
 
     def to_vector(self) -> Tuple[int, int]:
         """Return the direction as a vector"""
@@ -20,4 +27,5 @@ class Direction(Enum):
             Direction.EAST: (1, 0),
             Direction.SOUTH: (0, 1),
             Direction.WEST: (-1, 0),
+            Direction.NONE: (0, 0)
         }[self]
