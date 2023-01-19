@@ -1,3 +1,4 @@
+from .maze.random_maze_factory import RandomMazeFactory
 from .maze.components import Components
 from .entities.pacman import Pacman
 from .direction import Direction
@@ -8,7 +9,11 @@ from ..config import Config
 class Game:
 
     def __init__(self, config: Config) -> None:
-        self.maze = Maze(filename=config.graphics.maze_path)
+        path = config.graphics.maze_path
+        if config.user.enable_random_maze:
+            RandomMazeFactory(config).create()
+            path = config.maze.random_maze_path
+        self.maze = Maze(filename=path)
         self.pacman = Pacman(
             self.maze, config.game.game_speed, Direction.NONE, (0, 0), config.game.pacman_lives
         )
