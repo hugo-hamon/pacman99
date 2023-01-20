@@ -99,6 +99,16 @@
             "frame": {"x": 503, "y": 337, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
+        },
+        "pacman_1": {
+            "frame": {"x": 503, "y": 320, "w": 16, "h": 16},
+            "rotated": false,
+            "trimmed": false
+        },
+        "ghost_chaser": {
+            "frame": {"x": 1, "y": 83, "w": 16, "h": 16},
+            "rotated": false,
+            "trimmed": false
         }
     }
 }

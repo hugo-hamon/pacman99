@@ -11,7 +11,7 @@ class Maze():
         self.width = 0
         self.height = 0
         self.maze = np.zeros((0, 0), dtype=Components)
-        self.packman_start = (0, 0)
+        self.pacman_start = (0, 0)
         self.total_dots = 0
         self.load_file()
 
@@ -32,7 +32,7 @@ class Maze():
             for j in range(self.width):
                 for i in range(self.height):
                     self.maze[i, j] = self.get_component_type(lines[i][j])
-            self.packman_start = tuple(map(int, lines[-1].split(" ")))
+            self.pacman_start = tuple(map(int, lines[-1].split(" ")))
             self.total_dots = np.count_nonzero(
                 self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
@@ -99,9 +99,9 @@ class Maze():
             )
         return neighbors
 
-    def get_packman_start(self) -> Tuple[int, int]:
-        """Return the position of the packman start"""
-        return self.packman_start
+    def get_pacman_start(self) -> Tuple[int, int]:
+        """Return the position of the pacman start"""
+        return self.pacman_start
 
     def get_total_dots(self) -> int:
         return self.total_dots

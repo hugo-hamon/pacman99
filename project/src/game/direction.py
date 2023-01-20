@@ -29,3 +29,13 @@ class Direction(Enum):
             Direction.WEST: (-1, 0),
             Direction.NONE: (0, 0)
         }[self]
+    
+    def to_angle(self) -> int:
+        """Return the direction as an angle"""
+        return {
+            Direction.NORTH: 90,
+            Direction.EAST: 0,
+            Direction.SOUTH: 270,
+            Direction.WEST: 180,
+            Direction.NONE: 0
+        }[self]
