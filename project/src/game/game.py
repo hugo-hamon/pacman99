@@ -65,15 +65,25 @@ class Game:
 
     def init_ghosts(self) -> List[Entities]:
         """Initialize the ghosts and return them"""
-        return [Chaser(self.maze, self.pacman, self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
+        return [Chaser(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)), Chaser(self.maze, self.pacman, 0.7 * self.config.game.game_speed, Direction.SOUTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
 
     def update(self) -> None:
         """Update the game"""
         self.pacman.move(60)
+        if self.is_pacman_dying():
+            self.pacman.lose_life()
+            self.pacman.direction = Direction.NONE
+            self.pacman.set_position(self.maze.get_pacman_start())
         for ghost in self.ghosts:
             ghost.move(60)
+            if self.is_pacman_dying():
+                self.pacman.lose_life()
+                self.pacman.direction = Direction.NONE
+                self.pacman.set_position(self.maze.get_pacman_start())
         self.eat_dot()
         self.pacman_tp()
+        if self.pacman.get_lives() == 0:
+            print("You lost")
         if self.is_game_won():
             print("You won")
 
@@ -100,3 +110,14 @@ class Game:
                 (self.maze.get_width() - 1, pacman_position[1]))
         if pacman_position[0] > self.maze.get_width():
             self.pacman.set_position((0, pacman_position[1]))
+
+    def is_pacman_dying(self) -> None:
+        """Check if the pacman collide with a ghost"""
+        pacman_position = (round(self.pacman.get_position()[0]), round(
+            self.pacman.get_position()[1]))
+        for ghost in self.ghosts:
+            ghost_position = (round(ghost.get_position()[0]), round(
+                ghost.get_position()[1]))
+            if pacman_position == ghost_position:
+                return True
+        return False

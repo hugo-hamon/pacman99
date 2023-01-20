@@ -13,12 +13,13 @@ class Pacman(Entities):
         self.next_direction: Direction = Direction.NONE
         self.boost_state = False
         self.lives = lives
+        self.alive = True
         self.distance = 0
 
     # Requests
     def is_dead(self) -> bool:
         """retourne vraie si le pacman est mort (plus de vie)"""
-        return self.lives == 0
+        return self.alive
 
     def get_lives(self) -> int:
         """retourne le nombre de vie restante"""
@@ -50,8 +51,13 @@ class Pacman(Entities):
         """Switch l'état de pac-man pour les super pac-gum"""
         self.boost_state = not self.boost_state
 
+    def respawn(self) -> None:
+        "Pacman revient à la vie"
+        self.alive = True
+
     def lose_life(self) -> None:
         """Perd une vie"""
+        self.alive = False
         self.lives -= 1
 
     def _get_next_direction(self) -> Direction:

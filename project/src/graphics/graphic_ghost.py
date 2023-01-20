@@ -22,8 +22,11 @@ class GraphicGhost():
 
     def create_ghost_sprite(self) -> List[pg.surface.Surface]:
         """Create a ghost sprite"""
-        chaser = self.create_chaser_sprite()
-        return [chaser]
+        ghost_sprites = []
+        for _ in range(len(self.game.get_ghosts())):
+            chaser = self.create_chaser_sprite()
+            ghost_sprites.append(chaser)
+        return ghost_sprites
 
     def display_ghost(self, canvas: pg.surface.Surface) -> None:
         """Display ghost"""

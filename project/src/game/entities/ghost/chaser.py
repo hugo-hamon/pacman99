@@ -39,7 +39,6 @@ class Chaser(Entities):
             ghost_pos = self.get_position()
             dir_ghost_pos = round(ghost_pos[0] + direction.to_vector()[0]), round(ghost_pos[1] + direction.to_vector()[1])
             dist_to_dir = self.distance_euclidienne(dir_ghost_pos, pac_pos)
-            print(dir_ghost_pos, dist_to_dir)
             if dist_to_dir < dist or prefered_direction == Direction.NONE:
                 prefered_direction = direction
                 dist = dist_to_dir
