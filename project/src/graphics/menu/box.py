@@ -31,7 +31,7 @@ class Box:
         x = self.position[0] - self.sprite.get_width() / 2
         y = self.position[1]
         return (x, y, self.sprite.get_width(), self.sprite.get_height())
-    
+
     def is_collide(self, x: float, y: float) -> bool:
         """Return True if the box is collide with the mouse"""
         x_box, y_box, width, height = self.get_dimension()

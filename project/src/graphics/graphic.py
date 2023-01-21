@@ -43,7 +43,7 @@ class Graphic:
         )
         self.create_sprites()
 
-        self.main_menu = MainMenu(self.screen)
+        self.main_menu = MainMenu(self.screen, self.game, self)
 
     # REQUESTS
     def play_sound(self, sound_path: str, loop_enable: bool) -> None:
@@ -100,6 +100,13 @@ class Graphic:
     def display_sprites(self) -> None:
         """Display the sprites"""
         self.pacman_sprite.display_pacman(self.canvas)
-        self.pacman_sprite.update()
         self.maze_sprites.display_maze(self.canvas)
         self.ghost.display_ghost(self.canvas)
+
+    def set_fps(self, fps: int) -> None:
+        """Set the fps"""
+        self.fps = fps
+
+    def get_fps(self) -> int:
+        """Get the fps"""
+        return self.fps

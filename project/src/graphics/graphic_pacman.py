@@ -21,8 +21,11 @@ class GraphicPacman():
     def display_pacman(self, canvas: pg.surface.Surface) -> None:
         """Display pacman"""
         current_direction = self.game.get_pacman().get_direction()
+        if current_direction != Direction.NONE:
+            self.update()
         self.image = pg.transform.rotate(
             self.image, current_direction.to_angle())
+        
         pacman_position = self.game.get_pacman().get_position()
         pacman_position = (
             pacman_position[0] * self.image.get_width(),

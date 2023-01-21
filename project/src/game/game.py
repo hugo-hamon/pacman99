@@ -72,7 +72,6 @@ class Game:
         self.pacman.move(60)
         for ghost in self.ghosts:
             ghost.move(60)
-            print("Ghost position: ", ghost.get_position())
         self.eat_dot()
         self.pacman_tp()
         if self.is_game_won():
