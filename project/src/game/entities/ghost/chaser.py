@@ -1,8 +1,8 @@
 from ...maze.components import Components
 from ...direction import Direction
 from ..entities import Entities
-from ...maze.maze import Maze
 from .ghost import GeneralGhost
+from ...maze.maze import Maze
 from typing import Tuple
 import numpy as np
 

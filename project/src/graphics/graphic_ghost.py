@@ -13,23 +13,24 @@ class GraphicGhost():
         self.spritesheet = spritesheet
         self.ghost = self.create_ghost_sprite()
 
-    def create_chaser_sprite(self) -> pg.surface.Surface:
-        """Create a ghost sprite for the chaser ghost"""
+    def rescale_sprite(self, path: str) -> pg.surface.Surface:
+        """Rescale a sprite"""
         return rescale(
             self.spritesheet.parse_sprite(
-                "r_red_ghost"), self.screen, self.game
+                path), self.screen, self.game
         )
 
     def create_ghost_sprite(self) -> List[pg.surface.Surface]:
         """Create a ghost sprite"""
-        ghost_sprites = []
-        for _ in range(len(self.game.get_ghosts())):
-            chaser = self.create_chaser_sprite()
-            ghost_sprites.append(chaser)
+        ghost_sprites = [self.rescale_sprite("red_ghost_0")]
+        ghost_sprites.append(self.rescale_sprite("pink_ghost_0"))
+        ghost_sprites.append(self.rescale_sprite("orange_ghost_0"))
+        ghost_sprites.append(self.rescale_sprite("blue_ghost_0"))
         return ghost_sprites
 
     def display_ghost(self, canvas: pg.surface.Surface) -> None:
         """Display ghost"""
+        # Order: Blinky, Pinky, Clyde, Inky
         for k, ghost in enumerate(self.game.get_ghosts()):
             ghost_position = ghost.get_position()
             ghost_position = (

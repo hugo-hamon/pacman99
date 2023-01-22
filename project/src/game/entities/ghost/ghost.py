@@ -17,7 +17,7 @@ class GeneralGhost(Entities) :
                  coordinate: Tuple[float, float] = (5, 5)) -> None:
         super().__init__(maze, speed, direction, coordinate)
         self.pac = pac
-        self.state = gs.FRIGHTENED
+        self.state = gs.CHASE
     
     # REQUESTS
 

@@ -1,9 +1,9 @@
 from ...maze.components import Components
+from .ghoststate import Ghoststate
 from ...direction import Direction
+from .ghost import GeneralGhost
 from ..entities import Entities
 from ...maze.maze import Maze
-from .ghost import GeneralGhost
-from .ghoststate import GhostState
 from typing import Tuple
 import numpy as np
 
@@ -16,13 +16,13 @@ class Clyde(GeneralGhost):
     def _get_next_direction(self) -> Direction:
         '''Return and set the next direction of the ghost.'''
         match self.state:
-            case GhostState.CHASE:
+            case Ghoststate.CHASE:
                 return self.get_chase_direction()
-            case GhostState.SCATTER:
+            case Ghoststate.SCATTER:
                 return self.get_scatter_direction()
-            case GhostState.FRIGHTENED:
+            case Ghoststate.FRIGHTENED:
                 return self.get_frightened_direction()
-            case GhostState.EATEN:
+            case Ghoststate.EATEN:
                 return self.get_eaten_direction()
 
     def get_chase_direction(self) -> Direction:

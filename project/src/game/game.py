@@ -1,6 +1,6 @@
 from .maze.random_maze_factory import RandomMazeFactory
-from .entities.ghost.chaser import Chaser
-from .entities.entities import Entities
+from .entities.ghost import Blinky, Pinky, Clyde, Inky
+from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
 from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
@@ -46,7 +46,7 @@ class Game:
         """Return the pacman"""
         return self.pacman
 
-    def get_ghosts(self) -> List[Entities]:
+    def get_ghosts(self) -> List[GeneralGhost]:
         """Return the ghosts"""
         return self.ghosts
 
@@ -65,10 +65,17 @@ class Game:
         pacman.set_position(self.maze.get_pacman_start())
         return pacman
 
-    def init_ghosts(self) -> List[Chaser]:
+    def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
-        ghost = [Chaser(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)) for k in range(2)]
-        return ghost
+        ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed,
+                                             Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2))]
+        ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed,
+                      Direction.NORTH, (self.maze.get_width() / 2 + 1, self.maze.get_height() / 2)))
+        ghosts.append(Clyde(self.maze, self.pacman, self.config.game.game_speed,
+                      Direction.NORTH, (self.maze.get_width() / 2 - 1, self.maze.get_height() / 2)))
+        ghosts.append(Inky(self.maze, self.pacman, self.config.game.game_speed,
+                      Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2 - 1)))
+        return ghosts
 
     def update(self) -> None:
         """Update the game"""
@@ -81,6 +88,7 @@ class Game:
                 self.respawn_pacman()
         self.eat_dot()
         self.pacman_tp()
+        self.ghosts_tp()
         if self.pacman.get_lives() == 0:
             print("You lost")
         if self.is_game_won():
@@ -109,7 +117,8 @@ class Game:
             if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.SUPERDOT:
                 if self.config.user.enable_graphics and self.config.user.sound_enable:
                     self.sounds.play_sound_once("assets/music/munch_2.wav")
-                    self.sounds.play_sound_once("assets/music/power_pellet.wav")
+                    self.sounds.play_sound_once(
+                        "assets/music/power_pellet.wav")
                 self.score += 1
                 self.maze.set_component(
                     Components.EMPTY, pacman_position[1], pacman_position[0])
@@ -123,6 +132,17 @@ class Game:
                 (self.maze.get_width() - 1, pacman_position[1]))
         if pacman_position[0] > self.maze.get_width() - 1:
             self.pacman.set_position((0, pacman_position[1]))
+
+    def ghosts_tp(self) -> None:
+        """Teleport the ghost"""
+        for ghost in self.ghosts:
+            ghost_position = (round(ghost.get_position()[0]), round(
+                ghost.get_position()[1]))
+            if ghost_position[0] < 0:
+                ghost.set_position(
+                    (self.maze.get_width() - 1, ghost_position[1]))
+            if ghost_position[0] > self.maze.get_width() - 1:
+                ghost.set_position((0, ghost_position[1]))
 
     def is_pacman_dying(self) -> bool:
         """Check if the pacman collide with a ghost"""
