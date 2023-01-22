@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from ..direction import Direction
 from ..maze.maze import Maze
+from ...config import Config
 from typing import Tuple
 
 
