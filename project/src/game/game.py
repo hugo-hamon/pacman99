@@ -1,12 +1,7 @@
 from .maze.random_maze_factory import RandomMazeFactory
-<<<<<<< HEAD
-from .entities.ghost.blinky import Blinky
-from .entities.ghost.ghoststate import Ghoststate
-from .entities.entities import Entities
-=======
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from .entities.ghost.ghost import GeneralGhost
->>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
+from.entities.ghost.ghoststate import Ghoststate
 from .maze.components import Components
 from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
@@ -73,10 +68,6 @@ class Game:
 
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
-<<<<<<< HEAD
-        return [Blinky(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)),
-                Blinky(self.maze, self.pacman, 0.7 * self.config.game.game_speed, Direction.SOUTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
-=======
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed,
                                              Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2))]
         ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed,
@@ -86,7 +77,6 @@ class Game:
         ghosts.append(Inky(self.maze, self.pacman, self.config.game.game_speed,
                       Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2 - 1)))
         return ghosts
->>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
 
     def update(self) -> None:
         """Update the game"""
@@ -114,11 +104,7 @@ class Game:
                 ghost.set_state(Ghoststate.CHASE)
         self.eat_dot()
         self.pacman_tp()
-<<<<<<< HEAD
-
-=======
         self.ghosts_tp()
->>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
         if self.pacman.get_lives() == 0:
             print("You lost")
         if self.is_game_won():
@@ -147,16 +133,13 @@ class Game:
             if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.SUPERDOT:
                 if self.config.user.enable_graphics and self.config.user.sound_enable:
                     self.sounds.play_sound_once("assets/music/munch_2.wav")
-<<<<<<< HEAD
                     self.sounds.play_sound_once("assets/music/power_pellet.wav")
                 self.get_pacman().change_state()
                 self.super_mode_timer = self.config.game.super_mode_duration * 60
                 for ghost in self.ghosts:
                     ghost.set_state(Ghoststate.FRIGHTENED)
-=======
                     self.sounds.play_sound_once(
                         "assets/music/power_pellet.wav")
->>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
                 self.score += 1
                 self.maze.set_component(
                     Components.EMPTY, pacman_position[1], pacman_position[0])

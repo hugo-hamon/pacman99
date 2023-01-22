@@ -1,12 +1,8 @@
 [user]
 enable_graphics = true
 enable_random_maze = false
-<<<<<<< HEAD
 menu_enable = true
-=======
-menu_enable = false
->>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
-sound_enable = false
+sound_enable = true
 
 [graphics]
 width = 1080
