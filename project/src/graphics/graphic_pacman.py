@@ -27,10 +27,12 @@ class GraphicPacman():
             self.image, current_direction.to_angle())
         
         pacman_position = self.game.get_pacman().get_position()
+        print("pacman_position 1 : ", pacman_position)
         pacman_position = (
             pacman_position[0] * self.image.get_width(),
             pacman_position[1] * self.image.get_height()
         )
+        print("pacman_position 2 : ", pacman_position)
         canvas.blit(self.image, pacman_position)
 
     def update(self) -> None:
