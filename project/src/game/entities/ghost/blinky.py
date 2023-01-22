@@ -7,7 +7,7 @@ from .ghoststate import GhostState
 from typing import Tuple
 import numpy as np
 
-class Chaser(GeneralGhost):
+class Blinky(GeneralGhost):
 
     def __init__(self, maze: Maze, pac: Entities, speed: float = 0, direction: Direction = Direction.WEST,
                  coordinate: Tuple[float, float] = (5, 5)) -> None:

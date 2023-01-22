@@ -17,7 +17,7 @@ class GraphicGhost():
         """Create a ghost sprite for the chaser ghost"""
         return rescale(
             self.spritesheet.parse_sprite(
-                "red_ghost"), self.screen, self.game
+                "r_red_ghost"), self.screen, self.game
         )
 
     def create_ghost_sprite(self) -> List[pg.surface.Surface]:
