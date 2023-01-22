@@ -1,5 +1,6 @@
 from .maze.random_maze_factory import RandomMazeFactory
-from .entities.ghost.chaser import Chaser
+from .entities.ghost.blinky import Blinky
+from .entities.ghost.ghoststate import Ghoststate
 from .entities.entities import Entities
 from .maze.components import Components
 from ..graphics.sounds import Sounds
@@ -8,7 +9,7 @@ from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
 from typing import List
-
+import time
 
 class Game:
 
@@ -22,7 +23,7 @@ class Game:
         self.maze = Maze(filename=path)
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
-
+        self.super_mode_timer = 0
         self.score = 0
 
     # REQUESTS
@@ -67,20 +68,36 @@ class Game:
 
     def init_ghosts(self) -> List[Entities]:
         """Initialize the ghosts and return them"""
-        return [Chaser(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)),
-                Chaser(self.maze, self.pacman, 0.7 * self.config.game.game_speed, Direction.SOUTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
+        return [Blinky(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)),
+                Blinky(self.maze, self.pacman, 0.7 * self.config.game.game_speed, Direction.SOUTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
 
     def update(self) -> None:
         """Update the game"""
         self.pacman.move(60)
+        print(self.super_mode_timer)
         if self.is_pacman_dying():
-            self.respawn_pacman()
+                if self.super_mode_timer > 0:
+                    for ghost in self.ghosts:
+                        ghost.set_state(Ghoststate.EATEN)
+                else:
+                    self.respawn_pacman()
         for ghost in self.ghosts:
+            print(ghost.state)
             ghost.move(60)
             if self.is_pacman_dying():
-                self.respawn_pacman()
+                if self.super_mode_timer > 0:
+                    for ghost in self.ghosts:
+                        ghost.set_state(Ghoststate.EATEN)
+                else:
+                    self.respawn_pacman()
+        if self.super_mode_timer > 0:
+            self.super_mode_timer -= 1
+        else :
+            for ghost in self.ghosts:
+                ghost.set_state(Ghoststate.CHASE)
         self.eat_dot()
         self.pacman_tp()
+
         if self.pacman.get_lives() == 0:
             print("You lost")
         if self.is_game_won():
@@ -110,6 +127,10 @@ class Game:
                 if self.config.user.enable_graphics and self.config.user.sound_enable:
                     self.sounds.play_sound_once("assets/music/munch_2.wav")
                     self.sounds.play_sound_once("assets/music/power_pellet.wav")
+                self.get_pacman().change_state()
+                self.super_mode_timer = self.config.game.super_mode_duration * 60
+                for ghost in self.ghosts:
+                    ghost.set_state(Ghoststate.FRIGHTENED)
                 self.score += 1
                 self.maze.set_component(
                     Components.EMPTY, pacman_position[1], pacman_position[0])

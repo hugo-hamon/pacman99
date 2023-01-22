@@ -24,6 +24,7 @@ class GraphicConfig:
 class GameConfig:
     game_speed: float
     pacman_lives: int
+    super_mode_duration: int
 
 @dataclass
 class MazeGenerationConfig:

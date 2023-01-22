@@ -17,7 +17,7 @@ class GeneralGhost(Entities) :
                  coordinate: Tuple[float, float] = (5, 5)) -> None:
         super().__init__(maze, speed, direction, coordinate)
         self.pac = pac
-        self.state = gs.FRIGHTENED
+        self.state = gs.EATEN
     
     # REQUESTS
 
@@ -41,6 +41,58 @@ class GeneralGhost(Entities) :
     def _get_next_direction(self) -> Direction:
         '''Return and set the next direction of the ghost.'''
         pass
+    
+    def get_scatter_direction(self) -> Direction:
+        '''Return the direction of the ghost in scatter mode.'''
+        # TODO
+        position = self.get_position()
+        pac_pos = self.pac.get_position()
+        prefered_direction = Direction.NONE
+        dist = np.inf
+        for direction in self.get_possible_direction():
+            if direction == self.direction.opposite():
+                continue
+            dir_ghost_pos = round(
+                position[0] + direction.to_vector()[0]), round(position[1] + direction.to_vector()[1])
+            dist_to_dir = self.distance_euclidienne(dir_ghost_pos, pac_pos)
+            if dist_to_dir > dist or prefered_direction == Direction.NONE:
+                prefered_direction = direction
+                dist = dist_to_dir
+        self.direction = prefered_direction
+        return prefered_direction
+    
+    def get_frightened_direction(self) -> Direction:
+        '''Return the direction of the ghost in frightened mode.'''
+        position = self.get_position()
+        pac_pos = self.pac.get_position()
+        prefered_direction = Direction.NONE
+        dist = np.inf
+        for direction in self.get_possible_direction():
+            if direction == self.direction.opposite():
+                continue
+            dir_ghost_pos = round(
+                position[0] + direction.to_vector()[0]), round(position[1] + direction.to_vector()[1])
+            dist_to_dir = self.distance_euclidienne(dir_ghost_pos, pac_pos)
+            if dist_to_dir > dist or prefered_direction == Direction.NONE:
+                prefered_direction = direction
+                dist = dist_to_dir
+        self.direction = prefered_direction
+        return prefered_direction
+
+    def get_eaten_direction(self) -> Direction:
+        '''Return the direction of the ghost in frightened mode.'''
+        position = self.get_position()
+        prefered_direction = Direction.NONE
+        dist = np.inf
+        for direction in self.get_possible_direction():
+            dir_ghost_pos = round(
+                position[0] + direction.to_vector()[0]), round(position[1] + direction.to_vector()[1])
+            dist_to_dir = self.distance_euclidienne(dir_ghost_pos, (self.maze.get_width()//2, self.maze.get_height()//2))
+            if dist_to_dir < dist or prefered_direction == Direction.NONE:
+                prefered_direction = direction
+                dist = dist_to_dir
+        self.direction = prefered_direction
+        return prefered_direction
 
     # COMMANDS
 
