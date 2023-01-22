@@ -2,6 +2,7 @@ from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost.chaser import Chaser
 from .entities.entities import Entities
 from .maze.components import Components
+from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
@@ -11,12 +12,13 @@ from typing import List
 
 class Game:
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, sounds: Sounds) -> None:
         path = config.graphics.maze_path
         if config.user.enable_random_maze:
             RandomMazeFactory(config).create()
             path = config.maze.random_maze_path
         self.config = config
+        self.sounds = sounds
         self.maze = Maze(filename=path)
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
@@ -85,6 +87,9 @@ class Game:
             print("You won")
 
     def respawn_pacman(self):
+        if self.config.user.enable_graphics and self.config.user.sound_enable:
+            print("play sound")
+            self.sounds.play_sound_once("assets/music/death_1.wav")
         self.pacman.lose_life()
         self.pacman.direction = Direction.NONE
         self.pacman.set_position(self.maze.get_pacman_start())
@@ -93,12 +98,18 @@ class Game:
         """Eat a dot"""
         pacman_position = (round(self.pacman.get_position()[0]), round(
             self.pacman.get_position()[1]))
-        if pacman_position[0] > 0 and pacman_position[0] < self.maze.get_width() and pacman_position[1] > 0 and pacman_position[1] < self.maze.get_height():
+        if pacman_position[0] >= 0 and pacman_position[0] < self.maze.get_width() and \
+                pacman_position[1] >= 0 and pacman_position[1] < self.maze.get_height():
             if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.DOT:
+                if self.config.user.enable_graphics and self.config.user.sound_enable:
+                    self.sounds.play_sound_once("assets/music/munch_1.wav")
                 self.score += 1
                 self.maze.set_component(
                     Components.EMPTY, pacman_position[1], pacman_position[0])
             if self.maze.get_cell(pacman_position[0], pacman_position[1]) == Components.SUPERDOT:
+                if self.config.user.enable_graphics and self.config.user.sound_enable:
+                    self.sounds.play_sound_once("assets/music/munch_2.wav")
+                    self.sounds.play_sound_once("assets/music/power_pellet.wav")
                 self.score += 1
                 self.maze.set_component(
                     Components.EMPTY, pacman_position[1], pacman_position[0])
@@ -110,7 +121,7 @@ class Game:
         if pacman_position[0] < 0:
             self.pacman.set_position(
                 (self.maze.get_width() - 1, pacman_position[1]))
-        if pacman_position[0] > self.maze.get_width():
+        if pacman_position[0] > self.maze.get_width() - 1:
             self.pacman.set_position((0, pacman_position[1]))
 
     def is_pacman_dying(self) -> bool:

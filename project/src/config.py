@@ -7,7 +7,8 @@ import toml
 class UserConfig:
     enable_graphics: bool
     enable_random_maze: bool
-    enable_menu: bool
+    menu_enable: bool
+    sound_enable: bool
 
 
 @dataclass
