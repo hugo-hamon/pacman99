@@ -7,24 +7,30 @@ from .spritesheet import SpriteSheet
 from ..game.game import Game
 from ..config import Config
 from .menu import MainMenu
+from .sounds import Sounds
 import pygame as pg
 
 
 spritesheet_path = "assets/images/palettes.png"
+TILE_SIZE = 8
 
 
 class Graphic:
 
-    def __init__(self, config: Config, game: Game) -> None:
+    def __init__(self, config: Config, game: Game, sounds: Sounds) -> None:
         self.config = config
+        factor = max(config.graphics.width, config.graphics.height) / \
+            (game.get_maze().get_width() * TILE_SIZE)
+        screen_width = game.get_maze().get_width() * TILE_SIZE * int(factor)
+        screen_height = game.get_maze().get_height() * TILE_SIZE * int(factor)
         self.screen = pg.display.set_mode(
-            (config.graphics.width, config.graphics.height))
+            (screen_width, screen_height))
         pg.display.set_caption(config.graphics.title)
         self.canvas = pg.Surface(
-            (config.graphics.width, config.graphics.height))
+            (screen_width, screen_height))
 
         self.clock = pg.time.Clock()
-        self.mixer = pg.mixer
+        self.sound = sounds
 
         self.spritesheet = SpriteSheet(spritesheet_path)
         self.fps = config.graphics.fps
@@ -45,17 +51,16 @@ class Graphic:
 
         self.main_menu = MainMenu(self.screen, self.game, self)
 
-    # REQUESTS
-    def play_sound(self, sound_path: str, loop_enable: bool) -> None:
-        """Play a sound in loop or not"""
-        self.mixer.music.load(sound_path)
-        self.mixer.music.play(-1 if loop_enable else 0)
-
     # COMMANDS
     def start(self) -> None:
         """Run the graphic"""
-        if self.config.user.enable_menu:
-            self.main_menu.run()
+        if self.config.user.menu_enable:
+            self.launch_main_menu(self.config.user.sound_enable)
+
+        # play the background sound
+        if self.config.user.sound_enable:
+            self.sound.play_sound("assets/music/siren_1.wav", True)
+
         self.run = True
         while self.run:
             for event in pg.event.get():
@@ -88,8 +93,10 @@ class Graphic:
             self.game.get_pacman().set_next_direction(Direction.SOUTH)
         if event.key == pg.K_SPACE:
             self.game.get_maze().set_component(Components.SUPERDOT, 1, 1)
-        if event.key == pg.K_ESCAPE and self.config.user.enable_menu:
-            self.main_menu.run()
+        if event.key == pg.K_ESCAPE and self.config.user.menu_enable:
+            self.launch_main_menu(False)
+            if self.config.user.sound_enable:
+                self.sound.play_sound("assets/music/siren_1.wav", True)
 
     def create_sprites(self) -> None:
         """Create the sprites"""
@@ -110,3 +117,12 @@ class Graphic:
     def get_fps(self) -> int:
         """Get the fps"""
         return self.fps
+
+    def launch_main_menu(self, play_sound: bool) -> None:
+        """Launch the main menu"""
+        self.sound.stop_sound()
+        if play_sound:
+            self.sound.play_sound("assets/music/title_screen.mp3", True)
+        self.main_menu.run()
+        if play_sound:
+            self.sound.fadeout_sound(1000)

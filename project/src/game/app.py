@@ -1,5 +1,5 @@
-from .maze.random_maze_factory import RandomMazeFactory
 from ..graphics.graphic import Graphic
+from ..graphics.sounds import Sounds
 from ..config import Config
 from .game import Game
 
@@ -12,9 +12,10 @@ class App:
     # TODO
     def run(self) -> None:
         """Run the app"""
-        game = Game(config=self.config)
+        sounds = Sounds()
+        game = Game(config=self.config, sounds=sounds)
         if self.config.user.enable_graphics:
-            graphic = Graphic(config=self.config, game=game)
+            graphic = Graphic(config=self.config, game=game, sounds=sounds)
             graphic.start()
 
     # TODO
