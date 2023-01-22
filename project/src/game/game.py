@@ -65,10 +65,10 @@ class Game:
         pacman.set_position(self.maze.get_pacman_start())
         return pacman
 
-    def init_ghosts(self) -> List[Entities]:
+    def init_ghosts(self) -> List[Chaser]:
         """Initialize the ghosts and return them"""
-        return [Chaser(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)),
-                Chaser(self.maze, self.pacman, 0.7 * self.config.game.game_speed, Direction.SOUTH, (self.maze.get_width() // 2, self.maze.get_height() // 2))]
+        ghost = [Chaser(self.maze, self.pacman, 0.8 * self.config.game.game_speed, Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2)) for k in range(2)]
+        return ghost
 
     def update(self) -> None:
         """Update the game"""
