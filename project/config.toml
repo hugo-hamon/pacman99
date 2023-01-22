@@ -1,12 +1,16 @@
 [user]
 enable_graphics = true
 enable_random_maze = false
+<<<<<<< HEAD
 menu_enable = true
+=======
+menu_enable = false
+>>>>>>> 0638a992d6e1bcc80c3958e0ca729fb1f3ebc357
 sound_enable = false
 
 [graphics]
-width = 720
-height = 480
+width = 1080
+height = 720
 fps = 60
 title = "PacMan"
 maze_path = "assets/data/maze.txt"
@@ -22,5 +26,5 @@ height = 24
 density = 0.8
 seed = -1
 intersection_step = 3
-is_symetric = false
+is_symetric = true
 random_maze_path = "assets/data/random.txt"

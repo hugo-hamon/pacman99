@@ -105,47 +105,47 @@
             "rotated": false,
             "trimmed": false
         },
-        "r_red_ghost": {
+        "red_ghost_0": {
             "frame": {"x": 1, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "rw_red_ghost": {
+        "red_ghost_1": {
             "frame": {"x": 18, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "d_red_ghost": {
+        "red_ghost_2": {
             "frame": {"x": 35, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dw_red_ghost": {
+        "red_ghost_3": {
             "frame": {"x": 52, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "l_red_ghost": {
+        "red_ghost_4": {
             "frame": {"x": 69, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "lw_red_ghost": {
+        "red_ghost_5": {
             "frame": {"x": 86, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "u_red_ghost": {
+        "red_ghost_6": {
             "frame": {"x": 103, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "uw_red_ghost": {
+        "red_ghost_7": {
             "frame": {"x": 120, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "r_pink_ghost": {
+        "pink_ghost_0": {
             "frame": {"x": 201, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
@@ -185,7 +185,7 @@
             "rotated": false,
             "trimmed": false
         },
-        "r_blue_ghost": {
+        "blue_ghost_0": {
             "frame": {"x": 401, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
@@ -225,7 +225,7 @@
             "rotated": false,
             "trimmed": false
         },
-        "r_orange_ghost": {
+        "orange_ghost_0": {
             "frame": {"x": 601, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
