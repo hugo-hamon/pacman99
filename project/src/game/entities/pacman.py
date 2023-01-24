@@ -2,20 +2,30 @@ from ..maze.components import Components
 from ..direction import Direction
 from .entities import Entities
 from ..maze.maze import Maze
-from ...config import Config
 from typing import Tuple
+from typing import List
+import numpy as np
 import operator
 
 
 class Pacman(Entities):
 
-    def __init__(self, maze: Maze, speed: float = 0, direction: Direction = Direction.WEST, coordinate: Tuple[float, float] = (0, 0), lives: int = 3) -> None:
+    def __init__(self,
+                 maze: Maze,
+                 speed: float = 0,
+                 direction: Direction = Direction.WEST,
+                 coordinate: Tuple[float, float] = (0, 0),
+                 lives: int = 3,
+                 move_list: str = "") -> None:
         super().__init__(maze, speed, direction, coordinate)
         self.next_direction: Direction = Direction.NONE
         self.boost_state = False
         self.lives = lives
         self.alive = True
         self.distance = 0
+
+        self.move_list = move_list
+        self.move_list_index = 0
 
     # Requests
     def is_dead(self) -> bool:
@@ -61,6 +71,19 @@ class Pacman(Entities):
         self.alive = False
         self.lives -= 1
 
+    def get_next_valid_move(self) -> Direction:
+        """retourne la prochaine direction valide"""
+        while self.move_list_index < len(self.move_list):
+            self.direction = Direction.from_string(self.move_list[self.move_list_index])
+            print(self.direction)
+            if self.is_wall(self.direction):
+                self.direction = Direction.NONE   
+            self.move_list_index += 1
+            if self.direction != Direction.NONE:
+                self.distance += 1
+                return self.direction
+        return Direction.NONE
+
     def _get_next_direction(self) -> Direction:
         """Entrée : direction self.buffer
             Si on peut aller dans la direction buffer, go buffer
@@ -69,7 +92,10 @@ class Pacman(Entities):
         """Get the next direction of the entity"""
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
-        check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
+        check = tuple(
+            map(operator.add, self.next_direction.to_vector(), (1, 1)))
+        if self.move_list:
+            return self.get_next_valid_move()
         if area[check[1]][check[0]] != Components.WALL and self.next_direction != Direction.NONE:
             self.direction = self.next_direction
         elif self.is_wall(self.direction):

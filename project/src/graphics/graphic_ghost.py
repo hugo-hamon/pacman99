@@ -1,14 +1,16 @@
+from ..game.entities.ghost.ghoststate import Ghoststate
+from ..game.direction import Direction
 from .spritesheet import SpriteSheet
 from .standalone import rescale
 from ..game.game import Game
-from ..game.entities.ghost.ghoststate import Ghoststate
-from ..game.direction import Direction
 from typing import List
 import pygame as pg
 
+
 class GraphicGhost():
 
-    GHOST_SPRITE_PATH = {"Blinky": "red", "Pinky": "pink", "Clyde": "orange", "Inky": "blue"}
+    GHOST_SPRITE_PATH = {"Blinky": "red", "Pinky": "pink",
+                         "Clyde": "orange", "Inky": "blue"}
 
     def __init__(self, screen: pg.surface.Surface, game: Game, spritesheet: SpriteSheet) -> None:
         self.screen = screen
@@ -42,10 +44,15 @@ class GraphicGhost():
                 ghost_position[0] * self.ghost[k].get_width(),
                 ghost_position[1] * self.ghost[k].get_height()
             )
-            if ghost.state == Ghoststate.FRIGHTENED or ghost.state == Ghoststate.EATEN:
-                self.ghost[k] = self.rescale_sprite("dead_" + self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed)))
-            else :
-                direction_to_animation = {Direction.NORTH: 3, Direction.EAST: 0, Direction.SOUTH: 1, Direction.WEST: 2}
-                self.ghost[k] = self.rescale_sprite(self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed + 2 * direction_to_animation[ghost.direction])))
+            if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
+                self.ghost[k] = self.rescale_sprite(
+                    f"dead_{self.GHOST_SPRITE_PATH[ghost.__class__.__name__]}_ghost_{int(self.animation_speed)}"
+                )
+            else:
+                direction_to_animation = {
+                    Direction.NORTH: 3, Direction.EAST: 0, Direction.SOUTH: 1, Direction.WEST: 2}
+                self.ghost[k] = self.rescale_sprite(
+                    f"{self.GHOST_SPRITE_PATH[ghost.__class__.__name__]}_ghost_{int(self.animation_speed + 2 * direction_to_animation[ghost.direction])}"
+                )
 
             canvas.blit(self.ghost[k], ghost_position)

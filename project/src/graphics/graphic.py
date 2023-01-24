@@ -83,16 +83,15 @@ class Graphic:
 
     # TODO Rename this here and in `start`
     def __process_key_event(self, event: pg.event.Event) -> None:
-        if event.key == pg.K_q:
-            self.game.get_pacman().set_next_direction(Direction.WEST)
-        if event.key == pg.K_d:
-            self.game.get_pacman().set_next_direction(Direction.EAST)
-        if event.key == pg.K_z:
-            self.game.get_pacman().set_next_direction(Direction.NORTH)
-        if event.key == pg.K_s:
-            self.game.get_pacman().set_next_direction(Direction.SOUTH)
-        if event.key == pg.K_SPACE:
-            self.game.get_maze().set_component(Components.SUPERDOT, 1, 1)
+        if not self.config.genetic.genetic_enable:
+            if event.key == pg.K_q:
+                self.game.get_pacman().set_next_direction(Direction.WEST)
+            if event.key == pg.K_d:
+                self.game.get_pacman().set_next_direction(Direction.EAST)
+            if event.key == pg.K_z:
+                self.game.get_pacman().set_next_direction(Direction.NORTH)
+            if event.key == pg.K_s:
+                self.game.get_pacman().set_next_direction(Direction.SOUTH)
         if event.key == pg.K_ESCAPE and self.config.user.menu_enable:
             self.launch_main_menu(False)
             if self.config.user.sound_enable:
