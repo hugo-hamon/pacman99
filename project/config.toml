@@ -5,7 +5,7 @@ menu_enable = true
 sound_enable = true
 
 [graphics]
-width = 1080
+width = 720
 height = 720
 fps = 60
 title = "PacMan"
@@ -17,10 +17,10 @@ pacman_lives = 3
 super_mode_duration = 10
 
 [maze]
-width = 24
-height = 24
+width = 39
+height = 39
 density = 0.8
 seed = -1
 intersection_step = 3
-is_symetric = true
+is_symetric = false
 random_maze_path = "assets/data/random.txt"

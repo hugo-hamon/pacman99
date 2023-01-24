@@ -68,40 +68,24 @@ class Game:
 
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
-        ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed,
+        ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
                                              Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2))]
-        ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed,
+        ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed * 0.9,
                       Direction.NORTH, (self.maze.get_width() / 2 + 1, self.maze.get_height() / 2)))
-        ghosts.append(Clyde(self.maze, self.pacman, self.config.game.game_speed,
+        ghosts.append(Clyde(self.maze, self.pacman, self.config.game.game_speed * 0.8,
                       Direction.NORTH, (self.maze.get_width() / 2 - 1, self.maze.get_height() / 2)))
-        ghosts.append(Inky(self.maze, self.pacman, self.config.game.game_speed,
+        ghosts.append(Inky(self.maze, self.pacman, self.config.game.game_speed * 0.9,
                       Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2 - 1)))
         return ghosts
 
     def update(self) -> None:
         """Update the game"""
         self.pacman.move(60)
-        print(self.super_mode_timer)
-        if self.is_pacman_dying():
-                if self.super_mode_timer > 0:
-                    for ghost in self.ghosts:
-                        ghost.set_state(Ghoststate.EATEN)
-                else:
-                    self.respawn_pacman()
         for ghost in self.ghosts:
-            print(ghost.state)
+            self.__manage_collision(ghost)
             ghost.move(60)
-            if self.is_pacman_dying():
-                if self.super_mode_timer > 0:
-                    for ghost in self.ghosts:
-                        ghost.set_state(Ghoststate.EATEN)
-                else:
-                    self.respawn_pacman()
-        if self.super_mode_timer > 0:
-            self.super_mode_timer -= 1
-        else :
-            for ghost in self.ghosts:
-                ghost.set_state(Ghoststate.CHASE)
+            self.__manage_collision(ghost)
+        self.__check_super_dot_timer()
         self.eat_dot()
         self.pacman_tp()
         self.ghosts_tp()
@@ -137,7 +121,8 @@ class Game:
                 self.get_pacman().change_state()
                 self.super_mode_timer = self.config.game.super_mode_duration * 60
                 for ghost in self.ghosts:
-                    ghost.set_state(Ghoststate.FRIGHTENED)
+                    if ghost.state == Ghoststate.CHASE or ghost.state == Ghoststate.SCATTER:
+                        ghost.set_state(Ghoststate.FRIGHTENED)
                     self.sounds.play_sound_once(
                         "assets/music/power_pellet.wav")
                 self.score += 1
@@ -165,13 +150,35 @@ class Game:
             if ghost_position[0] > self.maze.get_width() - 1:
                 ghost.set_position((0, ghost_position[1]))
 
-    def is_pacman_dying(self) -> bool:
+    def __manage_collision(self, ghost:GeneralGhost) -> None:
+        """Manage the collision between pacman and ghost"""
+        if self.__is_pacman_ghost_colliding(ghost):
+                if ghost.state == Ghoststate.FRIGHTENED or ghost.state == Ghoststate.EATEN:
+                    ghost.set_state(Ghoststate.EATEN)
+                    ghost.set_speed(ghost.get_speed() * 4)
+                    self.score += 200
+                else :
+                    self.respawn_pacman()
+
+    def __is_pacman_ghost_colliding(self, ghost:GeneralGhost) -> bool:
         """Check if the pacman collide with a ghost"""
+        if ghost.state == Ghoststate.EATEN:
+            return False
         pacman_position = (round(self.pacman.get_position()[0]), round(
             self.pacman.get_position()[1]))
-        for ghost in self.ghosts:
-            ghost_position = (round(ghost.get_position()[0]), round(
-                ghost.get_position()[1]))
-            if pacman_position == ghost_position:
-                return True
+        ghost_position = (round(ghost.get_position()[0]), round(
+            ghost.get_position()[1]))
+        if pacman_position == ghost_position:
+            return True
         return False
+
+    def __check_super_dot_timer(self) -> None:
+        """Check if the super dot timer is over"""
+        self.super_mode_timer -= 1
+        if self.super_mode_timer == 0:
+            for ghost in self.ghosts:
+                if ghost.state == Ghoststate.EATEN:
+                    ghost.set_speed(ghost.get_speed() / 4)
+                    ghost.direction = Direction.NORTH
+                ghost.set_state(Ghoststate.CHASE)
+            self.get_pacman().change_state()

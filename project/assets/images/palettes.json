@@ -150,37 +150,37 @@
             "rotated": false,
             "trimmed": false
         },
-        "rw_pink_ghost": {
+        "pink_ghost_1": {
             "frame": {"x": 218, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "d_pink_ghost": {
+        "pink_ghost_2": {
             "frame": {"x": 235, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dw_pink_ghost": {
+        "pink_ghost_3": {
             "frame": {"x": 252, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "l_pink_ghost": {
+        "pink_ghost_4": {
             "frame": {"x": 269, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "lw_pink_ghost": {
+        "pink_ghost_5": {
             "frame": {"x": 286, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "u_pink_ghost": {
+        "pink_ghost_6": {
             "frame": {"x": 303, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "uw_pink_ghost": {
+        "pink_ghost_7": {
             "frame": {"x": 320, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
@@ -190,37 +190,37 @@
             "rotated": false,
             "trimmed": false
         },
-        "rw_blue_ghost": {
+        "blue_ghost_1": {
             "frame": {"x": 418, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "d_blue_ghost": {
+        "blue_ghost_2": {
             "frame": {"x": 435, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dw_blue_ghost": {
+        "blue_ghost_3": {
             "frame": {"x": 452, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "l_blue_ghost": {
+        "blue_ghost_4": {
             "frame": {"x": 469, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "lw_blue_ghost": {
+        "blue_ghost_5": {
             "frame": {"x": 486, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "u_blue_ghost": {
+        "blue_ghost_6": {
             "frame": {"x": 503, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "uw_blue_ghost": {
+        "blue_ghost_7": {
             "frame": {"x": 520, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
@@ -230,77 +230,78 @@
             "rotated": false,
             "trimmed": false
         },
-        "rw_orange_ghost": {
+        "orange_ghost_1": {
             "frame": {"x": 618, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "d_orange_ghost": {
+        "orange_ghost_2": {
             "frame": {"x": 635, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dw_orange_ghost": {
+        "orange_ghost_3": {
             "frame": {"x": 652, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "l_orange_ghost": {
+        "orange_ghost_4": {
             "frame": {"x": 669, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "lw_orange_ghost": {
+        "orange_ghost_5": {
             "frame": {"x": 686, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "u_orange_ghost": {
+        "orange_ghost_6": {
             "frame": {"x": 703, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "uw_orange_ghost": {
+        "orange_ghost_7": {
             "frame": {"x": 720, "y": 83, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dead_red_ghost": {
+
+        "dead_red_ghost_0": {
             "frame": {"x": 1, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "deadw_red_ghost": {
+        "dead_red_ghost_1": {
             "frame": {"x": 18, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dead_pink_ghost": {
+        "dead_pink_ghost_0": {
             "frame": {"x": 201, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "deadw_pink_ghost": {
+        "dead_pink_ghost_1": {
             "frame": {"x": 218, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dead_blue_ghost": {
+        "dead_blue_ghost_0": {
             "frame": {"x": 401, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "deadw_blue_ghost": {
+        "dead_blue_ghost_1": {
             "frame": {"x": 418, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "dead_orange_ghost": {
+        "dead_orange_ghost_0": {
             "frame": {"x": 601, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
         },
-        "deadw_orange_ghost": {
+        "dead_orange_ghost_1": {
             "frame": {"x": 618, "y": 168, "w": 16, "h": 16},
             "rotated": false,
             "trimmed": false
