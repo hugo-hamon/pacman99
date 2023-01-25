@@ -10,29 +10,19 @@ import numpy as np
 class Blinky(GeneralGhost):
 
     def __init__(self, maze: Maze, pac: Entities, speed: float = 0, direction: Direction = Direction.WEST,
-                 coordinate: Tuple[float, float] = (5, 5)) -> None:
-        super().__init__(maze, pac, speed, direction, coordinate)
-
-    def _get_next_direction(self) -> Direction:
-        '''Return and set the next direction of the ghost.'''
-        match self.state:
-            case Ghoststate.CHASE:
-                return self.get_chase_direction()
-            case Ghoststate.SCATTER:
-                return self.get_scatter_direction()
-            case Ghoststate.FRIGHTENED:
-                return self.get_frightened_direction()
-            case Ghoststate.EATEN:
-                return self.get_eaten_direction()
+                 coordinate: Tuple[float, float] = (5, 5), scatter_pos: Tuple[int, int] = (8, 8)) -> None:
+        super().__init__(maze, pac, speed, direction, coordinate, scatter_pos)
 
     def get_chase_direction(self) -> Direction:
         '''Return the direction of the ghost in chase mode.'''
+        if self.inside_ghostbox:
+            return self.get_outside_ghostbox_direction()
         position = self.get_position()
         pac_pos = self.pac.get_position()
         prefered_direction = Direction.NONE
         dist = np.inf
         for direction in self.get_possible_direction():
-            if direction == self.direction.opposite():
+            if self.get_direction() != Direction.NONE and direction == self.direction.opposite():
                 continue
             dir_ghost_pos = round(
                 position[0] + direction.to_vector()[0]), round(position[1] + direction.to_vector()[1])

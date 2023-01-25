@@ -42,11 +42,7 @@ class Pacman(Entities):
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
-        return area[checkw[1]][checkw[0]] == Components.WALL
-    
-    def get_move_list_index(self) -> int:
-        """retourne l'index du prochain mouvement de la liste de mouvement"""
-        return self.move_list_index
+        return area[checkw[1]][checkw[0]] in [Components.WALL, Components.DOOR]
 
     # Commandes
     def reset(self) -> None:
@@ -106,11 +102,8 @@ class Pacman(Entities):
         """Get the next direction of the entity"""
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
-        check = tuple(
-            map(operator.add, self.next_direction.to_vector(), (1, 1)))
-        if self.move_list:
-            return self.get_next_valid_move()
-        if area[check[1]][check[0]] != Components.WALL and self.next_direction != Direction.NONE:
+        check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
+        if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and self.next_direction != Direction.NONE:
             self.direction = self.next_direction
         elif self.is_wall(self.direction):
             self.direction = Direction.NONE

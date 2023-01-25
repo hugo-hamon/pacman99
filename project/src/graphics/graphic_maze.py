@@ -23,6 +23,7 @@ class GraphicMaze:
             Components.DOT: "dot",
             Components.SUPERDOT: "super_dot",
             Components.FRUIT: "fruit",
+            Components.DOOR: "door"
         }
         maze_sprites = []
         for i in range(maze.get_height()):

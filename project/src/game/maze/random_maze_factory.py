@@ -15,7 +15,7 @@ class RandomMazeFactory():
     MIN_MAZE_HEIGHT = 15
     MIN_MAZE_WIDTH = 15
     # The ghost box is a predefined structure at the center of the maze
-    GHOST_BOX = [[2, 2, 2, 2, 2, 2, 2, 2, 2], [2, 0, 0, 0, 1, 0, 0, 0, 2],
+    GHOST_BOX = [[2, 2, 2, 2, 2, 2, 2, 2, 2], [2, 0, 0, 0, 5, 0, 0, 0, 2],
                  [2, 0, 1, 1, 1, 1, 1, 0, 2], [2, 0, 1, 1, 1, 1, 1, 0, 2],
                  [2, 0, 1, 1, 1, 1, 1, 0, 2], [2, 0, 0, 0, 0, 0, 0, 0, 2],
                  [2, 1, 1, 1, 1, 1, 1, 1, 2]]

@@ -23,6 +23,7 @@ class Maze():
         2: Dot
         3: Superdot
         4: Fruit
+        5: Door
         """
         with open(self.filename, "r") as f:
             lines = f.readlines()
@@ -51,6 +52,8 @@ class Maze():
                 return Components.SUPERDOT
             case '4':
                 return Components.FRUIT
+            case '5':
+                return Components.DOOR
             case _:
                 raise ValueError("Invalid symbol")
 

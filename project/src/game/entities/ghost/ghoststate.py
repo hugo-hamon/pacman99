@@ -6,3 +6,4 @@ class Ghoststate(Enum):
     SCATTER = 1
     FRIGHTENED = 2
     EATEN = 3
+    EXITTING = 4
