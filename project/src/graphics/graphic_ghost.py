@@ -6,6 +6,9 @@ from ..game.game import Game
 from typing import List
 import pygame as pg
 
+class GhostException(Exception):
+    pass
+
 
 class GraphicGhost():
 
@@ -49,6 +52,8 @@ class GraphicGhost():
                     f"dead_{self.GHOST_SPRITE_PATH[ghost.__class__.__name__]}_ghost_{int(self.animation_speed)}"
                 )
             else:
+                if ghost.direction == Direction.NONE:
+                    raise GhostException("Ghost can't have direction set to NONE")
                 direction_to_animation = {
                     Direction.NORTH: 3, Direction.EAST: 0, Direction.SOUTH: 1, Direction.WEST: 2}
                 self.ghost[k] = self.rescale_sprite(

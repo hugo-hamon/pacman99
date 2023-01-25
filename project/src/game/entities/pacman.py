@@ -3,8 +3,6 @@ from ..direction import Direction
 from .entities import Entities
 from ..maze.maze import Maze
 from typing import Tuple
-from typing import List
-import numpy as np
 import operator
 
 
@@ -45,8 +43,20 @@ class Pacman(Entities):
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
         return area[checkw[1]][checkw[0]] == Components.WALL
+    
+    def get_move_list_index(self) -> int:
+        """retourne l'index du prochain mouvement de la liste de mouvement"""
+        return self.move_list_index
 
     # Commandes
+    def reset(self) -> None:
+        """Reset le pacman"""
+        self.next_direction = Direction.WEST
+        self.direction = Direction.NONE
+        self.boost_state = False
+        self.distance = 0
+        self.alive = True
+
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
         if self.direction.opposite() == dir:
@@ -71,11 +81,15 @@ class Pacman(Entities):
         self.alive = False
         self.lives -= 1
 
+    def set_movement(self, move_list: str) -> None:
+        """Enregistre la liste de mouvement"""
+        self.move_list = move_list
+        self.move_list_index = 0
+
     def get_next_valid_move(self) -> Direction:
         """retourne la prochaine direction valide"""
         while self.move_list_index < len(self.move_list):
             self.direction = Direction.from_string(self.move_list[self.move_list_index])
-            print(self.direction)
             if self.is_wall(self.direction):
                 self.direction = Direction.NONE   
             self.move_list_index += 1

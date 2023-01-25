@@ -1,15 +1,14 @@
-import time
-from typing import List
-from ..config import Config
-from .maze.maze import Maze
-from .direction import Direction
-from .entities.pacman import Pacman
-from ..graphics.sounds import Sounds
-from .maze.components import Components
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
-from .entities.ghost.ghost import GeneralGhost
 from .entities.ghost.ghoststate import Ghoststate
+from .entities.ghost.ghost import GeneralGhost
+from .maze.components import Components
+from ..graphics.sounds import Sounds
+from .entities.pacman import Pacman
+from .direction import Direction
+from typing import List, Tuple
+from .maze.maze import Maze
+from ..config import Config
 
 
 class Game:
@@ -55,8 +54,13 @@ class Game:
     # COMMANDS
     def reset(self) -> None:
         """Reset the game"""
-        # self.maze.reset()
-        # self.pacman.reset()
+        self.pacman.reset()
+        self.respawn_pacman()
+        for ghost in self.ghosts:
+            ghost.reset()
+        self.maze.reset()
+        self.score = 0
+        self.super_mode_timer = 0
 
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
@@ -96,12 +100,14 @@ class Game:
             print("You won")
 
     def respawn_pacman(self):
-        if self.config.user.enable_graphics and self.config.user.sound_enable:
-            print("play sound")
-            self.sounds.play_sound_once("assets/music/death_1.wav")
-        self.pacman.lose_life()
-        self.pacman.direction = Direction.NONE
         self.pacman.set_position(self.maze.get_pacman_start())
+        self.pacman.direction = Direction.WEST
+
+    def respawn_ghosts(self):
+        for ghost in self.ghosts:
+            ghost.direction = Direction.NORTH
+            ghost.set_position((self.maze.get_width() // 2,
+                               self.maze.get_height() // 2))
 
     def eat_dot(self) -> None:
         """Eat a dot"""
@@ -158,7 +164,11 @@ class Game:
                 ghost.set_speed(ghost.get_speed() * 4)
                 self.score += 200
             else:
+                if self.config.user.enable_graphics and self.config.user.sound_enable:
+                    self.sounds.play_sound_once("assets/music/death_1.wav")
+                self.pacman.lose_life()
                 self.respawn_pacman()
+                self.respawn_ghosts()
 
     def __is_pacman_ghost_colliding(self, ghost: GeneralGhost) -> bool:
         """Check if the pacman collide with a ghost"""
@@ -185,3 +195,21 @@ class Game:
         """Read the movement of the pacman"""
         with open(self.config.genetic.move_path, "r") as file:
             return file.read()
+
+    def run_with_movement(self, movements: str) -> Tuple[int, int, bool, bool]:
+        """
+        Play a game with a movement file and return information about the game.
+        return: Tuple[distance, score, is_dead, is_won]
+        """
+        self.reset()
+        self.pacman.set_movement(movements)
+        self.run(movements)
+        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+
+    def run(self, movements: str) -> None:
+        """Play a game"""
+        while self.pacman.direction != Direction.NONE:
+            self.update()
+            if self.pacman.get_lives() != self.config.game.pacman_lives:
+                break
+        

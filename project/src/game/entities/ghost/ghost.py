@@ -1,16 +1,16 @@
+from ...maze.components import Components
 from .ghoststate import Ghoststate as gs
+from abc import ABC, abstractmethod
 from ...direction import Direction
 from ...direction import Direction
 from ..entities import Entities
-from ...maze.components import Components
 from ...maze.maze import Maze
 from typing import Tuple
-from abc import ABC, abstractmethod
 from math import sqrt
 import numpy as np
 import operator
 
-class GeneralGhost(Entities) :
+class GeneralGhost(Entities, ABC) :
     '''Abstract class representing a ghost.
     Each subclass must implement the method _get_next_direction() which tells the ghost behavior.'''
     def __init__(self, maze: Maze, pac: Entities, speed: float = 0, direction: Direction = Direction.WEST,
@@ -40,12 +40,17 @@ class GeneralGhost(Entities) :
     def _get_next_direction(self) -> Direction:
         '''Return and set the next direction of the ghost.'''
         pass
+
+    @abstractmethod
+    def reset(self) -> None:
+        '''Reset the ghost.'''
+        pass
     
     def get_scatter_direction(self) -> Direction:
         '''Return the direction of the ghost in scatter mode.'''
         # A implementer dans cette classe ou dans chaque sous classes de fantomes au choix
         # TODO
-        pass
+        return NotImplemented()
     
     def get_frightened_direction(self) -> Direction:
         '''Return the direction of the ghost in frightened mode.'''

@@ -111,3 +111,7 @@ class Maze():
 
     def set_component(self, c: Components, x: int, y: int) -> None:
         self.maze[x, y] = c
+
+    def reset(self) -> None:
+        """Reset the maze to its initial state"""
+        self.load_file()

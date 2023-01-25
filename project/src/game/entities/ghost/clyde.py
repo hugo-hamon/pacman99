@@ -62,3 +62,6 @@ class Clyde(GeneralGhost):
                 dist = dist_to_dir
         self.direction = prefered_direction
         return prefered_direction
+    
+    def reset(self) -> None:
+        pass
