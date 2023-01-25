@@ -38,12 +38,20 @@ class MazeGenerationConfig:
     is_symetric: bool
     random_maze_path: str
 
+
+@dataclass
+class Genetic:
+    genetic_enable: bool
+    move_path: str
+
+
 @dataclass
 class Config:
     user: UserConfig
     graphics: GraphicConfig
     game: GameConfig
     maze: MazeGenerationConfig
+    genetic: Genetic
 
 
 def load_config(config_path: str) -> Config:

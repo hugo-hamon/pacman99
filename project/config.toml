@@ -25,3 +25,7 @@ seed = -1
 intersection_step = 3
 is_symetric = false
 random_maze_path = "assets/data/random.txt"
+
+[genetic]
+genetic_enable = true
+move_path = "assets/data/moves.txt"

@@ -1,15 +1,16 @@
+import time
+from typing import List
+from ..config import Config
+from .maze.maze import Maze
+from .direction import Direction
+from .entities.pacman import Pacman
+from ..graphics.sounds import Sounds
+from .maze.components import Components
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from .entities.ghost.ghost import GeneralGhost
-from.entities.ghost.ghoststate import Ghoststate
-from .maze.components import Components
-from ..graphics.sounds import Sounds
-from .entities.pacman import Pacman
-from .direction import Direction
-from .maze.maze import Maze
-from ..config import Config
-from typing import List
-import time
+from .entities.ghost.ghoststate import Ghoststate
+
 
 class Game:
 
@@ -61,9 +62,10 @@ class Game:
 
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
+        movements = self.read_movement() if self.config.genetic.genetic_enable else ""
         pacman = Pacman(
-            self.maze, self.config.game.game_speed, Direction.NONE, (0, 0),
-            self.config.game.pacman_lives
+            self.maze, self.config.game.game_speed, Direction.WEST, (0, 0),
+            self.config.game.pacman_lives, movements
         )
         pacman.set_position(self.maze.get_pacman_start())
         return pacman
@@ -85,7 +87,6 @@ class Game:
         """Update the game"""
         self.pacman.move(60)
         for ghost in self.ghosts:
-            self.__manage_collision(ghost)
             ghost.move(60)
             self.__manage_collision(ghost)
         self.__check_super_dot_timer()
@@ -150,17 +151,17 @@ class Game:
             if ghost_position[0] > self.maze.get_width() - 1:
                 ghost.set_position((0, ghost_position[1]))
 
-    def __manage_collision(self, ghost:GeneralGhost) -> None:
+    def __manage_collision(self, ghost: GeneralGhost) -> None:
         """Manage the collision between pacman and ghost"""
         if self.__is_pacman_ghost_colliding(ghost):
-                if ghost.state == Ghoststate.FRIGHTENED or ghost.state == Ghoststate.EATEN:
-                    ghost.set_state(Ghoststate.EATEN)
-                    ghost.set_speed(ghost.get_speed() * 4)
-                    self.score += 200
-                else :
-                    self.respawn_pacman()
+            if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
+                ghost.set_state(Ghoststate.EATEN)
+                ghost.set_speed(ghost.get_speed() * 4)
+                self.score += 200
+            else:
+                self.respawn_pacman()
 
-    def __is_pacman_ghost_colliding(self, ghost:GeneralGhost) -> bool:
+    def __is_pacman_ghost_colliding(self, ghost: GeneralGhost) -> bool:
         """Check if the pacman collide with a ghost"""
         if ghost.state == Ghoststate.EATEN:
             return False
@@ -168,9 +169,7 @@ class Game:
             self.pacman.get_position()[1]))
         ghost_position = (round(ghost.get_position()[0]), round(
             ghost.get_position()[1]))
-        if pacman_position == ghost_position:
-            return True
-        return False
+        return pacman_position == ghost_position
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""
@@ -199,3 +198,7 @@ class Game:
                 if self.ghosts[0].state == Ghoststate.SCATTER:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.CHASE)
+    def read_movement(self) -> str:
+        """Read the movement of the pacman"""
+        with open(self.config.genetic.move_path, "r") as file:
+            return file.read()

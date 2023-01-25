@@ -29,7 +29,7 @@ class Direction(Enum):
             Direction.WEST: (-1, 0),
             Direction.NONE: (0, 0)
         }[self]
-    
+
     def to_angle(self) -> int:
         """Return the direction as an angle"""
         return {
@@ -39,3 +39,13 @@ class Direction(Enum):
             Direction.WEST: 180,
             Direction.NONE: 0
         }[self]
+
+    @staticmethod
+    def from_string(string: str) -> Direction:
+        """Return the direction from a string"""
+        return {
+            "n": Direction.NORTH,
+            "e": Direction.EAST,
+            "s": Direction.SOUTH,
+            "w": Direction.WEST
+        }[string]
