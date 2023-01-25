@@ -8,7 +8,12 @@ import pygame as pg
 
 class GraphicGhost():
 
+    # CONSTANTS
+
     GHOST_SPRITE_PATH = {"Blinky": "red", "Pinky": "pink", "Clyde": "orange", "Inky": "blue"}
+    FRIGHTENED_BLINKING_TIME = 100
+
+    # CONSTRUCTOR
 
     def __init__(self, screen: pg.surface.Surface, game: Game, spritesheet: SpriteSheet) -> None:
         self.screen = screen
@@ -16,6 +21,8 @@ class GraphicGhost():
         self.spritesheet = spritesheet
         self.ghost = self.create_ghost_sprite()
         self.animation_speed = 0.1
+
+    # COMMANDS
 
     def rescale_sprite(self, path: str) -> pg.surface.Surface:
         """Rescale a sprite"""
@@ -26,10 +33,9 @@ class GraphicGhost():
 
     def create_ghost_sprite(self) -> List[pg.surface.Surface]:
         """Create a ghost sprite"""
-        ghost_sprites = [self.rescale_sprite("red_ghost_0")]
-        ghost_sprites.append(self.rescale_sprite("pink_ghost_0"))
-        ghost_sprites.append(self.rescale_sprite("orange_ghost_0"))
-        ghost_sprites.append(self.rescale_sprite("blue_ghost_0"))
+        ghost_sprites = []
+        for ghost in self.game.get_ghosts():
+            ghost_sprites.append(self.rescale_sprite(self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_0"))
         return ghost_sprites
 
     def display_ghost(self, canvas: pg.surface.Surface) -> None:
@@ -43,9 +49,13 @@ class GraphicGhost():
                 ghost_position[1] * self.ghost[k].get_height()
             )
             if ghost.state == Ghoststate.FRIGHTENED or ghost.state == Ghoststate.EATEN:
-                self.ghost[k] = self.rescale_sprite("dead_" + self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed)))
+                if ghost.state == Ghoststate.FRIGHTENED and self.animation_speed > 1 and self.game.super_mode_timer < self.FRIGHTENED_BLINKING_TIME:
+                    self.ghost[k] = self.rescale_sprite(self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_0")
+                else:
+                    self.ghost[k] = self.rescale_sprite("dead_" + self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed)))
             else :
                 direction_to_animation = {Direction.NORTH: 3, Direction.EAST: 0, Direction.SOUTH: 1, Direction.WEST: 2}
-                self.ghost[k] = self.rescale_sprite(self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed + 2 * direction_to_animation[ghost.direction])))
+                if ghost.get_direction() != Direction.NONE:
+                    self.ghost[k] = self.rescale_sprite(self.GHOST_SPRITE_PATH[ghost.__class__.__name__] + "_ghost_" + str(int(self.animation_speed + 2 * direction_to_animation[ghost.direction])))
 
             canvas.blit(self.ghost[k], ghost_position)

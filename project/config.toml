@@ -2,7 +2,7 @@
 enable_graphics = true
 enable_random_maze = false
 menu_enable = true
-sound_enable = true
+sound_enable = false
 
 [graphics]
 width = 720
@@ -15,7 +15,8 @@ maze_path = "assets/data/maze.txt"
 game_speed = 5
 pacman_lives = 3
 super_mode_duration = 10
-
+scatter_duration = 6
+chase_duration = 5
 [maze]
 width = 39
 height = 39

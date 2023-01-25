@@ -95,6 +95,11 @@
             "rotated": false,
             "trimmed": false
         },
+        "door": {
+            "frame": {"x": 127, "y": 223, "w": 8, "h": 8},
+            "rotated": false,
+            "trimmed": false
+        },
         "pacman_0": {
             "frame": {"x": 503, "y": 337, "w": 16, "h": 16},
             "rotated": false,

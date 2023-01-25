@@ -25,7 +25,9 @@ class GameConfig:
     game_speed: float
     pacman_lives: int
     super_mode_duration: int
-
+    scatter_duration: int
+    chase_duration: int
+    
 @dataclass
 class MazeGenerationConfig:
     width: int
