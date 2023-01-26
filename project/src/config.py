@@ -46,6 +46,7 @@ class Genetic:
     population_size: int
     graded_retain_percentage: float
     mutation_chance: float
+    selection_type: str
 
 
 @dataclass

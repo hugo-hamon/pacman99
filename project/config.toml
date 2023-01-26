@@ -32,4 +32,5 @@ genetic_enable = true
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.2
-mutation_chance = 0.1
+mutation_chance = 0.01
+selection_type = "rank"

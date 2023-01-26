@@ -29,18 +29,31 @@ class Population:
                      if individual.is_winner()), None)
 
     # Commands
-
     def generate_population(self, population_size: int) -> None:
         """Generate a population of random individuals."""
+        self.population = [Individual() for _ in range(population_size)]
+
+    def select_by_rank(self) -> None:
+        """Select the population by rank."""
+        self.population.sort(key=lambda individual: individual.get_fitness())
+        self.population = self.population[:self.graded_retain_count]
+
+    def select_by_roulette(self) -> None:
+        """Select the population by roulette."""
         return NotImplemented()
 
     def select_population(self) -> None:
-        """Select the population according to the graded retain count."""
-        self.population = self.population[:self.graded_retain_count]
-
-    def grade_population(self) -> None:
-        """Grade the population according to the fitness function."""
-        return NotImplemented()
+        """Select the population."""
+        match self.config.genetic.selection_type:
+            case "rank":
+                self.select_by_rank()
+            case "roulette":
+                self.select_by_roulette()
+            case _:
+                raise ValueError(
+                    "Invalid selection type for genetic algorithm."
+                    "Please use 'rank' or 'roulette'."
+                )
 
     def crossover_population(self) -> None:
         """Crossover the population."""
@@ -52,7 +65,6 @@ class Population:
 
     def evolve_population(self) -> None:
         """Evolve the population."""
-        self.grade_population()
         self.select_population()
         self.crossover_population()
         self.mutate_population()

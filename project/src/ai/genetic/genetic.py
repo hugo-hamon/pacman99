@@ -1,19 +1,7 @@
 from ...graphics.sounds import Sounds
-from .individual import Individual
 from .population import Population
-from ...game.game import Game
 from ...config import Config
 from typing import List
-
-
-def individual_fitness(self, individual: Individual) -> float:
-    """Get the fitness of an individual."""
-    return NotImplemented()
-
-
-def crossover(self, parent1: Individual, parent2: Individual) -> Individual:
-    """Crossover two parents to create a child."""
-    return NotImplemented()
 
 
 class Genetic:
@@ -31,3 +19,11 @@ class Genetic:
         while not self.population.is_solution_found():
             self.population.evolve_population()
         winner = self.population.get_winner()
+        if winner is not None:
+            print("Solution found: ", winner.get_solution())
+            self.write_solution(solution=winner.get_solution())
+
+    def write_solution(self, solution: str) -> None:
+        """Write the solution to a file."""
+        with open(self.config.genetic.move_path, "w") as file:
+            file.write(solution)
