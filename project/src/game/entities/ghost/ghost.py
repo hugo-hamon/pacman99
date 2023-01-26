@@ -150,3 +150,4 @@ class GeneralGhost(Entities, ABC) :
         if ghoststate == gs.EATEN:
             self.inside_ghostbox = True
         self.state = ghoststate
+        

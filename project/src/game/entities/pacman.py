@@ -45,14 +45,6 @@ class Pacman(Entities):
         return area[checkw[1]][checkw[0]] in [Components.WALL, Components.DOOR]
 
     # Commandes
-    def reset(self) -> None:
-        """Reset le pacman"""
-        self.next_direction = Direction.WEST
-        self.direction = Direction.NONE
-        self.boost_state = False
-        self.distance = 0
-        self.alive = True
-
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
         if self.direction.opposite() == dir:
@@ -103,6 +95,8 @@ class Pacman(Entities):
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
         check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
+        if self.move_list:
+            return self.get_next_valid_move()
         if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and self.next_direction != Direction.NONE:
             self.direction = self.next_direction
         elif self.is_wall(self.direction):

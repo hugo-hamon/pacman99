@@ -33,5 +33,3 @@ class Blinky(GeneralGhost):
         self.direction = prefered_direction
         return prefered_direction
     
-    def reset(self) -> None:
-        pass

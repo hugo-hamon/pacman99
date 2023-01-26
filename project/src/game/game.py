@@ -54,16 +54,6 @@ class Game:
         return self.ghosts
 
     # COMMANDS
-    def reset(self) -> None:
-        """Reset the game"""
-        self.pacman.reset()
-        self.respawn_pacman()
-        for ghost in self.ghosts:
-            ghost.reset()
-        self.maze.reset()
-        self.score = 0
-        self.super_mode_timer = 0
-
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
         movements = self.read_movement() if self.config.genetic.genetic_enable else ""
@@ -110,6 +100,9 @@ class Game:
     def respawn_ghosts(self):
         for ghost in self.ghosts:
             ghost.direction = Direction.NORTH
+            ghost.state = Ghoststate.EXITTING
+            ghost.inside_ghostbox = True
+            ghost.set_speed(ghost.speed_at_init)
             ghost.set_position((self.maze.get_width() // 2,
                                self.maze.get_height() // 2))
 
@@ -218,12 +211,11 @@ class Game:
         Play a game with a movement file and return information about the game.
         return: Tuple[distance, score, is_dead, is_won]
         """
-        self.reset()
         self.pacman.set_movement(movements)
-        self.run(movements)
+        self.run()
         return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
 
-    def run(self, movements: str) -> None:
+    def run(self) -> None:
         """Play a game"""
         while self.pacman.direction != Direction.NONE:
             self.update()

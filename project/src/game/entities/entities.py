@@ -20,6 +20,7 @@ class Entities(ABC):
         self.movedistance: int = 0
         self.maze = maze
         self.isInIntersection = True
+        self.speed_at_init = speed
 
     # REQUESTS
     def get_speed(self) -> float:

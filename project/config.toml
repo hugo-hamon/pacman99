@@ -17,6 +17,7 @@ pacman_lives = 3
 super_mode_duration = 10
 scatter_duration = 6
 chase_duration = 5
+
 [maze]
 width = 39
 height = 39
@@ -29,3 +30,6 @@ random_maze_path = "assets/data/random.txt"
 [genetic]
 genetic_enable = true
 move_path = "assets/data/moves.txt"
+population_size = 100
+graded_retain_percentage = 0.2
+mutation_chance = 0.1

@@ -43,6 +43,9 @@ class MazeGenerationConfig:
 class Genetic:
     genetic_enable: bool
     move_path: str
+    population_size: int
+    graded_retain_percentage: float
+    mutation_chance: float
 
 
 @dataclass
