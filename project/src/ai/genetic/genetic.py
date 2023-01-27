@@ -9,7 +9,7 @@ class Genetic:
     def __init__(self, config: Config, sounds: Sounds) -> None:
         self.config = config
         self.sounds = sounds
-        self.population = Population(config=config)
+        self.population = Population(config=config, sounds=sounds)
 
     def run(self) -> None:
         """Run the genetic algorithm."""
@@ -18,10 +18,11 @@ class Genetic:
         )
         while not self.population.is_solution_found():
             self.population.evolve_population()
+            print("Generation: ", self.population.get_generation())
         winner = self.population.get_winner()
         if winner is not None:
-            print("Solution found: ", winner.get_solution())
-            self.write_solution(solution=winner.get_solution())
+            print("Solution found: ", winner.get_genes())
+            self.write_solution(solution=winner.get_genes())
 
     def write_solution(self, solution: str) -> None:
         """Write the solution to a file."""
