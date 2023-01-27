@@ -10,6 +10,10 @@ from typing import List, Tuple
 from .maze.maze import Maze
 from ..config import Config
 
+DOT_SCORE = 100
+SUPER_DOT_SCORE = 500
+GHOST_SCORE = 200
+
 
 class Game:
 
@@ -67,7 +71,8 @@ class Game:
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
-                                             Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2),
+                                             Direction.NORTH, (self.maze.get_width(
+                                             ) / 2, self.maze.get_height() / 2),
                                              (self.maze.get_width(), 0))]
         ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed * 0.5,
                       Direction.NORTH, (self.maze.get_width() / 2 + 1, self.maze.get_height() / 2), (self.maze.get_width(), self.maze.get_height())))
@@ -114,20 +119,23 @@ class Game:
             match self.maze.get_cell(pac_pos[0], pac_pos[1]):
                 case Components.DOT:
                     if self.config.user.enable_graphics and self.config.user.sound_enable:
-                            self.sounds.play_sound_once("assets/music/munch_1.wav")
-                    self.score += 1
-                    self.maze.set_component(Components.EMPTY, pac_pos[1], pac_pos[0])
+                        self.sounds.play_sound_once("assets/music/munch_1.wav")
+                    self.score += DOT_SCORE
+                    self.maze.set_component(
+                        Components.EMPTY, pac_pos[1], pac_pos[0])
                 case Components.SUPERDOT:
                     if self.config.user.enable_graphics and self.config.user.sound_enable:
                         self.sounds.play_sound_once("assets/music/munch_2.wav")
-                        self.sounds.play_sound_once("assets/music/power_pellet.wav")
+                        self.sounds.play_sound_once(
+                            "assets/music/power_pellet.wav")
                     self.get_pacman().change_state()
                     self.super_mode_timer = self.config.game.super_mode_duration * self.config.graphics.fps
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
-                    self.score += 10
-                    self.maze.set_component(Components.EMPTY, pac_pos[1], pac_pos[0])
+                    self.score += SUPER_DOT_SCORE
+                    self.maze.set_component(
+                        Components.EMPTY, pac_pos[1], pac_pos[0])
 
     def pacman_tp(self) -> None:
         """Teleport the pacman"""
@@ -156,7 +164,7 @@ class Game:
             if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
                 ghost.set_state(Ghoststate.EATEN)
                 ghost.set_speed(ghost.get_speed() * 4)
-                self.score += 200
+                self.score += GHOST_SCORE
             else:
                 if self.config.user.enable_graphics and self.config.user.sound_enable:
                     self.sounds.play_sound_once("assets/music/death_1.wav")
@@ -190,17 +198,20 @@ class Game:
         self.switch_ghost_state_timer -= 1
         if self.switch_ghost_state_timer == 0:
             if self.ghost_state == Ghoststate.CHASE:
-                self.switch_ghost_state_timer = self.config.game.scatter_duration * self.config.graphics.fps
+                self.switch_ghost_state_timer = self.config.game.scatter_duration * \
+                    self.config.graphics.fps
                 self.ghost_state = Ghoststate.SCATTER
                 if self.ghosts[0].state == Ghoststate.CHASE:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.SCATTER)
             else:
-                self.switch_ghost_state_timer = self.config.game.chase_duration * self.config.graphics.fps
+                self.switch_ghost_state_timer = self.config.game.chase_duration * \
+                    self.config.graphics.fps
                 self.ghost_state = Ghoststate.CHASE
                 if self.ghosts[0].state == Ghoststate.SCATTER:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.CHASE)
+
     def read_movement(self) -> str:
         """Read the movement of the pacman"""
         with open(self.config.genetic.move_path, "r") as file:
@@ -212,7 +223,9 @@ class Game:
         return: Tuple[distance, score, is_dead, is_won]
         """
         self.pacman.set_movement(movements)
-        self.run()
+        if movements != "":
+            self.run()
+
         return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
 
     def run(self) -> None:
@@ -221,4 +234,3 @@ class Game:
             self.update()
             if self.pacman.get_lives() != self.config.game.pacman_lives:
                 break
-        
