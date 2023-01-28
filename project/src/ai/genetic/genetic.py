@@ -1,5 +1,6 @@
 from ...graphics.sounds import Sounds
 from .population import Population
+from .clone_pop import Clone_pop
 from ...config import Config
 from typing import List
 
@@ -9,6 +10,8 @@ class Genetic:
     def __init__(self, config: Config, sounds: Sounds) -> None:
         self.config = config
         self.sounds = sounds
+        if self.config.genetic.population_type == "clone_pop":
+            self.population = Clone_pop(config=config, sounds=sounds)
         self.population = Population(config=config, sounds=sounds)
 
     def run(self) -> None:

@@ -1,6 +1,6 @@
 [user]
 enable_graphics = true
-enable_random_maze = true
+enable_random_maze = false
 menu_enable = true
 sound_enable = false
 
@@ -31,6 +31,10 @@ random_maze_path = "assets/data/random.txt"
 genetic_enable = true
 move_path = "assets/data/moves.txt"
 population_size = 100
-graded_retain_percentage = 0.2
-mutation_chance = 0.1
+graded_retain_percentage = 0.40
+mutation_chance = 0.25
+deletion_chance = 0.05
+addition_chance = 0.80
+replacement_chance = 0.15
 selection_type = "rank"
+population_type = "clone_popp"

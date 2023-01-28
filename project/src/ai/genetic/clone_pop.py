@@ -4,21 +4,16 @@ from typing import List, Union
 from ...config import Config
 from ...graphics.sounds import Sounds
 
-def breed(mother: Individual, father: Individual) -> Individual:
+MOVES = ["n", "s", "e", "w"]
+
+def clone(father: Individual) -> Individual:
     """Breed two individuals to create a new individual."""
-    father_length = randint(0, min(len(father.get_genes()), 5))
-    mother_length = len(mother.get_genes()) - father_length
-    moves = mother.get_genes()[:mother_length] + \
-        father.get_genes()[:father_length]
+    moves = father.get_genes()[:]
     child = Individual()
     child.set_genes(moves)
     return child
 
-
-MOVES = ["n", "s", "e", "w"]
-
-
-class Population:
+class Clone_pop:
 
     def __init__(self, config: Config, sounds: Sounds) -> None:
         self.config = config
@@ -82,13 +77,9 @@ class Population:
         parents = self.population
         desired_length = self.config.genetic.population_size - len(parents)
         children = []
-        if len(parents) < 2:
-            raise ValueError("graded_retain_percentage is too low.")
         while len(children) < desired_length:
-            mother = choice(parents)
             father = choice(parents)
-            if mother != father:
-                children.append(breed(mother, father))
+            children.append(clone(father))
         self.population.extend(children)
 
     def mutate_population(self) -> None:
@@ -96,18 +87,28 @@ class Population:
         for individual in self.population:
             if randint(0, 100) <= self.config.genetic.mutation_chance * 100:
                 individual_genes = individual.get_genes()
-                individual.set_genes(
-                    individual_genes + MOVES[randint(0, len(MOVES) - 1)]
-                )
-            if randint(0, 100) <= self.config.genetic.mutation_chance * 100 and len(individual.get_genes()) > 0:
-                individual_genes = individual.get_genes()
-                slice_idx = randint(0, len(individual_genes) - 1)
-                individual_genes = individual_genes[:slice_idx] + \
-                    MOVES[randint(0, len(MOVES) - 1)]
-                individual.set_genes(
-                    individual_genes[:randint(0, len(individual_genes) - 1)]
-                )
-
+                randx = randint(0, 100)  
+                if randx <= self.config.genetic.addition_chance * 100:
+                    individual_genes = individual_genes + MOVES[randint(0, len(MOVES) - 1)]
+                    
+                elif randx <= (self.config.genetic.replacement_chance +
+                             self.config.genetic.mutation_chance) * 100:
+                    # Selects one of the last 10 moves to replace with a random move
+                    replacement_idx = randint((max(0,len(individual_genes) - 10)),
+                                              len(individual_genes) - 1)
+                    # Replaces it
+                    individual_genes[replacement_idx] = MOVES[randint(0, len(MOVES) - 1)]
+                    individual.set_genes(individual_genes)
+                    
+                # Last option should always be True
+                elif randx <= (self.config.genetic.deletion_chance +
+                             self.config.genetic.replacement_chance +
+                             self.config.genetic.mutation_chance) * 100:
+                    slice_idx = randint(0, len(individual_genes) - 1)
+                    individual_genes = individual_genes[:slice_idx] +\
+                        individual_genes[slice_idx + 1:]
+                individual.set_genes(individual_genes)
+                
     def evolve_population(self) -> None:
         """Evolve the population."""
         for individual in self.population:

@@ -1,14 +1,13 @@
 from ...graphics.sounds import Sounds
 from typing import Dict, Union
+from random import randint
 from ...game.game import Game
 from ...config import Config
-
-
 class Individual:
 
     def __init__(self, distance=0, score=0, dead=False, won=False) -> None:
         self.distance = distance
-        self.genes = ""
+        self.genes = ["n", "s", "e", "w"][randint(0, 3)]
         self.score = score
         self.dead = dead
         self.won = won
@@ -37,10 +36,13 @@ class Individual:
         """Check if the individual is a winner."""
         return self.won
 
-    def get_fitness(self) -> float:
+    def get_fitness(self, explore: bool = True) -> float:
         """Get the fitness of the individual."""
-        return self.score + self.distance - (self.dead * 1000) + (self.won * 2000)
-
+        if explore :
+            return self.score + self.distance - (self.dead * 1000) + (self.won * 2000)
+        else :
+            return self.score - self.distance - (self.dead * 1000) + (self.won * 2000) 
+        
     # Commands
     def set_genes(self, genes: str) -> None:
         """Set the genes of the individual."""
