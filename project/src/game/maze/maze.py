@@ -2,7 +2,7 @@ from .components import Components
 from typing import Tuple
 import numpy as np
 import itertools
-
+from functools import lru_cache
 
 class Maze():
 
@@ -14,7 +14,7 @@ class Maze():
         self.pacman_start = (0, 0)
         self.total_dots = 0
         self.load_file()
-
+        
     def load_file(self) -> None:
         """
         Load the maze from a file

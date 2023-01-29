@@ -19,9 +19,12 @@ class Genetic:
         self.population.generate_population(
             population_size=self.config.genetic.population_size
         )
-        while not self.population.is_solution_found():
+        gen_left = self.config.genetic.max_generation
+        while not self.population.is_solution_found() and \
+                    gen_left != 0:
             self.population.evolve_population()
             print("Generation: ", self.population.get_generation())
+            gen_left -= 1
         winner = self.population.get_winner()
         if winner is not None:
             print("Solution found: ", winner.get_genes())
