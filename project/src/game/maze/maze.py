@@ -2,7 +2,7 @@ from .components import Components
 from typing import Tuple
 import numpy as np
 import itertools
-
+from functools import lru_cache
 
 class Maze():
 

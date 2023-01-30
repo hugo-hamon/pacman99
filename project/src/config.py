@@ -46,9 +46,13 @@ class Genetic:
     population_size: int
     graded_retain_percentage: float
     mutation_chance: float
+    deletion_chance: float
+    addition_chance: float
+    replacement_chance: float
     selection_type: str
-
-
+    population_type: str
+    max_generation: int
+    
 @dataclass
 class Config:
     user: UserConfig

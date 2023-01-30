@@ -1,4 +1,3 @@
-from ...graphics.sounds import Sounds
 from .individual import Individual
 from random import choice, randint, random
 import numpy as np
@@ -6,6 +5,7 @@ from typing import List, Union
 from ...config import Config
 from ...game.maze.maze import Maze
 
+from ...graphics.sounds import Sounds
 
 def breed(mother: Individual, father: Individual) -> Individual:
     """Breed two individuals to create a new individual using hugo's breeding."""
