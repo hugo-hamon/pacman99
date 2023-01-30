@@ -1,7 +1,7 @@
 [user]
 enable_graphics = true
 enable_random_maze = true
-menu_enable = true
+menu_enable = false
 sound_enable = false
 
 [graphics]
@@ -16,21 +16,21 @@ game_speed = 5
 pacman_lives = 3
 super_mode_duration = 10
 scatter_duration = 6
-chase_duration = 5
+chase_duration = 20
 
 [maze]
 width = 15
 height = 15
 density = 0.8
-seed = 1
+seed = 5
 intersection_step = 3
 is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = false
+genetic_enable = true
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.2
-mutation_chance = 0.1
-selection_type = "rank"
+mutation_chance = 0.2
+selection_type = "tournament"

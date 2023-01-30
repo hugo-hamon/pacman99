@@ -17,14 +17,14 @@ GHOST_SCORE = 200
 
 class Game:
 
-    def __init__(self, config: Config, sounds: Sounds) -> None:
+    def __init__(self, config: Config, sounds: Sounds, maze: Maze = None) -> None:
         path = config.graphics.maze_path
-        if config.user.enable_random_maze:
-            RandomMazeFactory(config).create()
-            path = config.maze.random_maze_path
         self.config = config
         self.sounds = sounds
-        self.maze = Maze(filename=path)
+        if maze is None:
+            self.maze = Maze(filename=path) 
+        else:
+            self.maze = maze
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
@@ -224,9 +224,14 @@ class Game:
         """
         self.pacman.set_movement(movements)
         if movements != "":
-            self.run()
+            while self.pacman.direction != Direction.NONE:
+                self.update()
+                self.update()
+                self.update()
+                if self.pacman.get_lives() != self.config.game.pacman_lives:
+                    break
 
-        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won(), self.get_maze().get_total_remain_dots()
 
     def run(self) -> None:
         """Play a game"""

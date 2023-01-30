@@ -6,14 +6,18 @@ import itertools
 
 class Maze():
 
-    def __init__(self, filename: str):
+    def __init__(self, filename:str = None) -> None:
         self.filename = filename
         self.width = 0
         self.height = 0
+        self.begin_maze = np.zeros((0, 0), dtype=Components)
         self.maze = np.zeros((0, 0), dtype=Components)
         self.pacman_start = (0, 0)
         self.total_dots = 0
-        self.load_file()
+        self.remain_dots = 0
+        if filename is not None:
+            print("Loading maze from file: " + filename)
+            self.load_file()
 
     def load_file(self) -> None:
         """
@@ -29,13 +33,16 @@ class Maze():
             lines = f.readlines()
             self.width = len(lines[0]) - 1
             self.height = len(lines) - 1
+            self.begin_maze = np.zeros((self.height, self.width), dtype=Components)
             self.maze = np.zeros((self.height, self.width), dtype=Components)
             for j in range(self.width):
                 for i in range(self.height):
+                    self.begin_maze[i, j] = self.get_component_type(lines[i][j])
                     self.maze[i, j] = self.get_component_type(lines[i][j])
             self.pacman_start = tuple(map(int, lines[-1].split(" ")))
             self.total_dots = np.count_nonzero(
                 self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+            self.remain_dots = self.total_dots
 
     def get_component_type(self, symbol: str) -> Components:
         """
@@ -110,7 +117,15 @@ class Maze():
         return self.total_dots
 
     def get_total_remain_dots(self) -> int:
-        return np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+        return self.remain_dots
 
     def set_component(self, c: Components, x: int, y: int) -> None:
+        """Set the component at the position (x,y)"""
+        if c == Components.EMPTY and self.maze[x, y] in [Components.DOT, Components.SUPERDOT]:
+            self.remain_dots -= 1
         self.maze[x, y] = c
+
+    def reset(self) -> None:
+        """Reset the maze"""
+        self.maze = self.begin_maze.copy()
+        self.remain_dots = self.total_dots
