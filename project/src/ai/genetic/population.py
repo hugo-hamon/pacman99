@@ -106,7 +106,7 @@ class Population:
         tournament_size = 5
         for _ in range(self.graded_retain_count):
             competitors = []
-            for _ in range(5):
+            for _ in range(tournament_size):
                 competitors.append(choice(self.population))
             competitors.sort(
                 key=lambda individual: individual.get_fitness(), reverse=True)
