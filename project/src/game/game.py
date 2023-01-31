@@ -9,6 +9,7 @@ from .direction import Direction
 from typing import List, Tuple
 from .maze.maze import Maze
 from ..config import Config
+import math
 
 DOT_SCORE = 100
 SUPER_DOT_SCORE = 500
@@ -176,11 +177,10 @@ class Game:
         """Check if the pacman collide with a ghost"""
         if ghost.state == Ghoststate.EATEN:
             return False
-        pacman_position = (round(self.pacman.get_position()[0]), round(
-            self.pacman.get_position()[1]))
-        ghost_position = (round(ghost.get_position()[0]), round(
-            ghost.get_position()[1]))
-        return pacman_position == ghost_position
+        pacman_position = self.pacman.get_position()
+        ghost_position = ghost.get_position()
+        return math.sqrt((pacman_position[0] - ghost_position[0])**2 
+        + (pacman_position[1] - ghost_position[1])**2) < 0.75
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""

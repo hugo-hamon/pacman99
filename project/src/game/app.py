@@ -19,7 +19,7 @@ class App:
         game = Game(config=self.config, sounds=sounds)
         if self.config.genetic.genetic_enable:
             genetic = Genetic(config=self.config, sounds=sounds)
-            genetic.run()
+            #genetic.run()
         if self.config.user.enable_graphics:
             graphic = Graphic(config=self.config, game=game, sounds=sounds)
             graphic.start()
