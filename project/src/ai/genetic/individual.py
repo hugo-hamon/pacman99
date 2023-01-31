@@ -12,6 +12,7 @@ class Individual:
         self.score = score
         self.dead = dead
         self.won = won
+        self.game = None
 
     # Request
     def get_data(self) -> Dict[str, Union[int, bool]]:
@@ -39,7 +40,9 @@ class Individual:
 
     def get_fitness(self) -> float:
         """Get the fitness of the individual."""
-        return self.score + self.distance - (self.dead * 1000) + (self.won * 2000)
+        if self.game is None:
+            raise ReferenceError("Game is not set")
+        return self.score + self.distance / self.game.maze.get_total_remain_dots() - (self.dead * 1000) + (self.won * 2000)
 
     # Commands
     def set_genes(self, genes: str) -> None:
@@ -48,8 +51,8 @@ class Individual:
 
     def play(self, config: Config, sounds: Sounds) -> None:
         """Play the game with the individual."""
-        game = Game(config=config, sounds=sounds)
-        self.distance, self.score, self.dead, self.won = game.run_with_movement(
+        self.game = Game(config=config, sounds=sounds)
+        self.distance, self.score, self.dead, self.won = self.game.run_with_movement(
             movements=self.genes
         )
         # print("Dots reamining: ", game.get_maze().get_total_remain_dots())

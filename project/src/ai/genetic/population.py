@@ -7,10 +7,9 @@ from ...config import Config
 
 def breed(mother: Individual, father: Individual) -> Individual:
     """Breed two individuals to create a new individual."""
-    father_length = randint(0, min(len(father.get_genes()), 5))
-    mother_length = len(mother.get_genes()) - father_length
-    moves = mother.get_genes()[:mother_length] + \
-        father.get_genes()[:father_length]
+    mother_moves = mother.get_genes()[:randint(0, len(mother.get_genes()))]
+    father_moves = father.get_genes()[randint(0, len(father.get_genes())):]
+    moves = mother_moves + father_moves
     child = Individual()
     child.set_genes(moves)
     return child
@@ -111,6 +110,7 @@ class Population:
 
     def evolve_population(self) -> None:
         """Evolve the population."""
+        queue = []
         for individual in self.population:
             individual.play(self.config, self.sounds)
         self.select_population()
@@ -119,4 +119,13 @@ class Population:
         print("This move are", self.population[0].get_genes())
         self.crossover_population()
         self.mutate_population()
+        if len(queue) == 10:
+            queue.pop(0)
+            if queue[-1] == queue[0]:
+                queue = []
+                for individual in self.population:
+                    individual.set_genes(individual.get_genes()[:-10])
+
+        queue.append(self.population[0].get_genes())
+
         self.generation += 1

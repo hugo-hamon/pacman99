@@ -28,7 +28,7 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = true
+genetic_enable = false
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.2
