@@ -6,7 +6,7 @@ from .maze.components import Components
 from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
 from .direction import Direction
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
 
@@ -17,14 +17,11 @@ GHOST_SCORE = 200
 
 class Game:
 
-    def __init__(self, config: Config, sounds: Sounds) -> None:
+    def __init__(self, config: Config, sounds: Sounds, maze: Union[Maze, None] = None) -> None:
         path = config.graphics.maze_path
-        if config.user.enable_random_maze:
-            RandomMazeFactory(config).create()
-            path = config.maze.random_maze_path
         self.config = config
         self.sounds = sounds
-        self.maze = Maze(filename=path)
+        self.maze = Maze(filename=path) if maze is None else maze
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
@@ -217,16 +214,21 @@ class Game:
         with open(self.config.genetic.move_path, "r") as file:
             return file.read()
 
-    def run_with_movement(self, movements: str) -> Tuple[int, int, bool, bool]:
+    def run_with_movement(self, movements: str) -> Tuple[int, int, bool, bool, int]:
         """
         Play a game with a movement file and return information about the game.
         return: Tuple[distance, score, is_dead, is_won]
         """
         self.pacman.set_movement(movements)
         if movements != "":
-            self.run()
+            while self.pacman.direction != Direction.NONE:
+                self.update()
+                self.update()
+                self.update()
+                if self.pacman.get_lives() != self.config.game.pacman_lives:
+                    break
 
-        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won(), self.get_maze().get_total_remain_dots()
 
     def run(self) -> None:
         """Play a game"""
