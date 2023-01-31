@@ -22,7 +22,7 @@ class App:
             game = Game(config=self.config)
         if self.config.genetic.genetic_enable:
             genetic = Genetic(config=self.config, sounds=sounds)
-            genetic.run()
+            #genetic.run()
         if self.config.user.enable_graphics:
             game.start()
 
