@@ -36,7 +36,8 @@ class Game:
         self.ghost_state = Ghoststate.CHASE
 
         self.agent = DQNAgent(config=config)
-        self.agent.load(config.neural.output_dir + config.neural.weights_path)
+        if config.neural.play_enable:
+            self.agent.load(config.neural.output_dir + config.neural.weights_path)
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -261,7 +262,7 @@ class Game:
 
     def get_reward(self) -> int:
         """Return the reward of the game"""
-        return self.score - self.previous_score - 1
+        return self.score - self.previous_score + 1
 
     def step(self, action: Direction) -> Tuple[np.ndarray, int, bool]:
         """Update the game with an action and return the next state, the reward and if the game is over"""

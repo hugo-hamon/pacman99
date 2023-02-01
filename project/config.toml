@@ -41,12 +41,12 @@ population_type = ""
 max_generation = 50
 
 [neural]
-train_enable = false
+train_enable = true
 play_enable = false
 output_dir = "assets/model_output/pacman"
-weights_path = "weights_0350.hdf5"
+weights_path = "weights_0200.hdf5"
 state_size = 230
 action_size = 4
 batch_size = 32
-episodes = 1001
+episodes = 100001
 learning_rate = 0.001

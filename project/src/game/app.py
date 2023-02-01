@@ -26,7 +26,7 @@ class App:
         maze = Maze(path)
         game = Game(config=self.config, sounds=sounds, maze=maze)
         if self.config.neural.train_enable:
-            train(self.config, sounds, maze)
+            train(self.config, sounds)
         if self.config.genetic.genetic_enable:
             genetic = Genetic(config=self.config, sounds=sounds, maze=maze)
             genetic.run()
