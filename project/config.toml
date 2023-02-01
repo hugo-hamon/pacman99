@@ -1,6 +1,6 @@
 [user]
-enable_graphics = false
-enable_random_maze = true
+enable_graphics = true
+enable_random_maze = false
 menu_enable = true
 sound_enable = false
 
@@ -39,3 +39,14 @@ replacement_chance = 0.25
 selection_type = "tournament"
 population_type = ""
 max_generation = 50
+
+[neural]
+train_enable = false
+play_enable = false
+output_dir = "assets/model_output/pacman"
+weights_path = "weights_0350.hdf5"
+state_size = 230
+action_size = 4
+batch_size = 32
+episodes = 1001
+learning_rate = 0.001

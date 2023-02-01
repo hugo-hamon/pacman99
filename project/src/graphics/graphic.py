@@ -9,6 +9,7 @@ from ..config import Config
 from .menu import MainMenu
 from .sounds import Sounds
 import pygame as pg
+import random
 
 
 spritesheet_path = "assets/images/palettes.png"
@@ -62,6 +63,7 @@ class Graphic:
             self.sound.play_sound("assets/music/siren_1.wav", True)
 
         self.run = True
+        k = 0
         while self.run:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -70,6 +72,8 @@ class Graphic:
                     self.__process_key_event(event)
 
             # Update the game
+            if self.config.neural.play_enable:
+                self.game.play_neural_move()
             self.game.update()
 
             # Display the sprites
@@ -77,11 +81,11 @@ class Graphic:
             self.screen.blit(self.canvas, (0, 0))
 
             # Update the display
+            
             self.canvas.fill((0, 0, 0))
             pg.display.update()
             self.clock.tick(self.fps)
 
-    # TODO Rename this here and in `start`
     def __process_key_event(self, event: pg.event.Event) -> None:
         if not self.config.genetic.genetic_enable:
             if event.key == pg.K_q:

@@ -1,18 +1,23 @@
+from __future__ import annotations
+from ..ai.neural_network.test import get_move, DQNAgent
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from .entities.ghost.ghoststate import Ghoststate
 from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
+from typing import List, Tuple, Union
 from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
 from .direction import Direction
-from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
+import numpy as np
 
 DOT_SCORE = 100
 SUPER_DOT_SCORE = 500
 GHOST_SCORE = 200
+
+AREA_SIZE = 7
 
 
 class Game:
@@ -26,8 +31,12 @@ class Game:
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
         self.score = 0
+        self.previous_score = 0
         self.switch_ghost_state_timer = self.config.game.chase_duration * 60
         self.ghost_state = Ghoststate.CHASE
+
+        self.agent = DQNAgent(config=config)
+        self.agent.load(config.neural.output_dir + config.neural.weights_path)
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -144,6 +153,10 @@ class Game:
         if pacman_position[0] > self.maze.get_width() - 1:
             self.pacman.set_position((0, pacman_position[1]))
 
+    def get_game(self) -> Game:
+        """Return the game"""
+        return self
+
     def ghosts_tp(self) -> None:
         """Teleport the ghost"""
         for ghost in self.ghosts:
@@ -181,7 +194,7 @@ class Game:
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""
-        self.super_mode_timer -= 1
+        self.super_mode_timer = max(0, self.super_mode_timer - 1)
         if self.super_mode_timer == 0:
             for ghost in self.ghosts:
                 if ghost.state == Ghoststate.EATEN:
@@ -221,12 +234,7 @@ class Game:
         """
         self.pacman.set_movement(movements)
         if movements != "":
-            while self.pacman.direction != Direction.NONE:
-                self.update()
-                self.update()
-                self.update()
-                if self.pacman.get_lives() != self.config.game.pacman_lives:
-                    break
+            self.run()
 
         return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won(), self.get_maze().get_total_remain_dots()
 
@@ -236,3 +244,36 @@ class Game:
             self.update()
             if self.pacman.get_lives() != self.config.game.pacman_lives:
                 break
+
+    def get_state(self) -> np.ndarray:
+        """Return the state of the game"""
+        pac_x, pac_y = self.pacman.get_position()
+        # 0: wall, 1: empty, 2: dot, 3: super dot, 4: ghost, 5: pacman
+        pacman_area = self.maze.get_area(round(pac_x), round(pac_y), AREA_SIZE)
+        for ghost_pos in [ghost.get_position() for ghost in self.ghosts]:
+            # check if the ghost is in the area
+            if (ghost_pos[0] >= pac_x - AREA_SIZE and ghost_pos[0] <= pac_x + AREA_SIZE) and (ghost_pos[1] >= pac_y - AREA_SIZE and ghost_pos[1] <= pac_y + AREA_SIZE):
+                pacman_area[round(ghost_pos[1] - pac_y + AREA_SIZE),
+                            round(ghost_pos[0] - pac_x + AREA_SIZE)] = 4
+        ghost_direction = [ghost.direction.value for ghost in self.ghosts]
+        # flatten all the array
+        return np.array([np.concatenate((pacman_area.flatten(), ghost_direction, [self.super_mode_timer]))])
+
+    def get_reward(self) -> int:
+        """Return the reward of the game"""
+        return self.score - self.previous_score - 1
+
+    def step(self, action: Direction) -> Tuple[np.ndarray, int, bool]:
+        """Update the game with an action and return the next state, the reward and if the game is over"""
+        self.previous_score = self.score
+        self.pacman.set_next_direction(action)
+        self.update()
+        next_state = self.get_state()
+        reward = self.get_reward()
+        done = self.pacman.get_lives() != self.config.game.pacman_lives
+        return next_state, reward, done
+
+    def play_neural_move(self) -> None:
+        """Play a move with the neural network"""
+        move = get_move(self.get_game(), self.agent)
+        self.pacman.set_next_direction(move)

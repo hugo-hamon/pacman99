@@ -4,9 +4,10 @@ import numpy as np
 import itertools
 from functools import lru_cache
 
+
 class Maze():
 
-    def __init__(self, filename:str = None) -> None:
+    def __init__(self, filename: str = "") -> None:
         self.filename = filename
         self.width = 0
         self.height = 0
@@ -15,8 +16,7 @@ class Maze():
         self.pacman_start = (0, 0)
         self.total_dots = 0
         self.remain_dots = 0
-        if filename is not None:
-            print("Loading maze from file: " + filename)
+        if filename != "":
             self.load_file()
 
     def load_file(self) -> None:
@@ -33,11 +33,13 @@ class Maze():
             lines = f.readlines()
             self.width = len(lines[0]) - 1
             self.height = len(lines) - 1
-            self.begin_maze = np.zeros((self.height, self.width), dtype=Components)
+            self.begin_maze = np.zeros(
+                (self.height, self.width), dtype=Components)
             self.maze = np.zeros((self.height, self.width), dtype=Components)
             for j in range(self.width):
                 for i in range(self.height):
-                    self.begin_maze[i, j] = self.get_component_type(lines[i][j])
+                    self.begin_maze[i, j] = self.get_component_type(
+                        lines[i][j])
                     self.maze[i, j] = self.get_component_type(lines[i][j])
             self.pacman_start = tuple(map(int, lines[-1].split(" ")))
             self.total_dots = np.count_nonzero(
@@ -129,3 +131,17 @@ class Maze():
         """Reset the maze"""
         self.maze = self.begin_maze.copy()
         self.remain_dots = self.total_dots
+
+    def get_area(self, x: int, y: int, radius: int) -> np.ndarray:
+        """Return a np.array of the area of the cell (x,y)"""
+        area = np.zeros((radius * 2 + 1, radius * 2 + 1), dtype=int)
+        for j, i in itertools.product(range(-radius, radius + 1), range(-radius, radius + 1)):
+            area[i + radius, j + radius] = (
+                Components.EMPTY.value
+                if x + j < 0
+                or x + j >= self.width
+                or y + i < 0
+                or y + i >= self.height
+                else self.maze[y + i, x + j].value
+            )
+        return area

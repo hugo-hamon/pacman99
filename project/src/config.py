@@ -27,7 +27,8 @@ class GameConfig:
     super_mode_duration: int
     scatter_duration: int
     chase_duration: int
-    
+
+
 @dataclass
 class MazeGenerationConfig:
     width: int
@@ -52,7 +53,21 @@ class Genetic:
     selection_type: str
     population_type: str
     max_generation: int
-    
+
+
+@dataclass
+class Neural:
+    train_enable: bool
+    play_enable: bool
+    output_dir: str
+    weights_path: str
+    state_size: int
+    action_size: int
+    batch_size: int
+    episodes: int
+    learning_rate: float
+
+
 @dataclass
 class Config:
     user: UserConfig
@@ -60,6 +75,7 @@ class Config:
     game: GameConfig
     maze: MazeGenerationConfig
     genetic: Genetic
+    neural: Neural
 
 
 def load_config(config_path: str) -> Config:
