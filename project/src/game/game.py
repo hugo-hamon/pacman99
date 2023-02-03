@@ -18,13 +18,12 @@ GHOST_SCORE = 200
 
 class Game:
 
-    def __init__(self, config: Config, sounds: Sounds) -> None:
+    def __init__(self, config: Config) -> None:
         path = config.graphics.maze_path
         if config.user.enable_random_maze:
             RandomMazeFactory(config).create()
             path = config.maze.random_maze_path
         self.config = config
-        self.sounds = sounds
         self.maze = Maze(filename=path)
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
@@ -120,18 +119,12 @@ class Game:
                 pac_pos[1] >= 0 and pac_pos[1] < self.maze.get_height():
             match self.maze.get_cell(pac_pos[0], pac_pos[1]):
                 case Components.DOT:
-                    if self.config.user.enable_graphics and self.config.user.sound_enable:
-                        self.sounds.play_sound_once("assets/music/munch_1.wav")
                     self.score += DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
                 case Components.SUPERDOT:
-                    if self.config.user.enable_graphics and self.config.user.sound_enable:
-                        self.sounds.play_sound_once("assets/music/munch_2.wav")
-                        self.sounds.play_sound_once(
-                            "assets/music/power_pellet.wav")
                     self.get_pacman().change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.graphics.fps
+                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.graphics.fps / self.config.game.game_speed
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
@@ -168,8 +161,6 @@ class Game:
                 ghost.set_speed(ghost.get_speed() * 4)
                 self.score += GHOST_SCORE
             else:
-                if self.config.user.enable_graphics and self.config.user.sound_enable:
-                    self.sounds.play_sound_once("assets/music/death_1.wav")
                 self.pacman.lose_life()
                 self.respawn_pacman()
                 self.respawn_ghosts()
