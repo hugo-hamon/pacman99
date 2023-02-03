@@ -13,7 +13,7 @@ maze_path = "assets/data/maze.txt"
 
 [game]
 game_speed = 5
-pacman_lives = 3
+pacman_lives = 1
 super_mode_duration = 10
 scatter_duration = 6
 chase_duration = 20
@@ -28,7 +28,7 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = true
+genetic_enable = false
 move_path = "assets/data/moves.txt"
 population_size = 20
 graded_retain_percentage = 0.40

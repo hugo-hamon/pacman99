@@ -30,7 +30,8 @@ class Game:
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
         self.score = 0
-        self.switch_ghost_state_timer = self.config.game.chase_duration * 60
+        self.ghost_scatter_nbr = 0
+        self.switch_ghost_state_timer = self.config.game.chase_duration * self.config.graphics.fps
         self.ghost_state = Ghoststate.CHASE
 
     # REQUESTS
@@ -195,7 +196,8 @@ class Game:
 
     def __switch_ghosts_state(self) -> None:
         """Switch the ghosts state"""
-        self.switch_ghost_state_timer -= 1
+        if self.ghost_scatter_nbr < 2:
+            self.switch_ghost_state_timer -= 1
         if self.switch_ghost_state_timer == 0:
             if self.ghost_state == Ghoststate.CHASE:
                 self.switch_ghost_state_timer = self.config.game.scatter_duration * \
@@ -205,6 +207,7 @@ class Game:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.SCATTER)
             else:
+                self.ghost_scatter_nbr += 1
                 self.switch_ghost_state_timer = self.config.game.chase_duration * \
                     self.config.graphics.fps
                 self.ghost_state = Ghoststate.CHASE

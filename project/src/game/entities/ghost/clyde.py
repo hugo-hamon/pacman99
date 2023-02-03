@@ -1,7 +1,5 @@
 from ...maze.components import Components
-from .ghoststate import Ghoststate
 from ...direction import Direction
-from .ghost import GeneralGhost
 from ..entities import Entities
 from ...maze.maze import Maze
 from .ghost import GeneralGhost
