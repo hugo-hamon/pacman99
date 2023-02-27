@@ -1,8 +1,8 @@
 from .components import Components
+from functools import lru_cache
 from typing import Tuple
 import numpy as np
 import itertools
-from functools import lru_cache
 
 
 class Maze():
@@ -145,3 +145,20 @@ class Maze():
                 else self.maze[y + i, x + j].value
             )
         return area
+    
+    # for the convolutional neural network
+    def get_wall_matrix(self) -> np.ndarray:
+        """Return a np.array of the wall matrix"""
+        return np.array(self.maze == Components.WALL, dtype=int)
+    
+    def get_dot_matrix(self) -> np.ndarray:
+        """Return a np.array of the dot matrix"""
+        return np.array(self.maze == Components.DOT, dtype=int)
+    
+    def get_superdot_matrix(self) -> np.ndarray:
+        """Return a np.array of the superdot matrix"""
+        return np.array(self.maze == Components.SUPERDOT, dtype=int)
+    
+    def get_path_matrix(self) -> np.ndarray:
+        """Return a np.array of the path matrix"""
+        return np.array(self.maze == Components.EMPTY, dtype=int)

@@ -1,7 +1,7 @@
 [user]
 enable_graphics = true
-enable_random_maze = false
-menu_enable = true
+enable_random_maze = true
+menu_enable = false
 sound_enable = false
 
 [graphics]
@@ -22,7 +22,7 @@ chase_duration = 20
 width = 15
 height = 15
 density = 0.8
-seed = 5
+seed = 1
 intersection_step = 3
 is_symetric = false
 random_maze_path = "assets/data/random.txt"
@@ -44,9 +44,9 @@ max_generation = 50
 train_enable = true
 play_enable = false
 output_dir = "assets/model_output/pacman"
-weights_path = "weights_0200.hdf5"
+weights_path = "weights_0800.hdf5"
 state_size = 230
 action_size = 4
-batch_size = 32
+batch_size = 64
 episodes = 100001
 learning_rate = 0.001

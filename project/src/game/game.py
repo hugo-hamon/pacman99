@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..ai.neural_network.test import get_move, DQNAgent
+from ..ai.neural_network.test_conv2d import ConvDQNAgent, get_move
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from .entities.ghost.ghoststate import Ghoststate
@@ -11,6 +11,7 @@ from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
+from PIL import Image
 import numpy as np
 
 DOT_SCORE = 100
@@ -35,7 +36,7 @@ class Game:
         self.switch_ghost_state_timer = self.config.game.chase_duration * 60
         self.ghost_state = Ghoststate.CHASE
 
-        self.agent = DQNAgent(config=config)
+        self.agent = ConvDQNAgent(config=config)
         if config.neural.play_enable:
             self.agent.load(config.neural.output_dir + config.neural.weights_path)
 
@@ -246,30 +247,40 @@ class Game:
             if self.pacman.get_lives() != self.config.game.pacman_lives:
                 break
 
-    def get_state(self) -> np.ndarray:
-        """Return the state of the game"""
+    def get_conv_state(self):
+        """Return the state of the game for the convolutional neural network"""
+        return np.array(self.get_image())
+
+    def get_image(self):
+        """Return the image of the game"""
+        env = np.zeros((self.maze.get_height(), self.maze.get_width(), 3), dtype=np.uint8)
+        # Set the path to white
+        env[self.maze.get_wall_matrix() == 0] = (255, 255, 255)
+        # Set the dots to yellow
+        env[self.maze.get_dot_matrix() == 1] = (255, 255, 0)
+        # Set the super dots to blue
+        env[self.maze.get_superdot_matrix() == 1] = (0, 0, 255)
+        # Set the pacman to red
         pac_x, pac_y = self.pacman.get_position()
-        # 0: wall, 1: empty, 2: dot, 3: super dot, 4: ghost, 5: pacman
-        pacman_area = self.maze.get_area(round(pac_x), round(pac_y), AREA_SIZE)
-        for ghost_pos in [ghost.get_position() for ghost in self.ghosts]:
-            # check if the ghost is in the area
-            if (ghost_pos[0] >= pac_x - AREA_SIZE and ghost_pos[0] <= pac_x + AREA_SIZE) and (ghost_pos[1] >= pac_y - AREA_SIZE and ghost_pos[1] <= pac_y + AREA_SIZE):
-                pacman_area[round(ghost_pos[1] - pac_y + AREA_SIZE),
-                            round(ghost_pos[0] - pac_x + AREA_SIZE)] = 4
-        ghost_direction = [ghost.direction.value for ghost in self.ghosts]
-        # flatten all the array
-        return np.array([np.concatenate((pacman_area.flatten(), ghost_direction, [self.super_mode_timer]))])
+        env[round(pac_y), round(pac_x)] = (255, 0, 0)
+        # Set the ghosts to green
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            env[round(ghost_y), round(ghost_x)] = (0, 255, 0)
+        return Image.fromarray(env, 'RGB')
+
+
 
     def get_reward(self) -> int:
         """Return the reward of the game"""
         return self.score - self.previous_score + 1
 
-    def step(self, action: Direction) -> Tuple[np.ndarray, int, bool]:
+    def step(self, action: Direction, is_conv=True):
         """Update the game with an action and return the next state, the reward and if the game is over"""
         self.previous_score = self.score
         self.pacman.set_next_direction(action)
         self.update()
-        next_state = self.get_state()
+        next_state = self.get_conv_state()
         reward = self.get_reward()
         done = self.pacman.get_lives() != self.config.game.pacman_lives
         return next_state, reward, done
