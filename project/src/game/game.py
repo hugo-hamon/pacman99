@@ -2,8 +2,8 @@ from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from .entities.ghost.ghoststate import Ghoststate
 from .entities.ghost.ghost import GeneralGhost
+from ..utils.eventBroadcast import EventBroadcast
 from .maze.components import Components
-from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
 from .direction import Direction
 from typing import List, Tuple
@@ -16,9 +16,11 @@ SUPER_DOT_SCORE = 500
 GHOST_SCORE = 200
 
 
-class Game:
+class Game(EventBroadcast):
 
     def __init__(self, config: Config) -> None:
+        super().__init__
+        self.validEvent += ["dotPickup1","superDotPickup1","lostLife1"]
         path = config.graphics.maze_path
         if config.user.enable_random_maze:
             RandomMazeFactory(config).create()
@@ -85,17 +87,15 @@ class Game:
 
     def update(self) -> None:
         """Update the game"""
-        self.pacman.move(60)
+        self.pacman.move(60/self.config.game.game_speed)
         for ghost in self.ghosts:
-            ghost.move(60)
+            ghost.move(60/self.config.game.game_speed)
             self.__manage_collision(ghost)
         self.__check_super_dot_timer()
-        self.__switch_ghosts_state()
-        self.eat_dot()
+        self.__update_ghosts_state()
+        self.check_dot()
         self.pacman_tp()
         self.ghosts_tp()
-        if self.pacman.get_lives() == 0:
-            print("You lost")
         if self.is_game_won():
             print("You won")
 
@@ -112,7 +112,7 @@ class Game:
             ghost.set_position((self.maze.get_width() // 2,
                                self.maze.get_height() // 2))
 
-    def eat_dot(self) -> None:
+    def check_dot(self) -> None:
         pac_pos = (round(self.pacman.get_position()[0]), round(
             self.pacman.get_position()[1]))
         if pac_pos[0] >= 0 and pac_pos[0] < self.maze.get_width() and \
@@ -122,15 +122,17 @@ class Game:
                     self.score += DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
+                    self.__eventTrigger("dotPickup1", (pac_pos[1], pac_pos[0]))
                 case Components.SUPERDOT:
                     self.get_pacman().change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.graphics.fps / self.config.game.game_speed
+                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.game.game_speed
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
                     self.score += SUPER_DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
+                    self.__eventTrigger("superDotPickup1", (pac_pos[1], pac_pos[0]))
 
     def pacman_tp(self) -> None:
         """Teleport the pacman"""
@@ -162,6 +164,9 @@ class Game:
                 self.score += GHOST_SCORE
             else:
                 self.pacman.lose_life()
+                self.__eventTrigger("lostLife1", self.pacman.get_lives())
+                if self.pacman.get_lives() == 0:
+                    print("You lost")
                 self.respawn_pacman()
                 self.respawn_ghosts()
 
@@ -185,8 +190,8 @@ class Game:
                 ghost.set_state(self.ghost_state)
             self.get_pacman().change_state()
 
-    def __switch_ghosts_state(self) -> None:
-        """Switch the ghosts state"""
+    def __update_ghosts_state(self) -> None:
+        """update the ghosts state"""
         if self.ghost_scatter_nbr < 2:
             self.switch_ghost_state_timer -= 1
         if self.switch_ghost_state_timer == 0:
