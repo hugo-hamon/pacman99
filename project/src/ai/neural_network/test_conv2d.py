@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.optimizers import Adam
 from collections import deque
 from ...config import Config
+from time import time
 import numpy as np
 import random
 import cv2
@@ -31,10 +32,11 @@ class ConvDQNAgent:
         self.state_size = (25, 23, 3)
         if config.user.enable_random_maze:
             self.state_size = (config.maze.height, config.maze.width, 3)
+        self.state_size = (11, 11, 3)
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95
         self.epsilon = 1.0 if config.neural.train_enable else 0.0
-        self.epsilon_decay = 0.998
+        self.epsilon_decay = 0.999
         self.epsilon_min = 0.01
 
         self.learning_rate = config.neural.learning_rate
@@ -44,14 +46,16 @@ class ConvDQNAgent:
     def _build_model(self) -> Sequential:
         """Build the neural network model using convolutional layers"""
         model = Sequential()
-        model.add(Conv2D(256, (3, 3), activation='relu',
+        model.add(Conv2D(32, (2, 2), activation='relu',
                   input_shape=self.state_size))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
 
-        model.add(Conv2D(256, (3, 3), activation='relu'))
+        model.add(Conv2D(128, (2, 2), activation='relu'))
+
+        model.add(Conv2D(256, (2, 2), activation='relu'))
+
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
+
+        model.add(Conv2D(64, (2, 2), activation='relu'))
 
         model.add(Flatten())
         model.add(Dense(64))
@@ -68,6 +72,7 @@ class ConvDQNAgent:
 
     def act(self, state) -> Direction:
         """Act with the neural network"""
+        random.seed(time())
         if np.random.rand() <= self.epsilon:
             return Direction(random.randrange(self.action_size))
         state = np.array(state).reshape(-1, *state.shape) / 255
@@ -113,7 +118,6 @@ class ConvDQNAgent:
     def summary(self, file):
         """Return a string with the layers of the neural network"""
         return self.model.summary(print_fn=lambda x: file.write(x + '\n'))
-        
 
 
 def get_move(game, agent: ConvDQNAgent) -> Direction:
