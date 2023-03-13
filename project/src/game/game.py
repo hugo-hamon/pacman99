@@ -79,7 +79,6 @@ class Game:
 
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
-        return []
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
                                              Direction.NORTH, (self.maze.get_width(
                                              ) / 2, self.maze.get_height() / 2),

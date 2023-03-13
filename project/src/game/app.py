@@ -25,6 +25,8 @@ class App:
             path = self.config.maze.random_maze_path
         maze = Maze(path)
         game = Game(config=self.config, sounds=sounds, maze=maze)
+        print(self.config.neural.train_enable)
+        print("cacacaca")
         if self.config.neural.train_enable:
             train(self.config, sounds)
         if self.config.genetic.genetic_enable:

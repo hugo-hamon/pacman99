@@ -1,5 +1,5 @@
 [user]
-enable_graphics = true
+enable_graphics = false
 enable_random_maze = true
 menu_enable = false
 sound_enable = false
@@ -28,10 +28,10 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = false
+genetic_enable = true
 move_path = "assets/data/moves.txt"
-population_size = 20
-graded_retain_percentage = 0.4
+population_size = 100
+graded_retain_percentage = 0.3
 mutation_chance = 0.25
 deletion_chance = 0.05
 addition_chance = 0.80
@@ -41,20 +41,12 @@ population_type = ""
 max_generation = 50
 
 [neural]
-train_enable = true
+train_enable = false
 play_enable = false
 output_dir = "assets/model_output/pacman"
-<<<<<<< HEAD
 weights_path = "weights_4750.hdf5"
-=======
-weights_path = "weights_1000.hdf5"
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
 state_size = 230
 action_size = 4
 batch_size = 64
 episodes = 100001
-<<<<<<< HEAD
 learning_rate = 0.0015
-=======
-learning_rate = 0.03
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
