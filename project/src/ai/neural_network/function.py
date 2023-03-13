@@ -1,5 +1,6 @@
 from ...game.maze.random_maze_factory import RandomMazeFactory
 from .test_conv2d import visualize_array
+from ...game.direction import Direction
 from .test_conv2d import ConvDQNAgent
 from ...game.maze.maze import Maze
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ from ...game.game import Game
 from ...config import Config
 from time import time
 import numpy as np
+import random
+import tqdm
 
 
 def create_game(config: Config, sound):
@@ -27,6 +30,7 @@ def save_all_information(config: Config, agent):
         f.write(f"Epsilon decay: {agent.epsilon_decay}\n")
         f.write(f"Epsilon min: {agent.epsilon_min}\n")
         agent.summary(f)
+
 
 def save_plot(mean_life_time, mean_score):
     mean_mean_life_time = []
@@ -57,20 +61,21 @@ def train_conv(config: Config, sound):
     mean_life_time = []
     mean_score = []
     t1 = time()
-    for e in range(config.neural.episodes):
+    action = Direction.WEST
+
+    for e in tqdm.tqdm(range(config.neural.episodes)):
         game = create_game(config, sound)
         state = game.get_conv_state()
-        for t in range(10000):
-            
-            '''if t % (game.config.graphics.fps // 3) == 0:
-                visualize_array(state)'''
-            
+        for t in range(2000):
             action = agent.act(state)
-
+            # visualize_array(state)
             next_state, reward, done = game.step(action, True)
-            reward = -10 if done else reward
-            agent.remember(state, action, reward, next_state, done)
 
+            reward = -10 if done else reward
+            if game.is_game_won():
+                reward = 100
+
+            agent.remember(state, action, reward, next_state, done)
             state = next_state
             if done:
                 print(
@@ -79,11 +84,13 @@ def train_conv(config: Config, sound):
                 mean_score.append(game.get_score())
                 break
 
-        print(
-            f"Durée de vie moyenne sur les 10 derniers episodes: {sum(mean_life_time[-10:])/len(mean_life_time[-10:])}")
-        print(
-            f"Score moyen sur les 10 derniers episodes: {sum(mean_score[-10:])/len(mean_score[-10:])}"
-        )
+        if mean_life_time and mean_score:
+            print(mean_life_time[-10:])
+            print(
+                f"Durée de vie moyenne sur les 10 derniers episodes: {sum(mean_life_time[-10:])/len(mean_life_time[-10:])}")
+            print(
+                f"Score moyen sur les 10 derniers episodes: {sum(mean_score[-10:])/len(mean_score[-10:])}"
+            )
         print(f"Temps écoulé: {round(time() - t1, 2)}s")
         # save matplotlib graph
         if e % 10 == 0:

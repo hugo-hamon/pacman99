@@ -38,7 +38,8 @@ class Game:
 
         self.agent = ConvDQNAgent(config=config)
         if config.neural.play_enable:
-            self.agent.load(config.neural.output_dir + config.neural.weights_path)
+            self.agent.load(config.neural.output_dir +
+                            config.neural.weights_path)
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -78,6 +79,7 @@ class Game:
 
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
+        return []
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
                                              Direction.NORTH, (self.maze.get_width(
                                              ) / 2, self.maze.get_height() / 2),
@@ -207,6 +209,8 @@ class Game:
 
     def __switch_ghosts_state(self) -> None:
         """Switch the ghosts state"""
+        if len(self.ghosts) == 0:
+            return
         self.switch_ghost_state_timer -= 1
         if self.switch_ghost_state_timer == 0:
             if self.ghost_state == Ghoststate.CHASE:
@@ -247,13 +251,17 @@ class Game:
             if self.pacman.get_lives() != self.config.game.pacman_lives:
                 break
 
-    def get_conv_state(self):
+    def get_conv_state(self, full_size: bool = False, size: int = 5):
         """Return the state of the game for the convolutional neural network"""
-        return np.array(self.get_image())
+        if full_size:
+            return np.array(self.get_image())
+        else:
+            return np.array(self.get_crop_image(size))
 
     def get_image(self):
         """Return the image of the game"""
-        env = np.zeros((self.maze.get_height(), self.maze.get_width(), 3), dtype=np.uint8)
+        env = np.zeros(
+            (self.maze.get_height(), self.maze.get_width(), 3), dtype=np.uint8)
         # Set the path to white
         env[self.maze.get_wall_matrix() == 0] = (255, 255, 255)
         # Set the dots to yellow
@@ -267,9 +275,37 @@ class Game:
         for ghost in self.ghosts:
             ghost_x, ghost_y = ghost.get_position()
             env[round(ghost_y), round(ghost_x)] = (0, 255, 0)
+
         return Image.fromarray(env, 'RGB')
 
+    def get_crop_image(self, size: int):
+        """Return the image of the game with a size centered on the pacman"""
+        length = size * 2 + 1
+        env = np.zeros((length, length, 3), dtype=np.uint8)
+        pac_x, pac_y = self.pacman.get_position()
+        pac_x = round(pac_x)
+        pac_y = round(pac_y)
+        # Set the path to white
+        env[self.maze.get_wall_size_matrix(
+            pac_x, pac_y, size) == 0] = (255, 255, 255)
+        # Set the dots to yellow
+        env[self.maze.get_dot_size_matrix(
+            pac_x, pac_y, size) == 1] = (255, 255, 0)
+        # Set the super dots to blue
+        env[self.maze.get_superdot_size_matrix(
+            pac_x, pac_y, size) == 1] = (0, 0, 255)
+        # Set the pacman to red
+        env[size, size] = (255, 0, 0)
+        # Set the ghosts to green
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            ghost_x = round(ghost_x)
+            ghost_y = round(ghost_y)
+            if abs(ghost_x - pac_x) <= size and abs(ghost_y - pac_y) <= size:
+                env[size + ghost_y - pac_y, size +
+                    ghost_x - pac_x] = (0, 255, 0)
 
+        return Image.fromarray(env, 'RGB')
 
     def get_reward(self) -> int:
         """Return the reward of the game"""
@@ -283,7 +319,7 @@ class Game:
             self.update()
         next_state = self.get_conv_state()
         reward = self.get_reward()
-        done = self.pacman.get_lives() != self.config.game.pacman_lives
+        done = self.pacman.get_lives() != self.config.game.pacman_lives or self.is_game_won()
         return next_state, reward, done
 
     def play_neural_move(self) -> None:

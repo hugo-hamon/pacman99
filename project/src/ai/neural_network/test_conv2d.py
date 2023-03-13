@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.optimizers import Adam
 from collections import deque
 from ...config import Config
+from time import time
 import numpy as np
 import random
 from time import time
@@ -32,6 +33,7 @@ class ConvDQNAgent:
         self.state_size = (25, 23, 3)
         if config.user.enable_random_maze:
             self.state_size = (config.maze.height, config.maze.width, 3)
+        self.state_size = (11, 11, 3)
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95
         self.epsilon = 1.0 if config.neural.train_enable else 0.0
@@ -116,7 +118,6 @@ class ConvDQNAgent:
     def summary(self, file):
         """Return a string with the layers of the neural network"""
         return self.model.summary(print_fn=lambda x: file.write(x + '\n'))
-        
 
 
 def get_move(game, agent: ConvDQNAgent) -> Direction:

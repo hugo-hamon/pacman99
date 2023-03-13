@@ -44,9 +44,17 @@ max_generation = 50
 train_enable = true
 play_enable = false
 output_dir = "assets/model_output/pacman"
+<<<<<<< HEAD
 weights_path = "weights_4750.hdf5"
+=======
+weights_path = "weights_1000.hdf5"
+>>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
 state_size = 230
 action_size = 4
 batch_size = 64
 episodes = 100001
+<<<<<<< HEAD
 learning_rate = 0.0015
+=======
+learning_rate = 0.03
+>>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
