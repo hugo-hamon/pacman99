@@ -69,7 +69,7 @@ def train_conv(config: Config, sound):
         for t in range(2000):
             action = agent.act(state)
             # visualize_array(state)
-            next_state, reward, done = game.step(action, True)
+            next_state, reward, done = game.step(action)
 
             reward = -10 if done else reward
             if game.is_game_won():
@@ -111,6 +111,6 @@ def play(config: Config, sound, maze):
     done = False
     while not done:
         action = agent.act(state)
-        next_state, reward, done = game.step(action, True)
+        next_state, reward, done = game.step(action)
         state = next_state
     print(game.get_score())
