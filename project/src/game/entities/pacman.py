@@ -28,7 +28,7 @@ class Pacman(Entities):
     # Requests
     def is_dead(self) -> bool:
         """retourne vraie si le pacman est mort (plus de vie)"""
-        return self.alive
+        return self.lives <= 0
 
     def get_lives(self) -> int:
         """retourne le nombre de vie restante"""

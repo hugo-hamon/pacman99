@@ -1,8 +1,9 @@
 from ..game.maze.random_maze_factory import RandomMazeFactory
-from ..ai.neural_network.function import train
+from ..ai.neural_network import function
 from ..ai.genetic.genetic import Genetic
 from ..graphics.graphic import Graphic
 from ..graphics.sounds import Sounds
+from ..ai.policy import policy_train
 from ..game.maze.maze import Maze
 from ..config import Config
 from .game import Game
@@ -25,8 +26,10 @@ class App:
             path = self.config.maze.random_maze_path
         maze = Maze(path)
         game = Game(config=self.config, sounds=sounds, maze=maze)
+        if self.config.policy.train_enable:
+            policy_train.train(self.config, sounds)
         if self.config.neural.train_enable:
-            train(self.config, sounds)
+            function.train(self.config, sounds)
         if self.config.genetic.genetic_enable:
             genetic = Genetic(config=self.config, sounds=sounds, maze=maze)
             genetic.run()

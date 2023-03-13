@@ -1,6 +1,6 @@
 [user]
 enable_graphics = true
-enable_random_maze = true
+enable_random_maze = false
 menu_enable = false
 sound_enable = false
 
@@ -41,7 +41,7 @@ population_type = ""
 max_generation = 50
 
 [neural]
-train_enable = true
+train_enable = false
 play_enable = false
 output_dir = "assets/model_output/pacman"
 weights_path = "weights_1000.hdf5"
@@ -50,3 +50,13 @@ action_size = 4
 batch_size = 64
 episodes = 100001
 learning_rate = 0.03
+
+[policy]
+train_enable = true
+play_enable = false
+alpha = 0.0001
+gamma = 0.997
+n_actions = 4
+episodes = 100001
+output_dir = "assets/model_output/pacman"
+weights_path = "weights_1000.h5"

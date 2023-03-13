@@ -69,6 +69,18 @@ class Neural:
 
 
 @dataclass
+class Policy:
+    train_enable: bool
+    play_enable: bool
+    alpha: float
+    gamma: float
+    n_actions: int
+    episodes: int
+    output_dir: str
+    weights_path: str
+
+
+@dataclass
 class Config:
     user: UserConfig
     graphics: GraphicConfig
@@ -76,6 +88,7 @@ class Config:
     maze: MazeGenerationConfig
     genetic: Genetic
     neural: Neural
+    policy: Policy
 
 
 def load_config(config_path: str) -> Config:

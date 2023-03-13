@@ -74,6 +74,9 @@ class Graphic:
             # Update the game
             if self.config.neural.play_enable:
                 self.game.play_neural_move()
+            elif self.config.policy.play_enable:
+                self.game.play_policy_move()
+
             self.game.update()
 
             # Display the sprites
@@ -81,7 +84,7 @@ class Graphic:
             self.screen.blit(self.canvas, (0, 0))
 
             # Update the display
-            
+
             self.canvas.fill((0, 0, 0))
             pg.display.update()
             self.clock.tick(self.fps)

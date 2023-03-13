@@ -2,6 +2,7 @@ from __future__ import annotations
 from ..ai.neural_network.test_conv2d import ConvDQNAgent, get_move
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
+from ..ai.policy.agent import Agent, get_policy_move
 from .entities.ghost.ghoststate import Ghoststate
 from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
@@ -14,9 +15,9 @@ from ..config import Config
 from PIL import Image
 import numpy as np
 
-DOT_SCORE = 100
-SUPER_DOT_SCORE = 500
-GHOST_SCORE = 200
+DOT_SCORE = 1
+SUPER_DOT_SCORE = 2
+GHOST_SCORE = 2
 
 AREA_SIZE = 7
 
@@ -40,6 +41,13 @@ class Game:
         if config.neural.play_enable:
             self.agent.load(config.neural.output_dir +
                             config.neural.weights_path)
+
+        self.policy_agent = Agent(
+            config.policy.alpha, config.policy.gamma, config.policy.n_actions)
+        if config.policy.play_enable:
+            self.policy_agent.policy.load_weights(
+                config.policy.output_dir + config.policy.weights_path
+            )
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -79,7 +87,6 @@ class Game:
 
     def init_ghosts(self) -> List[GeneralGhost]:
         """Initialize the ghosts and return them"""
-        return []
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
                                              Direction.NORTH, (self.maze.get_width(
                                              ) / 2, self.maze.get_height() / 2),
@@ -311,7 +318,7 @@ class Game:
         """Return the reward of the game"""
         return self.score - self.previous_score + 1
 
-    def step(self, action: Direction, is_conv=True):
+    def step(self, action: Direction):
         """Update the game with an action and return the next state, the reward and if the game is over"""
         self.previous_score = self.score
         self.pacman.set_next_direction(action)
@@ -326,3 +333,33 @@ class Game:
         """Play a move with the neural network"""
         move = get_move(self.get_game(), self.agent)
         self.pacman.set_next_direction(move)
+
+    def play_policy_move(self) -> None:
+        """Play a move with the policy gradient"""
+        move = get_policy_move(self.get_game(), self.policy_agent)
+        self.pacman.set_next_direction(move)
+
+    def get_policy_state(self) -> np.ndarray:
+        """Return the state of the game for the policy gradient"""
+        image = self.get_crop_image(7).convert('L')
+        normalized_image = np.array(image) / 255
+        return normalized_image.flatten()
+
+    def get_policy_reward(self) -> int:
+        """Return the reward of the game for the policy gradient"""
+        return self.score - self.previous_score
+
+    def policy_step(self, action: int):
+        """Update the game with an action and return the next state, the reward and if the game is over"""
+        self.previous_score = self.score
+        self.pacman.set_next_direction(Direction(action))
+        for _ in range(10):
+            self.update()
+        if self.score == self.previous_score:
+            self.score -= 0.1
+        next_state = self.get_policy_state()
+        reward = self.get_policy_reward()
+        done = self.pacman.get_lives() != self.config.game.pacman_lives or self.is_game_won()
+        if done:
+            reward = 10 if self.is_game_won() else -1
+        return next_state, reward, done
