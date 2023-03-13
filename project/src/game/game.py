@@ -279,7 +279,8 @@ class Game:
         """Update the game with an action and return the next state, the reward and if the game is over"""
         self.previous_score = self.score
         self.pacman.set_next_direction(action)
-        self.update()
+        for _ in range(self.config.graphics.fps // 3):
+            self.update()
         next_state = self.get_conv_state()
         reward = self.get_reward()
         done = self.pacman.get_lives() != self.config.game.pacman_lives

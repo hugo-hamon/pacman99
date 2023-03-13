@@ -29,11 +29,16 @@ def save_all_information(config: Config, agent):
         agent.summary(f)
 
 def save_plot(mean_life_time, mean_score):
-    plt.plot(mean_life_time)
+    mean_mean_life_time = []
+    mean_mean_score = []
+    for i in range(0, len(mean_life_time), 10):
+        mean_mean_life_time.append(np.mean(mean_life_time[i:i+10]))
+        mean_mean_score.append(np.mean(mean_score[i:i+10]))
+    plt.plot(mean_mean_life_time)
     plt.title("Durée de vie moyenne")
     plt.savefig("src/ai/neural_network/mean_life_time.png")
     plt.clf()
-    plt.plot(mean_score)
+    plt.plot(mean_mean_score)
     plt.title("Score moyen")
     plt.savefig("src/ai/neural_network/mean_score.png")
     plt.clf()
@@ -47,7 +52,7 @@ def train_conv(config: Config, sound):
     done = False
     agent = ConvDQNAgent(config)
     save_all_information(config, agent)
-    # agent.epsilon = 1
+    # agent.epsilon = 0.01
     # agent.load(config.neural.output_dir + config.neural.weights_path)
     mean_life_time = []
     mean_score = []
@@ -56,10 +61,10 @@ def train_conv(config: Config, sound):
         game = create_game(config, sound)
         state = game.get_conv_state()
         for t in range(10000):
-            """
-            if e % 50 == 0:
-                visualize_array(state)
-            """
+            
+            '''if t % (game.config.graphics.fps // 3) == 0:
+                visualize_array(state)'''
+            
             action = agent.act(state)
 
             next_state, reward, done = game.step(action, True)

@@ -6,12 +6,13 @@ from collections import deque
 from ...config import Config
 import numpy as np
 import random
+from time import time
 import cv2
 import os
 
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+#os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 def visualize_array(array):
@@ -34,7 +35,7 @@ class ConvDQNAgent:
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95
         self.epsilon = 1.0 if config.neural.train_enable else 0.0
-        self.epsilon_decay = 0.998
+        self.epsilon_decay = 0.9995
         self.epsilon_min = 0.01
 
         self.learning_rate = config.neural.learning_rate
@@ -44,14 +45,15 @@ class ConvDQNAgent:
     def _build_model(self) -> Sequential:
         """Build the neural network model using convolutional layers"""
         model = Sequential()
-        model.add(Conv2D(256, (3, 3), activation='relu',
+        model.add(Conv2D(64, (5, 5), activation='relu',
                   input_shape=self.state_size))
+        
+        model.add(Conv2D(128, (2, 2), activation='relu'))
+        model.add(Conv2D(256, (2, 2), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
 
-        model.add(Conv2D(256, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
+        model.add(Conv2D(128, (2, 2), activation='relu'))
+        
 
         model.add(Flatten())
         model.add(Dense(64))
@@ -68,6 +70,7 @@ class ConvDQNAgent:
 
     def act(self, state) -> Direction:
         """Act with the neural network"""
+        random.seed(time())
         if np.random.rand() <= self.epsilon:
             return Direction(random.randrange(self.action_size))
         state = np.array(state).reshape(-1, *state.shape) / 255
