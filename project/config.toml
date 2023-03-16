@@ -2,17 +2,17 @@
 enable_graphics = true
 enable_random_maze = false
 menu_enable = false
-sound_enable = false
+sound_enable = true
 
 [graphics]
 width = 720
 height = 720
-fps = 60
+fps = 120
 title = "PacMan"
 maze_path = "assets/data/maze.txt"
 
 [game]
-game_speed = 5
+game_speed = 30
 pacman_lives = 1
 super_mode_duration = 10
 scatter_duration = 6

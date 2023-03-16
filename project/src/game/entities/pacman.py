@@ -44,6 +44,10 @@ class Pacman(Entities):
         checkw = tuple(map(operator.add, dir.to_vector(), (1, 1)))
         return area[checkw[1]][checkw[0]] in [Components.WALL, Components.DOOR]
 
+    def is_boosted(self):
+        """retourne vrai si pacman est boosté"""
+        return self.boost_state
+    
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""

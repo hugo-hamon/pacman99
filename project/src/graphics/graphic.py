@@ -18,6 +18,8 @@ class GraphicGame(Game):
 
     def __init__(self, config: Config, sounds: Sounds) -> None:
         super().__init__(config)
+        self.addListener(self.dot_eaten_event, "dotPickup", self)
+        self.addListener(self.superdot_eaten_event, "superDotPickup", self)
         self.config = config
         factor = max(config.graphics.width, config.graphics.height) / \
             (self.get_maze().get_width() * TILE_SIZE)
@@ -125,43 +127,17 @@ class GraphicGame(Game):
         self.main_menu.run()
         if play_sound:
             self.sound.fadeout_sound(1000)
-"""
-    def eat_dot(self) -> None:
-        pac_pos = (round(self.pacman.get_position()[0]), round(
-            self.pacman.get_position()[1]))
-        if pac_pos[0] >= 0 and pac_pos[0] < self.maze.get_width() and \
-                pac_pos[1] >= 0 and pac_pos[1] < self.maze.get_height():
-            match self.maze.get_cell(pac_pos[0], pac_pos[1]):
-                case Components.DOT:
-                    if self.config.user.enable_graphics and self.config.user.sound_enable:
-                        self.sounds.play_sound_once("assets/music/munch_1.wav")
-                    self.score += DOT_SCORE
-                    self.maze.set_component(
-                        Components.EMPTY, pac_pos[1], pac_pos[0])
-                case Components.SUPERDOT:
-                    if self.config.user.enable_graphics and self.config.user.sound_enable:
-                        self.sounds.play_sound_once("assets/music/munch_2.wav")
-                        self.sounds.play_sound_once(
+    
+    def dot_eaten_event(self, coords):
+        if self.config.user.sound_enable:
+            self.sound.play_sound_once("assets/music/munch_1.wav")
+    
+    def superdot_eaten_event(self, coords):
+        if self.config.user.sound_enable:
+                        self.sound.play_sound_once("assets/music/munch_2.wav")
+                        self.sound.play_sound_once(
                             "assets/music/power_pellet.wav")
-                    self.get_pacman().change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.graphics.fps / self.config.game.game_speed
-                    for ghost in self.ghosts:
-                        if ghost.state != Ghoststate.EATEN:
-                            ghost.set_state(Ghoststate.FRIGHTENED)
-                    self.score += SUPER_DOT_SCORE
-                    self.maze.set_component(
-                        Components.EMPTY, pac_pos[1], pac_pos[0])
-
-    def __manage_collision(self, ghost: GeneralGhost) -> None:
-        if self.__is_pacman_ghost_colliding(ghost):
-            if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
-                ghost.set_state(Ghoststate.EATEN)
-                ghost.set_speed(ghost.get_speed() * 4)
-                self.score += GHOST_SCORE
-            else:
-                if self.config.user.enable_graphics and self.config.user.sound_enable:
-                    self.sounds.play_sound_once("assets/music/death_1.wav")
-                self.pacman.lose_life()
-                self.respawn_pacman()
-                self.respawn_ghosts()
-"""
+    
+    def lives_lost_event(self, args):
+        if self.config.user.sound_enable:
+                    self.sound.play_sound_once("assets/music/death_1.wav")

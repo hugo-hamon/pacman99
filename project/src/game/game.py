@@ -6,7 +6,7 @@ from ..utils.eventBroadcast import EventBroadcast
 from .maze.components import Components
 from .entities.pacman import Pacman
 from .direction import Direction
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
 import math
@@ -18,21 +18,18 @@ GHOST_SCORE = 200
 
 class Game(EventBroadcast):
 
-    def __init__(self, config: Config) -> None:
-        super().__init__
-        self.validEvent += ["dotPickup1","superDotPickup1","lostLife1"]
-        path = config.graphics.maze_path
-        if config.user.enable_random_maze:
-            RandomMazeFactory(config).create()
-            path = config.maze.random_maze_path
+    def __init__(self, config: Config, maze: Union[Maze, None] = None) -> None:
+        super().__init__()
+        self.validEvent += ["dotPickup","superDotPickup","lostLife"]
         self.config = config
-        self.maze = Maze(filename=path)
+        # TODO Implémenter game manager puis remplacer la ligne suivante par : self.maze = maze
+        self.maze = Maze(filename=config.graphics.maze_path) if maze is None else maze
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
         self.score = 0
         self.ghost_scatter_nbr = 0
-        self.switch_ghost_state_timer = self.config.game.chase_duration * self.config.graphics.fps
+        self.switch_ghost_state_timer = self.config.game.chase_duration * 60 / self.config.game.game_speed
         self.ghost_state = Ghoststate.CHASE
 
     # REQUESTS
@@ -63,6 +60,7 @@ class Game(EventBroadcast):
     # COMMANDS
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
+        # TODO séparer en 2 classes
         movements = self.read_movement() if self.config.genetic.genetic_enable else ""
         pacman = Pacman(
             self.maze, self.config.game.game_speed, Direction.WEST, (0, 0),
@@ -87,13 +85,14 @@ class Game(EventBroadcast):
 
     def update(self) -> None:
         """Update the game"""
-        self.pacman.move(60/self.config.game.game_speed)
+        self.pacman.move(60 * self.config.game.game_speed)
         for ghost in self.ghosts:
-            ghost.move(60/self.config.game.game_speed)
+            ghost.move(60 * self.config.game.game_speed)
             self.__manage_collision(ghost)
         self.__check_super_dot_timer()
         self.__update_ghosts_state()
         self.check_dot()
+        # TODO utile ?
         self.pacman_tp()
         self.ghosts_tp()
         if self.is_game_won():
@@ -113,8 +112,9 @@ class Game(EventBroadcast):
                                self.maze.get_height() // 2))
 
     def check_dot(self) -> None:
-        pac_pos = (round(self.pacman.get_position()[0]), round(
-            self.pacman.get_position()[1]))
+        pacman = self.pacman
+        pac_pos = (round(pacman.get_position()[0]), round(
+            pacman.get_position()[1]))
         if pac_pos[0] >= 0 and pac_pos[0] < self.maze.get_width() and \
                 pac_pos[1] >= 0 and pac_pos[1] < self.maze.get_height():
             match self.maze.get_cell(pac_pos[0], pac_pos[1]):
@@ -122,17 +122,18 @@ class Game(EventBroadcast):
                     self.score += DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
-                    self.__eventTrigger("dotPickup1", (pac_pos[1], pac_pos[0]))
+                    self._eventTrigger("dotPickup", (pac_pos[1], pac_pos[0]))
                 case Components.SUPERDOT:
-                    self.get_pacman().change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration * self.config.game.game_speed
+                    if pacman.is_boosted():
+                        pacman.change_state()
+                    self.super_mode_timer = self.config.game.super_mode_duration / self.config.game.game_speed
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
                     self.score += SUPER_DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
-                    self.__eventTrigger("superDotPickup1", (pac_pos[1], pac_pos[0]))
+                    self._eventTrigger("superDotPickup", (pac_pos[1], pac_pos[0]))
 
     def pacman_tp(self) -> None:
         """Teleport the pacman"""
@@ -158,13 +159,14 @@ class Game(EventBroadcast):
     def __manage_collision(self, ghost: GeneralGhost) -> None:
         """Manage the collision between pacman and ghost"""
         if self.__is_pacman_ghost_colliding(ghost):
+            #TODO Regarder si le EATEN est nécessaire
             if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
                 ghost.set_state(Ghoststate.EATEN)
                 ghost.set_speed(ghost.get_speed() * 4)
                 self.score += GHOST_SCORE
             else:
                 self.pacman.lose_life()
-                self.__eventTrigger("lostLife1", self.pacman.get_lives())
+                self._eventTrigger("lostLife", self.pacman.get_lives())
                 if self.pacman.get_lives() == 0:
                     print("You lost")
                 self.respawn_pacman()
