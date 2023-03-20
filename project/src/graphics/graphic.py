@@ -54,6 +54,7 @@ class GraphicGame(Game):
         self.main_menu = MainMenu(self.screen, self.game, self)
 
     # COMMANDS
+    #TODO rename to run?
     def start(self) -> None:
         """Run the graphic"""
         if self.config.user.menu_enable:
@@ -69,7 +70,7 @@ class GraphicGame(Game):
                 if event.type == pg.QUIT:
                     self.run = False
                 if event.type == pg.KEYDOWN:
-                    self.__process_key_event(event)
+                    self.__process_key_down(event)
 
             # Update the game
             self.update()
@@ -83,16 +84,15 @@ class GraphicGame(Game):
             pg.display.update()
             self.clock.tick(self.fps)
 
-    # TODO Rename this here and in `start`
-    def __process_key_event(self, event: pg.event.Event) -> None:
+    def __process_key_down(self, event: pg.event.Event) -> None:
         if not self.config.genetic.genetic_enable:
-            if event.key == pg.K_q:
+            if event.key == pg.K_q or event.key == pg.K_LEFT:
                 self.get_pacman().set_next_direction(Direction.WEST)
-            if event.key == pg.K_d:
+            if event.key == pg.K_d or event.key == pg.K_RIGHT:
                 self.get_pacman().set_next_direction(Direction.EAST)
-            if event.key == pg.K_z:
+            if event.key == pg.K_z or event.key == pg.K_UP:
                 self.get_pacman().set_next_direction(Direction.NORTH)
-            if event.key == pg.K_s:
+            if event.key == pg.K_s or event.key == pg.K_DOWN:
                 self.get_pacman().set_next_direction(Direction.SOUTH)
         if event.key == pg.K_ESCAPE and self.config.user.menu_enable:
             self.launch_main_menu(False)

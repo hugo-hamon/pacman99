@@ -17,8 +17,10 @@ GHOST_SCORE = 200
 
 
 class Game(EventBroadcast):
-
+    #Def init qui prend une fonction de mouvement(controle, gene ou ia)
+    #fonction du style func(Game)  
     def __init__(self, config: Config, maze: Union[Maze, None] = None) -> None:
+    #def __init__(self, config: Config, maze, control_func : Callable) -> None:
         super().__init__()
         self.validEvent += ["dotPickup","superDotPickup","lostLife"]
         self.config = config
@@ -85,18 +87,23 @@ class Game(EventBroadcast):
 
     def update(self) -> None:
         """Update the game"""
-        self.pacman.move(60 * self.config.game.game_speed)
+        self.pacman.move(60 / self.config.game.game_speed)
         for ghost in self.ghosts:
-            ghost.move(60 * self.config.game.game_speed)
+            ghost.move(60 / self.config.game.game_speed)
             self.__manage_collision(ghost)
         self.__check_super_dot_timer()
         self.__update_ghosts_state()
+        for entity in [self.pacman, *self.ghosts]:
+            self.check_tp_entity(entity)
         self.check_dot()
-        # TODO utile ?
-        self.pacman_tp()
-        self.ghosts_tp()
         if self.is_game_won():
             print("You won")
+
+    def check_tp_entity(self, entity) -> None:
+        """Teleports the entity when at the edge of the maze"""
+        xPos, yPos = entity.get_position()
+        if xPos % (self.maze.get_width() - 1) != xPos:
+            entity.set_position((xPos % (self.maze.get_width() - 1), yPos))
 
     def respawn_pacman(self):
         self.pacman.set_position(self.maze.get_pacman_start())
@@ -134,27 +141,6 @@ class Game(EventBroadcast):
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
                     self._eventTrigger("superDotPickup", (pac_pos[1], pac_pos[0]))
-
-    def pacman_tp(self) -> None:
-        """Teleport the pacman"""
-        pacman_position = (round(self.pacman.get_position()[0]), round(
-            self.pacman.get_position()[1]))
-        if pacman_position[0] < 0:
-            self.pacman.set_position(
-                (self.maze.get_width() - 1, pacman_position[1]))
-        if pacman_position[0] > self.maze.get_width() - 1:
-            self.pacman.set_position((0, pacman_position[1]))
-
-    def ghosts_tp(self) -> None:
-        """Teleport the ghost"""
-        for ghost in self.ghosts:
-            ghost_position = (round(ghost.get_position()[0]), round(
-                ghost.get_position()[1]))
-            if ghost_position[0] < 0:
-                ghost.set_position(
-                    (self.maze.get_width() - 1, ghost_position[1]))
-            if ghost_position[0] > self.maze.get_width() - 1:
-                ghost.set_position((0, ghost_position[1]))
 
     def __manage_collision(self, ghost: GeneralGhost) -> None:
         """Manage the collision between pacman and ghost"""
@@ -233,5 +219,5 @@ class Game(EventBroadcast):
         """Play a game"""
         while self.pacman.direction != Direction.NONE:
             self.update()
-            if self.pacman.get_lives() != self.config.game.pacman_lives:
+            if self.pacman.get_lives() == 0:
                 break
