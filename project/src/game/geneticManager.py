@@ -6,8 +6,8 @@ from ..config import Config
 import math
 from .game import Game
 
-class GameManager():
-    """Class allowing multiple games to be played at the same time for genetic algorithm"""
+class GeneticManager():
+    """Class allowing multiple games to be played at the same time with genetic algorithms"""
     def __init__(self, config: Config, maze_Nb):
         path = self.config.graphics.maze_path
         if self.config.user.enable_random_maze:
@@ -22,7 +22,10 @@ class GameManager():
         assert(len(movesList) == len(self.movesList))
         self.movesList = movesList
 
-    def runGames(self)
+    def setStartingMoves(self, moveList: List):
+        self.movesList = [[moveList]] * len(self.movesList)
+
+    def runGames(self):
         #TODO Do buffer shenanigans
         """Résumé : Buffer 
                     Début parallélisation

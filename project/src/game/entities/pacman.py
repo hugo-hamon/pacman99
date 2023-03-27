@@ -7,7 +7,7 @@ import operator
 
 
 class Pacman(Entities):
-
+    #TODO replace move_list par Game
     def __init__(self,
                  maze: Maze,
                  speed: float = 0,
@@ -21,7 +21,7 @@ class Pacman(Entities):
         self.lives = lives
         self.alive = True
         self.distance = 0
-
+    #TODO Déplacer dans geneticManager
         self.move_list = move_list
         self.move_list_index = 0
 
@@ -78,6 +78,7 @@ class Pacman(Entities):
         self.move_list = move_list
         self.move_list_index = 0
 
+    #TODO Déplacer dans geneticManager
     def get_next_valid_move(self) -> Direction:
         """retourne la prochaine direction valide"""
         while self.move_list_index < len(self.move_list):
@@ -89,7 +90,11 @@ class Pacman(Entities):
                 self.distance += 1
                 return self.direction
         return Direction.NONE
+    
+    #def _get_next_direction(self)
+    # return self.func(game)
 
+    #TODO Déplacer dans playerGame
     def _get_next_direction(self) -> Direction:
         """Entrée : direction self.buffer
             Si on peut aller dans la direction buffer, go buffer

@@ -24,8 +24,10 @@ class Game(EventBroadcast):
         super().__init__()
         self.validEvent += ["dotPickup","superDotPickup","lostLife"]
         self.config = config
-        # TODO Implémenter game manager puis remplacer la ligne suivante par : self.maze = maze
+        # TODO Implémenter game manager puis remplacer la ligne suivante par :
+        #  self.maze = maze
         self.maze = Maze(filename=config.graphics.maze_path) if maze is None else maze
+        #Passer func et self à pacman
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
