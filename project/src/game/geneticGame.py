@@ -11,6 +11,7 @@ class GeneticGame():
     """Class allowing a game controlled by genetic algorithm"""
     def __init__(self, config: Config, sounds: Sounds=None) -> None:
         """If sounds is set creates a graphic game otherwise creates a normal game"""
+        self.config = config
         path = self.config.graphics.maze_path
         if self.config.user.enable_random_maze:
             RandomMazeFactory(self.config).create()
