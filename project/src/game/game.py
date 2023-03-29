@@ -19,14 +19,12 @@ GHOST_SCORE = 200
 class Game(EventBroadcast):
     #Def init qui prend une fonction de mouvement(controle, gene ou ia)
     #fonction du style func(Game)  
-    def __init__(self, config: Config, maze: Union[Maze, None] = None) -> None:
+    def __init__(self, config: Config, maze: Maze) -> None:
     #def __init__(self, config: Config, maze, control_func : Callable) -> None:
         super().__init__()
         self.validEvent += ["dotPickup","superDotPickup","lostLife"]
         self.config = config
-        # TODO Implémenter game manager puis remplacer la ligne suivante par :
-        #  self.maze = maze
-        self.maze = Maze(filename=config.graphics.maze_path) if maze is None else maze
+        self.maze = maze
         #Passer func et self à pacman
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()

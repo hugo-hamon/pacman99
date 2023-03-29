@@ -1,8 +1,9 @@
 from .components import Components
+from functools import lru_cache
 from typing import Tuple
 import numpy as np
 import itertools
-from functools import lru_cache
+
 
 class Maze():
 
@@ -10,11 +11,15 @@ class Maze():
         self.filename = filename
         self.width = 0
         self.height = 0
+        self.begin_maze = np.zeros((0, 0), dtype=Components)
         self.maze = np.zeros((0, 0), dtype=Components)
         self.pacman_start = (0, 0)
         self.total_dots = 0
-        self.load_file()
-        
+        if filename != "":
+            self.load_file()
+        else:
+            raise FileNotFoundError("Filename is empty")
+
     def load_file(self) -> None:
         """
         Load the maze from a file
@@ -36,6 +41,8 @@ class Maze():
             self.pacman_start = tuple(map(int, lines[-1].split(" ")))
             self.total_dots = np.count_nonzero(
                 self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+            self.begin_maze = self.maze.copy()
+            
 
     def get_component_type(self, symbol: str) -> Components:
         """
@@ -107,10 +114,20 @@ class Maze():
         return self.pacman_start
 
     def get_total_dots(self) -> int:
+        """Return the total number of dots in the maze"""
         return self.total_dots
+    
+    def get_remain_dots(self) -> int:
+        """Return the number of dots remaining in the maze"""
+        return np.count_nonzero(self.maze == Components.DOT)
 
     def get_total_remain_dots(self) -> int:
+        """Return the total number of dots and superdots remaining in the maze"""
         return np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
 
     def set_component(self, c: Components, x: int, y: int) -> None:
         self.maze[x, y] = c
+
+    def reset(self) -> None:
+        """Reset the maze to the initial state"""
+        self.maze = self.begin_maze.copy()

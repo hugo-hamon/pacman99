@@ -4,6 +4,7 @@ from .graphic_ghost import GraphicGhost
 from ..game.direction import Direction
 from .graphic_maze import GraphicMaze
 from .spritesheet import SpriteSheet
+from ..game.maze.maze import Maze
 from ..game.game import Game
 from ..config import Config
 from .menu import MainMenu
@@ -13,11 +14,11 @@ import pygame as pg
 spritesheet_path = "assets/images/palettes.png"
 TILE_SIZE = 8
 
-
+# TODO rename file to graphicGame.py
 class GraphicGame(Game):
 
-    def __init__(self, config: Config, sounds: Sounds) -> None:
-        super().__init__(config)
+    def __init__(self, config: Config, sounds: Sounds, maze: Maze) -> None:
+        super().__init__(config, maze)
         self.addListener(self.dot_eaten_event, "dotPickup", self)
         self.addListener(self.superdot_eaten_event, "superDotPickup", self)
         self.config = config

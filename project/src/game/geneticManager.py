@@ -2,30 +2,34 @@ from .maze.random_maze_factory import RandomMazeFactory
 from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
-import math
 from .game import Game
+import copy
+import math
 
 
 class GeneticManager():
     """Class allowing multiple games to be played at the same time with genetic algorithms"""
 
-    def __init__(self, config: Config, maze_Nb):
+    def __init__(self, config: Config, game_nb: int, maze: Maze):
         self.config = config
-        path = self.config.graphics.maze_path
-        if self.config.user.enable_random_maze:
-            RandomMazeFactory(self.config).create()
-            path = self.config.maze.random_maze_path
-        self.maze = Maze(path)
-        self.games = []
-        self.movesList = [[]] * maze_Nb
-        # Initialiser Buffer?
+        self.maze = maze
+        self.games: List[Game] = []
+        self.game_nb = game_nb
+        self.moveLists = [""] * game_nb
+        self.run_result = []
+        # TODO paramètre nbGeneration dans les settings
+        self.genBuffer = 5
+        self.buffer = []
 
-    def setMovements(self, movesList: List):
-        assert (len(movesList) == len(self.movesList))
-        self.movesList = movesList
+    def setMovements(self, moveLists: List[str]):
+        assert (len(moveLists) == len(self.moveLists))
+        self.moveLists = moveLists
 
-    def setStartingMoves(self, moveList: List):
-        self.movesList = [[moveList]] * len(self.movesList)
+    def setStartingMoves(self, moveList: str):
+        self.moveLists = [moveList] * len(self.moveLists)
+
+    def get_run_result(self):
+        return self.run_result
 
     def runGames(self):
         # TODO Do buffer shenanigans
@@ -36,4 +40,16 @@ class GeneticManager():
                     Fin parallélisation
                     On met toute les games dans le buffer
                     """
-        return self.games
+        self.run_result = []
+        for _ in range(self.game_nb):
+            self.maze.reset()
+            self.games.append(Game(config=self.config, maze=self.maze))
+        # Run les games avec l'implémentation propre
+        for k, game in enumerate(self.games):
+            # TODO Remplacer par l'implémentation propre quand Game est refait
+            dist, score, is_dead, is_win = game.run_with_movement(self.moveLists[k])
+            self.run_result.append({"dist": dist, "score": score, "is_dead": is_dead, "is_win": is_win})
+        
+        self.buffer.append(copy.deepcopy(self.games))
+        if len(self.buffer) > self.genBuffer:
+            self.buffer.pop(0)
