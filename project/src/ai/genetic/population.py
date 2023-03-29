@@ -79,9 +79,9 @@ class Population:
         """Generate a population of random individuals."""
         self.population = [Individual() for _ in range(population_size)]
         for individual in self.population:
-            res = ""
-            for _ in range(20):
-                res += choice(MOVES)
+            res = "eeessseeseessseesewewwnwwwessnswnwwwswwwwwnewswswwwnnssnnwesswwwsnnnwswswnnnneenessenwwsewswwswswwwnewsssssewwwewsnennnnnnnnnnneennnnessnweewsnennweewsnennnnnnnnnnnewswwnswswnwseswsewwwswesewsnennweewsnennnnnnnnnnnewswwnswswnwseswsewwwswsnsssewenweeeeeeennweeeeeenwsneenenennnnwwwwwwsnswnewwwsnnwswswssssswsseswweesssenewnnseweesssneswesseweeeseesnssweennnwwnwseswnnnwwwwewswwsnnssnsswewsweswweewsesesnsnsnsssewnenswwwewnnneeesnwnwwnnsennnnnnesnnenwwnsnnesenwsseeeeennweeeeeenwsneeewensnnnnnnsssneswssnseennsnnsnnsnnnsnseeswneneeeeeeeneenenennneenneeeeneneeneeneeene"
+            # for _ in range(20):
+            #     res += choice(MOVES)
             individual.set_genes(res)
 
     def select_by_rank(self) -> None:

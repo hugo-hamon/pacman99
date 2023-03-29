@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Tuple
 from enum import Enum
-
+import random
 
 class Direction(Enum):
     NORTH = 0
@@ -49,3 +49,8 @@ class Direction(Enum):
             "s": Direction.SOUTH,
             "w": Direction.WEST
         }[string]
+    
+    def random(self) -> Direction:
+        """Return a random direction"""
+        return random.choice(list(Direction))
+    

@@ -15,6 +15,8 @@ import tqdm
 def create_game(config: Config, sound):
     path = config.graphics.maze_path
     if config.user.enable_random_maze:
+        random.seed(time())
+        config.maze.seed = random.randint(1, 4)
         RandomMazeFactory(config).create()
         path = config.maze.random_maze_path
     maze = Maze(path)
@@ -55,6 +57,7 @@ def train_conv(config: Config, sound):
     # agent.load(config.neural.output_dir + config.neural.weights_path)
     mean_life_time = []
     mean_score = []
+    max_score = 0
     t1 = time()
     action = Direction.WEST
 
@@ -93,9 +96,9 @@ def train_conv(config: Config, sound):
         if len(agent.memory) > config.neural.batch_size:
             agent.replay()
 
-        if e % 50 == 0:
-            agent.save(f"{config.neural.output_dir}weights_" +
-                       '{:04d}'.format(e) + ".hdf5")
+        if max_score < mean_score[-1]:
+            max_score = mean_score[-1]
+            agent.save("deep_q_learning.hdf5")
 
 
 def play(config: Config, sound, maze):

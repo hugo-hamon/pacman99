@@ -17,7 +17,7 @@ class Agent:
         self.action_memory = []
         self.reward_memory = []
         self.policy = PolicyGradientNetwork(
-            n_actions=n_actions, layers_dims=(256, 256, 256)
+            n_actions=n_actions, layers_dims=(256, 256, 256, 256)
         )
         self.policy.compile(
             optimizer=keras.optimizers.Adam(learning_rate=self.alpha)
