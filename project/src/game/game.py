@@ -223,3 +223,7 @@ class Game(EventBroadcast):
             self.update()
             if self.pacman.get_lives() == 0:
                 break
+
+    def start(self) -> None:
+        """Start the game"""
+        return NotImplemented()

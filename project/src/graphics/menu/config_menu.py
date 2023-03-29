@@ -5,12 +5,12 @@ from ...game.game import Game
 from .box import Box
 import pygame as pg
 if TYPE_CHECKING:
-    from ..graphic import Graphic
+    from ..graphic import GraphicGame
 
 
 class ConfigMenu:
 
-    def __init__(self, screen: pg.surface.Surface, game: Game, graphic: Graphic) -> None:
+    def __init__(self, screen: pg.surface.Surface, game: Game, graphic: GraphicGame) -> None:
         pg.font.init()
         self.font = pg.font.Font("assets/font/pac-font.TTF", 20)
         self.screen = screen

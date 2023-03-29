@@ -6,9 +6,12 @@ from ..config import Config
 import math
 from .game import Game
 
+
 class GeneticManager():
     """Class allowing multiple games to be played at the same time with genetic algorithms"""
+
     def __init__(self, config: Config, maze_Nb):
+        self.config = config
         path = self.config.graphics.maze_path
         if self.config.user.enable_random_maze:
             RandomMazeFactory(self.config).create()
@@ -16,17 +19,17 @@ class GeneticManager():
         self.maze = Maze(path)
         self.games = []
         self.movesList = [[]] * maze_Nb
-        #Initialiser Buffer?
-    
+        # Initialiser Buffer?
+
     def setMovements(self, movesList: List):
-        assert(len(movesList) == len(self.movesList))
+        assert (len(movesList) == len(self.movesList))
         self.movesList = movesList
 
     def setStartingMoves(self, moveList: List):
         self.movesList = [[moveList]] * len(self.movesList)
 
     def runGames(self):
-        #TODO Do buffer shenanigans
+        # TODO Do buffer shenanigans
         """Résumé : Buffer 
                     Début parallélisation
                     On récupère les games buffered ou les games proches

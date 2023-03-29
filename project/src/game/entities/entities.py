@@ -44,7 +44,7 @@ class Entities(ABC):
         """Set the speed of the entity"""
         self.speed = speed * UNITSPERCELL
 
-    def move(self, ups: int) -> None:
+    def move(self, ups: float) -> None:
         """Move the entity, ups is the number of update in 1 ingame second)"""
         self.movedistance += int(self.speed / ups)
         while self.movedistance > 0 and self.direction != Direction.NONE:

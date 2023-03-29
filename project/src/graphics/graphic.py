@@ -37,7 +37,7 @@ class GraphicGame(Game):
         self.spritesheet = SpriteSheet(spritesheet_path)
         self.fps = config.graphics.fps
         self.game = self
-        self.run = False
+        self.running = False
 
         # Create the sprites
         self.maze_sprites = GraphicMaze(
@@ -54,7 +54,7 @@ class GraphicGame(Game):
         self.main_menu = MainMenu(self.screen, self.game, self)
 
     # COMMANDS
-    #TODO rename to run?
+    # TODO rename to run ?
     def start(self) -> None:
         """Run the graphic"""
         if self.config.user.menu_enable:
@@ -64,11 +64,11 @@ class GraphicGame(Game):
         if self.config.user.sound_enable:
             self.sound.play_sound("assets/music/siren_1.wav", True)
 
-        self.run = True
-        while self.run:
+        self.running = True
+        while self.running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    self.run = False
+                    self.running = False
                 if event.type == pg.KEYDOWN:
                     self.__process_key_down(event)
 
@@ -86,13 +86,13 @@ class GraphicGame(Game):
 
     def __process_key_down(self, event: pg.event.Event) -> None:
         if not self.config.genetic.genetic_enable:
-            if event.key == pg.K_q or event.key == pg.K_LEFT:
+            if event.key in [pg.K_q, pg.K_LEFT]:
                 self.get_pacman().set_next_direction(Direction.WEST)
-            if event.key == pg.K_d or event.key == pg.K_RIGHT:
+            if event.key in [pg.K_d, pg.K_RIGHT]:
                 self.get_pacman().set_next_direction(Direction.EAST)
-            if event.key == pg.K_z or event.key == pg.K_UP:
+            if event.key in [pg.K_z, pg.K_UP]:
                 self.get_pacman().set_next_direction(Direction.NORTH)
-            if event.key == pg.K_s or event.key == pg.K_DOWN:
+            if event.key in [pg.K_s, pg.K_DOWN]:
                 self.get_pacman().set_next_direction(Direction.SOUTH)
         if event.key == pg.K_ESCAPE and self.config.user.menu_enable:
             self.launch_main_menu(False)

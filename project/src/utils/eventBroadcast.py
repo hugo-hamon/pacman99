@@ -9,7 +9,7 @@ class EventBroadcast():
         """Execute the function func when event is realised passing a tuple of args as parameter"""
         if event not in self.validEvent :
             raise AssertionError("Error : invalid event")
-        if self.eventManager == None :
+        if self.eventManager is None:
             self.eventManager = {event : [] for event in self.validEvent}
         self.eventManager[event].append((func, owner))
 
