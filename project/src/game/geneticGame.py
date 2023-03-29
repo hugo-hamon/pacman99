@@ -1,34 +1,31 @@
 from .maze.random_maze_factory import RandomMazeFactory
+from ..utils.eventBroadcast import EventBroadcast
 from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
 import math
 from .game import Game
+from ..graphics.sounds import Sounds
 
-
-class GeneticManager():
-    """Class allowing multiple games to be played at the same time with genetic algorithms"""
-
-    def __init__(self, config: Config, maze_Nb):
-        self.config = config
+class GeneticGame():
+    """Class allowing a game controlled by genetic algorithm"""
+    def __init__(self, config: Config, sounds: Sounds=None) -> None:
+        """If sounds is set creates a graphic game otherwise creates a normal game"""
         path = self.config.graphics.maze_path
         if self.config.user.enable_random_maze:
             RandomMazeFactory(self.config).create()
             path = self.config.maze.random_maze_path
         self.maze = Maze(path)
-        self.games = []
+        self.games = Game(config, self.maze, getNextMove) if 
         self.movesList = [[]] * maze_Nb
-        # Initialiser Buffer?
-
+        #Initialiser Buffer?
+    
     def setMovements(self, movesList: List):
-        assert (len(movesList) == len(self.movesList))
-        self.movesList = movesList
+        assert(len(movesList) == len(self.movesList))
+        self.moveList = movesList
 
-    def setStartingMoves(self, moveList: List):
-        self.movesList = [[moveList]] * len(self.movesList)
-
-    def runGames(self):
-        # TODO Do buffer shenanigans
+    def runGame(self):
+        #TODO Do buffer shenanigans
         """Résumé : Buffer 
                     Début parallélisation
                     On récupère les games buffered ou les games proches
@@ -37,3 +34,6 @@ class GeneticManager():
                     On met toute les games dans le buffer
                     """
         return self.games
+
+    def getNextMove(self, _):
+
