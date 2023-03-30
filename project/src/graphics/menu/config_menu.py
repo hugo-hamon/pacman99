@@ -5,7 +5,7 @@ from ...game.game import Game
 from .box import Box
 import pygame as pg
 if TYPE_CHECKING:
-    from ..graphic import GraphicGame
+    from ..graphic_game import GraphicGame
 
 
 class ConfigMenu:

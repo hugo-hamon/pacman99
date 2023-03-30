@@ -7,6 +7,7 @@ from .spritesheet import SpriteSheet
 from ..game.maze.maze import Maze
 from ..game.game import Game
 from ..config import Config
+from typing import Callable
 from .menu import MainMenu
 from .sounds import Sounds
 import pygame as pg
@@ -17,8 +18,8 @@ TILE_SIZE = 8
 # TODO rename file to graphicGame.py
 class GraphicGame(Game):
 
-    def __init__(self, config: Config, sounds: Sounds, maze: Maze) -> None:
-        super().__init__(config, maze)
+    def __init__(self, config: Config, sounds: Sounds, maze: Maze, control_func: Callable) -> None:
+        super().__init__(config, maze, control_func)
         self.addListener(self.dot_eaten_event, "dotPickup", self)
         self.addListener(self.superdot_eaten_event, "superDotPickup", self)
         self.config = config
@@ -56,7 +57,7 @@ class GraphicGame(Game):
 
     # COMMANDS
     # TODO rename to run ?
-    def start(self) -> None:
+    def run(self) -> None:
         """Run the graphic"""
         if self.config.user.menu_enable:
             self.launch_main_menu(self.config.user.sound_enable)

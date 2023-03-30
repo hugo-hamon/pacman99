@@ -1,12 +1,12 @@
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
-from .entities.ghost.ghoststate import Ghoststate
-from .entities.ghost.ghost import GeneralGhost
 from ..utils.eventBroadcast import EventBroadcast
+from .entities.ghost.ghoststate import Ghoststate
+from typing import List, Tuple, Union, Callable
+from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
 from .entities.pacman import Pacman
 from .direction import Direction
-from typing import List, Tuple, Union
 from .maze.maze import Maze
 from ..config import Config
 import math
@@ -16,16 +16,12 @@ SUPER_DOT_SCORE = 500
 GHOST_SCORE = 200
 
 
-class Game(EventBroadcast):
-    #Def init qui prend une fonction de mouvement(controle, gene ou ia)
-    #fonction du style func(Game)  
-    def __init__(self, config: Config, maze: Maze) -> None:
-    #def __init__(self, config: Config, maze, control_func : Callable) -> None:
+class Game(EventBroadcast): 
+    def __init__(self, config: Config, maze, control_func : Callable) -> None:
         super().__init__()
         self.validEvent += ["dotPickup","superDotPickup","lostLife"]
         self.config = config
         self.maze = maze
-        #Passer func et self à pacman
         self.pacman = self.init_pacman()
         self.ghosts = self.init_ghosts()
         self.super_mode_timer = 0
@@ -33,6 +29,7 @@ class Game(EventBroadcast):
         self.ghost_scatter_nbr = 0
         self.switch_ghost_state_timer = self.config.game.chase_duration * 60 / self.config.game.game_speed
         self.ghost_state = Ghoststate.CHASE
+        self.control_func = control_func
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -41,7 +38,7 @@ class Game(EventBroadcast):
 
     def is_game_won(self) -> bool:
         """Return True if the game is won"""
-        return self.maze.get_total_remain_dots() == 0
+        return self.maze.get_remain_dots() == 0
 
     def get_score(self) -> int:
         """Return the score"""
@@ -62,11 +59,9 @@ class Game(EventBroadcast):
     # COMMANDS
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
-        # TODO séparer en 2 classes
-        movements = self.read_movement() if self.config.genetic.genetic_enable else ""
         pacman = Pacman(
-            self.maze, self.config.game.game_speed, Direction.WEST, (0, 0),
-            self.config.game.pacman_lives, movements
+            self.maze, self.get_direction, self.config.game.game_speed, Direction.WEST, (0, 0),
+            self.config.game.pacman_lives
         )
         pacman.set_position(self.maze.get_pacman_start())
         return pacman
@@ -142,6 +137,9 @@ class Game(EventBroadcast):
                         Components.EMPTY, pac_pos[1], pac_pos[0])
                     self._eventTrigger("superDotPickup", (pac_pos[1], pac_pos[0]))
 
+    def get_info(self):
+         return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+
     def __manage_collision(self, ghost: GeneralGhost) -> None:
         """Manage the collision between pacman and ghost"""
         if self.__is_pacman_ghost_colliding(ghost):
@@ -199,29 +197,10 @@ class Game(EventBroadcast):
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.CHASE)
 
-    def read_movement(self) -> str:
-        """Read the movement of the pacman"""
-        with open(self.config.genetic.move_path, "r") as file:
-            return file.read()
-
-    def run_with_movement(self, movements: str) -> Tuple[int, int, bool, bool]:
-        """
-        Play a game with a movement file and return information about the game.
-        return: Tuple[distance, score, is_dead, is_won]
-        """
-        self.pacman.set_movement(movements)
-        if movements != "":
-            self.run()
-
-        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
-
     def run(self) -> None:
         """Play a game"""
-        while self.pacman.direction != Direction.NONE:
+        while self.pacman.direction != Direction.NONE and self.pacman.get_lives() != 0:
             self.update()
-            if self.pacman.get_lives() == 0:
-                break
-
-    def start(self) -> None:
-        """Start the game"""
-        return NotImplemented()
+    
+    def get_direction(self):
+        return self.control_func(self)

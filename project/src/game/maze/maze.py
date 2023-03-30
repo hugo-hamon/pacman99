@@ -15,6 +15,7 @@ class Maze():
         self.maze = np.zeros((0, 0), dtype=Components)
         self.pacman_start = (0, 0)
         self.total_dots = 0
+        self.remain_dots = 0
         if filename != "":
             self.load_file()
         else:
@@ -42,7 +43,7 @@ class Maze():
             self.total_dots = np.count_nonzero(
                 self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
             self.begin_maze = self.maze.copy()
-            
+            self.remain_dots = self.total_dots
 
     def get_component_type(self, symbol: str) -> Components:
         """
@@ -116,18 +117,17 @@ class Maze():
     def get_total_dots(self) -> int:
         """Return the total number of dots in the maze"""
         return self.total_dots
-    
+
     def get_remain_dots(self) -> int:
         """Return the number of dots remaining in the maze"""
-        return np.count_nonzero(self.maze == Components.DOT)
-
-    def get_total_remain_dots(self) -> int:
-        """Return the total number of dots and superdots remaining in the maze"""
-        return np.count_nonzero(self.maze == Components.DOT) + np.count_nonzero(self.maze == Components.SUPERDOT)
+        return self.remain_dots
 
     def set_component(self, c: Components, x: int, y: int) -> None:
+        if c == Components.EMPTY and self.maze[x, y] in [Components.DOT, Components.SUPERDOT]:
+            self.remain_dots -= 1
         self.maze[x, y] = c
 
     def reset(self) -> None:
         """Reset the maze to the initial state"""
         self.maze = self.begin_maze.copy()
+        self.remain_dots = self.total_dots

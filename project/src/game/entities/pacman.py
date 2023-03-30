@@ -1,29 +1,28 @@
 from ..maze.components import Components
+from typing import Tuple, Callable
 from ..direction import Direction
 from .entities import Entities
 from ..maze.maze import Maze
-from typing import Tuple
 import operator
 
 
 class Pacman(Entities):
-    #TODO replace move_list par Game
+    # TODO replace move_list par Game
     def __init__(self,
                  maze: Maze,
+                 control_func: Callable,
                  speed: float = 0,
                  direction: Direction = Direction.WEST,
                  coordinate: Tuple[float, float] = (0, 0),
                  lives: int = 3,
-                 move_list: str = "") -> None:
+                 ) -> None:
         super().__init__(maze, speed, direction, coordinate)
         self.next_direction: Direction = Direction.NONE
         self.boost_state = False
         self.lives = lives
         self.alive = True
         self.distance = 0
-    #TODO Déplacer dans geneticManager
-        self.move_list = move_list
-        self.move_list_index = 0
+        self.control_func = control_func
 
     # Requests
     def is_dead(self) -> bool:
@@ -47,7 +46,7 @@ class Pacman(Entities):
     def is_boosted(self):
         """retourne vrai si pacman est boosté"""
         return self.boost_state
-    
+
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
@@ -78,32 +77,31 @@ class Pacman(Entities):
         self.move_list = move_list
         self.move_list_index = 0
 
-    #TODO Déplacer dans geneticManager
+    # TODO Déplacer dans geneticManager
     def get_next_valid_move(self) -> Direction:
         """retourne la prochaine direction valide"""
         while self.move_list_index < len(self.move_list):
-            self.direction = Direction.from_string(self.move_list[self.move_list_index])
+            self.direction = Direction.from_string(
+                self.move_list[self.move_list_index])
             if self.is_wall(self.direction):
-                self.direction = Direction.NONE   
+                self.direction = Direction.NONE
             self.move_list_index += 1
             if self.direction != Direction.NONE:
                 self.distance += 1
                 return self.direction
         return Direction.NONE
-    
-    #def _get_next_direction(self)
-    # return self.func(game)
 
-    #TODO Déplacer dans playerGame
+    def _get_next_direction(self):
+        return self.control_func()
+
+    # TODO Déplacer dans playerGame
+    """
     def _get_next_direction(self) -> Direction:
-        """Entrée : direction self.buffer
-            Si on peut aller dans la direction buffer, go buffer
-            Sinon on peut continuer tout droit, tout droit
-            Sinon null"""
-        """Get the next direction of the entity"""
+        Get the next direction of the entity
         position = self.get_position()
         area = self.maze.get_neighbors(round(position[0]), round(position[1]))
-        check = tuple(map(operator.add, self.next_direction.to_vector(), (1, 1)))
+        check = tuple(
+            map(operator.add, self.next_direction.to_vector(), (1, 1)))
         if self.move_list:
             return self.get_next_valid_move()
         if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and self.next_direction != Direction.NONE:
@@ -114,3 +112,4 @@ class Pacman(Entities):
         if self.direction != Direction.NONE:
             self.distance += 1
         return self.direction
+    """

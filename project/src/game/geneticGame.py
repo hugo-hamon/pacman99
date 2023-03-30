@@ -1,37 +1,26 @@
-from .maze.random_maze_factory import RandomMazeFactory
-from ..utils.eventBroadcast import EventBroadcast
-from typing import List, Tuple, Union
+from ..utils.genetic_iterator import GeneticIterator
+from ..graphics.graphic_game import GraphicGame
+from ..graphics.sounds import Sounds
+from typing import List, Union
 from .maze.maze import Maze
 from ..config import Config
-from .direction import Direction
-import math
 from .game import Game
-from ..graphics.sounds import Sounds
 
 class GeneticGame():
     """Class allowing a game controlled by genetic algorithm"""
-    def __init__(self, config: Config, sounds: Sounds=None) -> None:
+
+    def __init__(self, config: Config, maze: Maze, sounds: Union[Sounds, None] = None) -> None:
         """If sounds is set creates a graphic game otherwise creates a normal game"""
         self.config = config
         self.maze = maze
-        if sounds == None:
-            self.games = Game(config, self.maze, getNextMove)
+        self.geneticIterator = GeneticIterator()
+        if sounds is None:
+            self.games = Game(config, self.maze, self.geneticIterator.getNextMove)
         else:
-            self.games = graphicGame(config, sounds, self.maze, getNextMove)
-        self.moveList = []
-        self.index = 0
-    
-    def setMovements(self, moveList: List):
-        self.moveList = moveList
+            self.games = GraphicGame(config, sounds, self.maze, self.geneticIterator.getNextMove)
+
+    def setMovements(self, moves: str) -> None:
+        self.geneticIterator.set_moves(moves)
 
     def runGame(self):
-        return self.games
-
-    def getNextMove(self, game):
-         while self.index < len(self.moveList):
-            self.direction = Direction.from_string(self.move_list[self.move_list_index])
-            self.index += 1
-            if not self.is_wall(self.direction):
-                return self.direction
-        return Direction.NONE
-
+        return self.games.run()
