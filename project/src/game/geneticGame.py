@@ -1,9 +1,9 @@
 from ..utils.genetic_iterator import GeneticIterator
 from ..graphics.graphic_game import GraphicGame
 from ..graphics.sounds import Sounds
-from typing import List, Union
 from .maze.maze import Maze
 from ..config import Config
+from typing import Union
 from .game import Game
 
 class GeneticGame():
@@ -22,5 +22,5 @@ class GeneticGame():
     def setMovements(self, moves: str) -> None:
         self.geneticIterator.set_moves(moves)
 
-    def runGame(self):
+    def run(self):
         return self.games.run()

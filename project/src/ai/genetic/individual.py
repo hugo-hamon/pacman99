@@ -3,6 +3,7 @@ from typing import Dict, Union
 from random import randint
 from ...game.game import Game
 from ...config import Config
+
 class Individual:
 
     def __init__(self, distance=0, score=0, dead=False, won=False) -> None:

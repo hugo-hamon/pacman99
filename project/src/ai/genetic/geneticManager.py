@@ -1,11 +1,10 @@
-from ..utils.genetic_iterator import GeneticIterator
-from ..utils.genetic_buffer import GeneticBuffer
-from .maze.maze import Maze
-from ..config import Config
+from ...utils.genetic_iterator import GeneticIterator
+from ...utils.genetic_buffer import GeneticBuffer
+from ...game.maze.maze import Maze
+from ...config import Config
 from typing import List
-from .game import Game
+from ...game.game import Game
 import multiprocessing
-import time
 
 
 class GeneticManager():
@@ -34,7 +33,7 @@ class GeneticManager():
         self.games = []
         self.run_result = []
 
-    def runGames(self):
+    def run(self):
         # TODO Do buffer shenanigans
         """Résumé : Buffer 
                     Début parallélisation

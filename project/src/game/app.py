@@ -36,12 +36,25 @@ class App:
             game = Game(config=self.config, maze=maze, control_func=genetic_iterator.getNextMove)
         
         if self.config.genetic.genetic_enable:
-            genetic = Genetic(config=self.config, sounds=sounds)
-            # genetic.run()
+            self.run_genetic_game(maze, sounds)
         if self.config.user.enable_graphics:
             game.run()
 
-    # TODO
+        
+
+    def run_genetic_game(self, maze: Maze, sounds: Sounds) -> None:
+        moves = self.read_movement()
+        if self.config.user.enable_graphics:
+            genetic = GeneticGame(self.config, maze, sounds)
+            genetic.setMovements(moves)
+        else:
+            genetic = Genetic(self.config, sounds)
+        genetic.run()
+
+
+    def read_movement(self) -> str:
+        with open(self.config.genetic.move_path, "r") as f:
+            return f.read()
 
     def reset(self) -> None:
         """Reset the app"""
