@@ -37,5 +37,3 @@ deletion_chance = 0.05
 addition_chance = 0.80
 replacement_chance = 0.15
 selection_type = "rank"
-population_type = "clone_pop"
-max_generation = 10

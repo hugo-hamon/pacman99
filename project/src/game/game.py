@@ -16,10 +16,10 @@ SUPER_DOT_SCORE = 500
 GHOST_SCORE = 200
 
 
-class Game(EventBroadcast): 
-    def __init__(self, config: Config, maze, control_func : Callable) -> None:
+class Game(EventBroadcast):
+    def __init__(self, config: Config, maze, control_func: Callable) -> None:
         super().__init__()
-        self.validEvent += ["dotPickup","superDotPickup","lostLife"]
+        self.validEvent += ["dotPickup", "superDotPickup", "lostLife"]
         self.config = config
         self.maze = maze
         self.pacman = self.init_pacman()
@@ -27,7 +27,8 @@ class Game(EventBroadcast):
         self.super_mode_timer = 0
         self.score = 0
         self.ghost_scatter_nbr = 0
-        self.switch_ghost_state_timer = self.config.game.chase_duration * 60 / self.config.game.game_speed
+        self.switch_ghost_state_timer = self.config.game.chase_duration * \
+            60 / self.config.game.game_speed
         self.ghost_state = Ghoststate.CHASE
         self.control_func = control_func
 
@@ -60,7 +61,8 @@ class Game(EventBroadcast):
     def init_pacman(self) -> Pacman:
         """Initialize the pacman and return it"""
         pacman = Pacman(
-            self.maze, self.get_direction, self.config.game.game_speed, Direction.WEST, (0, 0),
+            self.maze, self.get_direction, self.config.game.game_speed, Direction.WEST, (
+                0, 0),
             self.config.game.pacman_lives
         )
         pacman.set_position(self.maze.get_pacman_start())
@@ -91,8 +93,6 @@ class Game(EventBroadcast):
         for entity in [self.pacman, *self.ghosts]:
             self.check_tp_entity(entity)
         self.check_dot()
-        if self.is_game_won():
-            print("You won")
 
     def check_tp_entity(self, entity) -> None:
         """Teleports the entity when at the edge of the maze"""
@@ -128,22 +128,24 @@ class Game(EventBroadcast):
                 case Components.SUPERDOT:
                     if pacman.is_boosted():
                         pacman.change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration / self.config.game.game_speed
+                    self.super_mode_timer = self.config.game.super_mode_duration / \
+                        self.config.game.game_speed
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
                     self.score += SUPER_DOT_SCORE
                     self.maze.set_component(
                         Components.EMPTY, pac_pos[1], pac_pos[0])
-                    self._eventTrigger("superDotPickup", (pac_pos[1], pac_pos[0]))
+                    self._eventTrigger(
+                        "superDotPickup", (pac_pos[1], pac_pos[0]))
 
     def get_info(self):
-         return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
 
     def __manage_collision(self, ghost: GeneralGhost) -> None:
         """Manage the collision between pacman and ghost"""
         if self.__is_pacman_ghost_colliding(ghost):
-            #TODO Regarder si le EATEN est nécessaire
+            # TODO Regarder si le EATEN est nécessaire
             if ghost.state in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
                 ghost.set_state(Ghoststate.EATEN)
                 ghost.set_speed(ghost.get_speed() * 4)
@@ -151,8 +153,6 @@ class Game(EventBroadcast):
             else:
                 self.pacman.lose_life()
                 self._eventTrigger("lostLife", self.pacman.get_lives())
-                if self.pacman.get_lives() == 0:
-                    print("You lost")
                 self.respawn_pacman()
                 self.respawn_ghosts()
 
@@ -162,8 +162,8 @@ class Game(EventBroadcast):
             return False
         pacman_position = self.pacman.get_position()
         ghost_position = ghost.get_position()
-        return math.sqrt((pacman_position[0] - ghost_position[0])**2 
-        + (pacman_position[1] - ghost_position[1])**2) < 0.75
+        return math.sqrt((pacman_position[0] - ghost_position[0])**2
+                         + (pacman_position[1] - ghost_position[1])**2) < 0.75
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""
@@ -201,6 +201,6 @@ class Game(EventBroadcast):
         """Play a game"""
         while self.pacman.direction != Direction.NONE and self.pacman.get_lives() != 0:
             self.update()
-    
+
     def get_direction(self):
         return self.control_func(self)

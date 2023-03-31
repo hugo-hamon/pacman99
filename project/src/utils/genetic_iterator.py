@@ -1,3 +1,4 @@
+from __future__ import annotations
 from ..game.direction import Direction
 from ..game.game import Game
 
@@ -21,11 +22,11 @@ class GeneticIterator:
                 return self.direction
         return Direction.NONE
     
-    def __eq__(self, other):
+    def __eq__(self, other: GeneticIterator) -> bool:
         return self.moves == other.moves
     
-    def startswith(self, other):
-        return self.startswith(other.movs)
+    def startswith(self, other: GeneticIterator) -> bool:
+        return self.moves.startswith(other.moves)
 
     def __hash__(self) -> int:
         return self.moves.__hash__()

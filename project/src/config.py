@@ -50,8 +50,6 @@ class Genetic:
     addition_chance: float
     replacement_chance: float
     selection_type: str
-    population_type: str
-    max_generation: int
     
 @dataclass
 class Config:

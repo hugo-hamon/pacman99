@@ -25,22 +25,24 @@ class App:
             RandomMazeFactory(self.config).create()
             path = self.config.maze.random_maze_path
         maze = Maze(path)
-        genetic_iterator = GeneticIterator()
-        genetic_iterator.set_moves("eeeennnn")
-        # genetic_game = GeneticGame(config=self.config, sounds=sounds, maze=maze)
-        # genetic_game.setMovements("eeeennnn")
-        # genetic_game.runGame()
-        if self.config.user.enable_graphics:
-            game = GraphicGame(config=self.config, sounds=sounds, maze=maze, control_func=genetic_iterator.getNextMove)
-        else:
-            game = Game(config=self.config, maze=maze, control_func=genetic_iterator.getNextMove)
-        
+
         if self.config.genetic.genetic_enable:
             self.run_genetic_game(maze, sounds)
+
+        # TODO: Changer ca par une classe qui gere les mouvements du joueur
+        genetic_iterator = GeneticIterator()
+        genetic_iterator.set_moves("eeeennnn")
+        if self.config.user.enable_graphics:
+            game = GraphicGame(
+                config=self.config, sounds=sounds, maze=maze, control_func=genetic_iterator.getNextMove
+            )
+        else:
+            game = Game(
+                config=self.config, maze=maze, control_func=genetic_iterator.getNextMove
+            )
+
         if self.config.user.enable_graphics:
             game.run()
-
-        
 
     def run_genetic_game(self, maze: Maze, sounds: Sounds) -> None:
         moves = self.read_movement()
@@ -48,9 +50,8 @@ class App:
             genetic = GeneticGame(self.config, maze, sounds)
             genetic.setMovements(moves)
         else:
-            genetic = Genetic(self.config, sounds)
+            genetic = Genetic(self.config, maze)
         genetic.run()
-
 
     def read_movement(self) -> str:
         with open(self.config.genetic.move_path, "r") as f:
