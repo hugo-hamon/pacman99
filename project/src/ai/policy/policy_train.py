@@ -108,11 +108,6 @@ def play(config: Config, sound):
         n_actions=config.policy.n_actions
     )
 
-<<<<<<< HEAD
-    agent.policy.load_weights("assets/model_output/policy_50.h5")
-
-=======
->>>>>>> 0c962bc424b0368befb7c78ec0723b946b73df81
     game = create_game(config, sound)
     done = False
     score = 0

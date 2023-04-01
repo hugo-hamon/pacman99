@@ -28,7 +28,7 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = true
+genetic_enable = false
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.3
@@ -49,7 +49,19 @@ state_size = 230
 action_size = 4
 batch_size = 64
 episodes = 100001
-learning_rate = 0.008
+learning_rate = 0.001
+
+
+[neural_mask]
+neural_mask_enable = false
+mask_path = "assets/data/mask.txt"
+population_size = 100
+graded_retain_percentage = 0.1
+mutation_chance = 0.05
+mask_size = 5
+max_network = 30
+max_neurons_per_network = 10
+
 
 [policy]
 train_enable = false

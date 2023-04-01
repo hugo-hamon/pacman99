@@ -1,8 +1,6 @@
 from ...game.maze.random_maze_factory import RandomMazeFactory
-from .test_conv2d import visualize_array
 from ...game.direction import Direction
-from .test_conv2d import ConvDQNAgent
-# from .DQNAgent import DQNAgent
+from .convDQNAgent import ConvDQNAgent
 from ...game.maze.maze import Maze
 import matplotlib.pyplot as plt
 from ...game.game import Game
@@ -12,13 +10,10 @@ import numpy as np
 import random
 import tqdm
 
-# MEMORY LEAKED LIBRARIES
-import sys
-import gc
-from pympler import summary, muppy
-
+MAZES_PATH = "assets/data/mazes/"
 
 def create_game(config: Config, sound, maze):
+    maze.reset()
     return Game(config, sound, maze)
 
 
@@ -32,62 +27,60 @@ def save_all_information(config: Config, agent):
         f.write(f"Epsilon min: {agent.epsilon_min}\n")
         agent.summary(f)
 
-
-def save_plot_data(mean_life_time, mean_score):
+def save_plot_data(mean_life_time, mean_score, mean_reward):
     '''Save data about score and life time in text files'''
-    with open("src/ai/neural_network/mean_score_data.txt", "a") as f:
+    with open("src/ai/neural_network/mean_score_data.txt", "w") as f:
         for i in mean_score:
             f.write(f"{i}\n")
 
-    with open("src/ai/neural_network/mean_life_time_data.txt", "a") as f:
+    with open("src/ai/neural_network/mean_life_time_data.txt", "w") as f:
         for i in mean_life_time:
             f.write(f"{i}\n")
 
+    with open("src/ai/neural_network/mean_reward_data.txt", "w") as f:
+        for i in mean_reward:
+            f.write(f"{i}\n")
 
 def save_plot(mean_life_time, mean_score):
-    mean_mean_life_time = []
-    mean_mean_score = []
-    for i in range(0, len(mean_life_time), 10):
-        mean_mean_life_time.append(np.mean(mean_life_time[i:i+10]))
-        mean_mean_score.append(np.mean(mean_score[i:i+10]))
-    plt.plot(mean_mean_life_time)
+    plt.plot(mean_life_time)
     plt.title("Durée de vie moyenne")
     plt.savefig("src/ai/neural_network/mean_life_time.png")
     plt.clf()
-    plt.plot(mean_mean_score)
+    plt.plot(mean_score)
     plt.title("Score moyen")
     plt.savefig("src/ai/neural_network/mean_score.png")
     plt.clf()
 
 
 def train(config: Config, sound, maze):
-    train_conv(config, sound)
+    train_conv(config, sound, maze)
 
 
-def train_conv(config: Config, sound, maze = None):
+def train_conv(config: Config, sound, maze):
     done = False
     agent = ConvDQNAgent(config)
     save_all_information(config, agent)
-    #agent.epsilon = 0.36
+    #agent.epsilon = 0.01
     #agent.load(config.neural.output_dir + config.neural.weights_path)
     mean_life_time = []
     mean_score = []
-    max_score = 0
+    mean_reward = []
+    
     t1 = time()
     action = Direction.WEST
 
-    for e in tqdm.tqdm(range(config.neural.episodes)):
+    for e in range(config.neural.episodes):
+        # Choose a different maze every 100 episodes
+        if e % 100 == 0:
+            maze = Maze(MAZES_PATH + "maze" + str(e // 100) + ".txt")
         game = create_game(config, sound, maze)
         state = game.get_conv_state()
-        # state = game.get_conv_state()          
+        reward_sum = 0
         for t in range(2000):
             action = agent.act(state)
-            
             next_state, reward, done = game.step(action)
-            reward = -1 if done else reward
-            if game.is_game_won():
-                reward = 100
-            # visualize_array(state)
+            reward_sum += reward
+
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             if done:
@@ -95,7 +88,9 @@ def train_conv(config: Config, sound, maze = None):
                     f"Episode: {e}/{config.neural.episodes}, Durée de vie moyenne: {t}, epsilon: {agent.epsilon:.2}")
                 mean_life_time.append(t)
                 mean_score.append(game.get_score())
+                mean_reward.append(reward_sum)
                 break
+
         if mean_life_time and mean_score:
             print(mean_life_time[-10:])
             print(
@@ -103,12 +98,16 @@ def train_conv(config: Config, sound, maze = None):
             print(
                 f"Score moyen sur les 10 derniers episodes: {sum(mean_score[-10:])/len(mean_score[-10:])}"
             )
+            print(
+                f"Reward moyen sur les 10 derniers episodes: {sum(mean_reward[-10:])/len(mean_reward[-10:])}"
+            )
         print(f"Temps écoulé: {round(time() - t1, 2)}s")
+
         if len(agent.memory) > config.neural.batch_size:
             agent.replay()
-        if e % 100 == 0:
-            # Save model and training data
-            save_plot_data(mean_life_time, mean_score)
+
+        if e % 50 == 0:
+            save_plot_data(mean_life_time, mean_score, mean_reward)
             agent.save(f"{config.neural.output_dir}weights_" +
                        '{:04d}'.format(e) + ".hdf5")
 
@@ -118,7 +117,6 @@ def play(config: Config, sound, maze):
     agent.load(config.neural.output_dir + config.neural.weights_path)
     game = Game(config, sound, maze)
     state = game.get_conv_state()
-    # state = game.get_conv_state()
     done = False
     while not done:
         action = agent.act(state)

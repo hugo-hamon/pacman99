@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..ai.neural_network.test_conv2d import ConvDQNAgent, get_move
+from ..ai.neural_network.convDQNAgent import ConvDQNAgent, get_move
 from ..ai.policy_agent.policy_agent import get_policy_agent_move
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
@@ -14,11 +14,10 @@ from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
-import tensorflow as tf
-from math import dist
 from PIL import Image
 import numpy as np
-from math import distimport random
+from math import dist
+import random
 
 if TYPE_CHECKING:
     from ..ai.neural_mask.mask import Mask
@@ -271,12 +270,12 @@ class Game:
 
     # NEURAL NETWORK RELATED METHODS
 
-    def get_conv_state(self, full_size: bool = False, size: int = 5):
+    def get_conv_state(self, full_size: bool = False, size: int = 7):
         """Return the state of the game for the convolutional neural network"""
         if full_size:
             return np.array(self.get_image())
         else:
-            return np.array(self.get_crop_image(size))
+            return np.array(self.get_crop_image2(size))
 
     def get_image(self):
         """Return the image of the game"""
@@ -298,35 +297,6 @@ class Game:
 
         return Image.fromarray(env, 'RGB')
 
-    def get_crop_image(self, size: int):
-        """Return the image of the game with a size centered on the pacman"""
-        length = size * 2 + 1
-        env = np.zeros((length, length, 3), dtype=np.uint8)
-        pac_x, pac_y = self.pacman.get_position()
-        pac_x = round(pac_x)
-        pac_y = round(pac_y)
-        # Set the path to white
-        env[self.maze.get_wall_size_matrix(
-            pac_x, pac_y, size) == 0] = (255, 255, 255)
-        # Set the dots to yellow
-        env[self.maze.get_dot_size_matrix(
-            pac_x, pac_y, size) == 1] = (255, 255, 0)
-        # Set the super dots to blue
-        env[self.maze.get_superdot_size_matrix(
-            pac_x, pac_y, size) == 1] = (0, 0, 255)
-        # Set the pacman to red
-        env[size, size] = (255, 0, 0)
-        # Set the ghosts to green
-        for ghost in self.ghosts:
-            ghost_x, ghost_y = ghost.get_position()
-            ghost_x = round(ghost_x)
-            ghost_y = round(ghost_y)
-            if abs(ghost_x - pac_x) <= size and abs(ghost_y - pac_y) <= size:
-                env[size + ghost_y - pac_y, size +
-                    ghost_x - pac_x] = (0, 255, 0)
-
-        return Image.fromarray(env, 'RGB')
-
     def get_crop_image2(self, size: int):
         """Return the image of the game with a size centered on the pacman"""
         length = size * 2 + 1
@@ -334,18 +304,21 @@ class Game:
         pac_x, pac_y = self.pacman.get_position()
         pac_x = round(pac_x)
         pac_y = round(pac_y)
-        # Set the path to white
+        # Set the path 
         env[self.maze.get_wall_size_matrix(
-            pac_x, pac_y, size) == 0] = (1, 0, 0, 0, 0)
-        # Set the dots to yellow
+            pac_x, pac_y, size) == 0] = [1, 0, 0, 0, 0]
+        # Set the dots 
         env[self.maze.get_dot_size_matrix(
-            pac_x, pac_y, size) == 1] = (0, 1, 0, 0, 0)
-        # Set the super dots to blue
+            pac_x, pac_y, size) == 1] = [0, 1, 0, 0, 0]
+        # Set the super dots 
         env[self.maze.get_superdot_size_matrix(
-            pac_x, pac_y, size) == 1] = (0, 1, 1, 0, 0)
-        # Set the pacman to red
-        env[size, size] = (0, 0, 0, 1, 0)
-        # Set the ghosts to green
+            pac_x, pac_y, size) == 1] = [0, 1, 1, 0, 0]
+        # Set the pacman 
+        env[size, size] = [0, 0, 0, 1, 0]
+        # Set if pacman is super
+        if self.super_mode_timer > 0:
+            env[size, size] = [0, 0, 1, 1, 0]
+        # Set the ghosts 
         for ghost in self.ghosts:
             ghost_x, ghost_y = ghost.get_position()
             ghost_x = round(ghost_x)
@@ -353,6 +326,9 @@ class Game:
             if abs(ghost_x - pac_x) <= size and abs(ghost_y - pac_y) <= size:
                 env[size + ghost_y - pac_y, size +
                     ghost_x - pac_x] = [0, 0, 0, 0, 1]
+                # Set the ghost direction
+                env[size + ghost_y - pac_y, size +
+                    ghost_x - pac_x][ghost.direction.value] = 1
         return np.array(env)
     
     def get_state(self) -> np.ndarray:
@@ -383,14 +359,28 @@ class Game:
     def get_reward(self) -> int:
         """Return the reward of the game
         A good reward is between -1 and 1"""
+        # Initialisation de certaines variables
         pac_x, pac_y = self.pacman.get_position()
         distance = 0
+        min_distance = np.inf
         for ghost in self.ghosts:
             ghost_x, ghost_y = ghost.get_position()
-            distance += dist((pac_x, pac_y), (ghost_x, ghost_y))
+            pacman_dist_to_ghost = dist((pac_x, pac_y), (ghost_x, ghost_y))
+            distance += pacman_dist_to_ghost
+            if pacman_dist_to_ghost < min_distance:
+                min_distance = pacman_dist_to_ghost
+        # On veut induire un comportement à pacman via la récompense :
+        # Si Pacman meurt
+        if self.pacman.get_lives() != self.config.game.pacman_lives:
+            return -1
+        # Si fantome trop proche
+        if min_distance < 3:
+            return -0.4
+        # Si score augmente
         if self.score - self.previous_score > 0:
             return 1
-        return distance / 100
+        # On veut que pacman s'éloigne des fantômes
+        return distance / 500
 
     def step(self, action: Direction):
         """Update the game with an action and return the next state, the reward and if the game is over"""
@@ -398,7 +388,7 @@ class Game:
         self.pacman.set_next_direction(action)
         for _ in range(self.config.graphics.fps // 4):
             self.update()
-        next_state = self.get_state()
+        next_state = self.get_conv_state()
         reward = self.get_reward()
         done = self.pacman.get_lives() != self.config.game.pacman_lives or self.is_game_won()
         return next_state, reward, done

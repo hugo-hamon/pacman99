@@ -1,5 +1,4 @@
 from ..game.maze.random_maze_factory import RandomMazeFactory
-from ..ai.neural_network import function2
 from ..ai.neural_mask.neural_mask import NeuralMask
 from ..ai.neural_network import function
 from ..ai.genetic.genetic import Genetic
@@ -29,7 +28,7 @@ class App:
         game = Game(config=self.config, sounds=sounds, maze=maze)
         
         self.launch_policy(sounds)
-        self.launch_neural(sounds)
+        self.launch_neural(sounds, maze)
         self.launch_genetic(sounds, maze)
         self.launch_neural_mask(sounds, maze)
         self.run_graphics(sounds, game)
@@ -39,10 +38,10 @@ class App:
         if self.config.policy.train_enable:
             policy_train.train(self.config, sounds)
 
-    def launch_neural(self, sounds: Sounds) -> None:
-        """Launch neural"""
+    def launch_neural(self, sounds: Sounds, maze) -> None:
+        """Launch neural with a specific preloaded maze"""
         if self.config.neural.train_enable:
-            function.train(self.config, sounds)
+            function.train(self.config, sounds, maze)
 
     def launch_genetic(self, sounds: Sounds, maze: Maze) -> None:
         """Launch genetic"""
@@ -64,7 +63,11 @@ class App:
             graphic = Graphic(config=self.config, game=game, sounds=sounds)
             graphic.start()
             
-
-    def reset(self) -> None:
-        """Reset the app"""
-        pass
+    def generate_mazes(self) -> None:
+        """Generate 100 random mazes with same configuration but different seeds"""
+        generator = RandomMazeFactory(self.config)
+        for i in range(100):
+            self.config.maze.random_maze_path = f'assets/data/mazes/maze{i}.txt'
+            generator.new_seed()
+            generator.create()
+    

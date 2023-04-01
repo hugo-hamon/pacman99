@@ -2,38 +2,35 @@ Parametres du reseau de neurones:
 
 Episode max: 100001
 Batch size: 64
-Learning rate: 0.008
+Learning rate: 0.001
 Epsilon decay: 0.999
 Epsilon min: 0.01
-Model: "sequential"
+Model: "sequential_1"
 _________________________________________________________________
  Layer (type)                Output Shape              Param #   
 =================================================================
- conv2d (Conv2D)             (None, 10, 10, 32)        416       
+ conv2d_4 (Conv2D)           (None, 13, 13, 64)        2944      
                                                                  
- conv2d_1 (Conv2D)           (None, 9, 9, 128)         16512     
+ conv2d_5 (Conv2D)           (None, 11, 11, 128)       73856     
                                                                  
- conv2d_2 (Conv2D)           (None, 8, 8, 256)         131328    
+ max_pooling2d_2 (MaxPooling  (None, 5, 5, 128)        0         
+ 2D)                                                             
                                                                  
- max_pooling2d (MaxPooling2D  (None, 4, 4, 256)        0         
- )                                                               
+ conv2d_6 (Conv2D)           (None, 4, 4, 256)         131328    
                                                                  
- conv2d_3 (Conv2D)           (None, 3, 3, 64)          65600     
+ max_pooling2d_3 (MaxPooling  (None, 2, 2, 256)        0         
+ 2D)                                                             
                                                                  
- flatten (Flatten)           (None, 576)               0         
+ conv2d_7 (Conv2D)           (None, 1, 1, 64)          65600     
                                                                  
-<<<<<<< HEAD
- dense (Dense)               (None, 64)                36928     
+ flatten_1 (Flatten)         (None, 64)                0         
                                                                  
- dense_1 (Dense)             (None, 4)                 260       
-=======
- dense_7 (Dense)             (None, 64)                36928     
+ dense_7 (Dense)             (None, 64)                4160      
                                                                  
  dense_8 (Dense)             (None, 4)                 260       
->>>>>>> 0c962bc424b0368befb7c78ec0723b946b73df81
                                                                  
 =================================================================
-Total params: 251,044
-Trainable params: 251,044
+Total params: 278,148
+Trainable params: 278,148
 Non-trainable params: 0
 _________________________________________________________________
