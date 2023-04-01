@@ -7,7 +7,7 @@ from ...graphics.sounds import Sounds
 MOVES = ["n", "s", "e", "w"]
 
 def clone(father: Individual) -> Individual:
-    """Breed two individuals to create a new individual."""
+    """Create a new individual from another one."""
     moves = father.get_genes()[:]
     child = Individual()
     child.set_genes(moves)

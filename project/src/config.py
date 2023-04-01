@@ -56,6 +56,18 @@ class Genetic:
 
 
 @dataclass
+class NeuralMask:
+    neural_mask_enable: bool
+    mask_path: str
+    population_size: int
+    graded_retain_percentage: float
+    mutation_chance: float
+    mask_size: int
+    max_network: int
+    max_neurons_per_network: int
+
+
+@dataclass
 class Neural:
     train_enable: bool
     play_enable: bool
@@ -87,6 +99,7 @@ class Config:
     game: GameConfig
     maze: MazeGenerationConfig
     genetic: Genetic
+    neural_mask: NeuralMask
     neural: Neural
     policy: Policy
 

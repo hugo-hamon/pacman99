@@ -71,6 +71,16 @@ class Graphic:
                 if event.type == pg.KEYDOWN:
                     self.__process_key_event(event)
 
+            # policy agent
+            """
+            if k % 5 == 0:
+                self.game.play_policy_agent_move()
+            k += 1
+            """
+
+            # a star
+            self.game.play_a_star_move()
+
             # Update the game
             if self.config.neural.play_enable:
                 self.game.play_neural_move()

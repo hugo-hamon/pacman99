@@ -108,6 +108,7 @@ class ConvDQNAgent:
         X = np.array(X) / MAX_COLOR_VALUE
         self.model.fit(X, np.array(y), batch_size=self.config.neural.batch_size,
                        epochs=1, verbose="0")
+
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 

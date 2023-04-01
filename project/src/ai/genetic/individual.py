@@ -43,11 +43,11 @@ class Individual:
 
     def get_fitness(self, explore: bool = True) -> float:
         """Get the fitness of the individual."""
-        if explore :
+        if explore:
             return self.score + self.distance - (self.dead * 10000) + (self.won * 200000)
-        else :
-            return self.score - self.distance - (self.dead * 10000) + (self.won * 200000) 
-        
+        else:
+            return self.score - self.distance - (self.dead * 10000) + (self.won * 200000)
+
     # Commands
     def set_genes(self, genes: str) -> None:
         """Set the genes of the individual."""
@@ -78,7 +78,8 @@ class Individual:
         index2 = randint(0, len(self.genes) - 1)
         gene1 = self.genes[index1]
         gene2 = self.genes[index2]
-        self.genes = self.genes[:index1] + gene2 + self.genes[index1 + 1:index2] + gene1 + self.genes[index2 + 1:]
+        self.genes = self.genes[:index1] + gene2 + \
+            self.genes[index1 + 1:index2] + gene1 + self.genes[index2 + 1:]
 
     def __mutate_by_invert_order(self) -> None:
         '''Mutate the individual by inverting the order of the genes.'''
@@ -88,7 +89,8 @@ class Individual:
         index2 = randint(0, len(self.genes) - 1)
         if index1 > index2:
             index1, index2 = index2, index1
-        self.genes = self.genes[:index1] + self.genes[index1:index2][::-1] + self.genes[index2:]
+        self.genes = self.genes[:index1] + \
+            self.genes[index1:index2][::-1] + self.genes[index2:]
 
     def play(self, config: Config, sounds: Sounds, maze: Maze) -> None:
         """Play the game with the individual."""

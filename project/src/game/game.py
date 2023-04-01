@@ -1,20 +1,29 @@
 from __future__ import annotations
 from ..ai.neural_network.test_conv2d import ConvDQNAgent, get_move
+from ..ai.policy_agent.policy_agent import get_policy_agent_move
 from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from ..ai.policy.agent import Agent, get_policy_move
+from typing import List, Tuple, Union, TYPE_CHECKING
 from .entities.ghost.ghoststate import Ghoststate
 from .entities.ghost.ghost import GeneralGhost
+from ..ai.tree_agent.tree_agent import a_star
 from .maze.components import Components
-from typing import List, Tuple, Union
 from ..graphics.sounds import Sounds
 from .entities.pacman import Pacman
 from .direction import Direction
 from .maze.maze import Maze
 from ..config import Config
+import tensorflow as tf
+from math import dist
 from PIL import Image
 import numpy as np
-from math import dist
+from math import distimport random
+
+if TYPE_CHECKING:
+    from ..ai.neural_mask.mask import Mask
+
+
 DOT_SCORE = 1
 SUPER_DOT_SCORE = 2
 GHOST_SCORE = 2
@@ -45,9 +54,14 @@ class Game:
         self.policy_agent = Agent(
             config.policy.alpha, config.policy.gamma, config.policy.n_actions)
         if config.policy.play_enable:
+            self.policy_agent.policy(tf.convert_to_tensor(
+                np.random.random((1, 225)), dtype=tf.float32))
             self.policy_agent.policy.load_weights(
                 config.policy.output_dir + config.policy.weights_path
             )
+
+        # algorithme a*
+        self.current_dot = (-1, -1)
 
     # REQUESTS
     def is_game_over(self) -> bool:
@@ -110,10 +124,6 @@ class Game:
         self.eat_dot()
         self.pacman_tp()
         self.ghosts_tp()
-        if self.pacman.get_lives() == 0:
-            print("You lost")
-        if self.is_game_won():
-            print("You won")
 
     def respawn_pacman(self):
         self.pacman.set_position(self.maze.get_pacman_start())
@@ -197,11 +207,10 @@ class Game:
         """Check if the pacman collide with a ghost"""
         if ghost.state == Ghoststate.EATEN:
             return False
-        pacman_position = (round(self.pacman.get_position()[0]), round(
-            self.pacman.get_position()[1]))
-        ghost_position = (round(ghost.get_position()[0]), round(
-            ghost.get_position()[1]))
-        return pacman_position == ghost_position
+        pacman_position = self.pacman.get_position(
+        )[0], self.pacman.get_position()[1]
+        ghost_position = ghost.get_position()[0], ghost.get_position()[1]
+        return dist(pacman_position, ghost_position) < 1
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""
@@ -235,6 +244,8 @@ class Game:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.CHASE)
 
+    # GENETIC RELATED METHODS
+
     def read_movement(self) -> str:
         """Read the movement of the pacman"""
         with open(self.config.genetic.move_path, "r") as file:
@@ -257,6 +268,8 @@ class Game:
             self.update()
             if self.pacman.get_lives() != self.config.game.pacman_lives:
                 break
+
+    # NEURAL NETWORK RELATED METHODS
 
     def get_conv_state(self, full_size: bool = False, size: int = 5):
         """Return the state of the game for the convolutional neural network"""
@@ -414,13 +427,135 @@ class Game:
         """Update the game with an action and return the next state, the reward and if the game is over"""
         self.previous_score = self.score
         self.pacman.set_next_direction(Direction(action))
-        for _ in range(10):
+        for _ in range(20):
             self.update()
         if self.score == self.previous_score:
-            self.score -= 0.1
+            self.score += 0.1
         next_state = self.get_policy_state()
         reward = self.get_policy_reward()
         done = self.pacman.get_lives() != self.config.game.pacman_lives or self.is_game_won()
         if done:
-            reward = 10 if self.is_game_won() else -1
+            reward = 10 if self.is_game_won() else -5
         return next_state, reward, done
+
+    # MASK RELATED METHODS
+
+    def run_with_mask(self, mask: Mask) -> Tuple[int, int, bool, bool]:
+        """Play a game with a mask"""
+        while not self.is_game_over():
+            state = self.get_mask_state()
+            action = mask.get_move(state)
+            self.pacman.set_next_direction(action)
+            for _ in range(20):
+                self.update()
+
+        return self.pacman.get_distance(), self.score, self.pacman.get_lives() != self.config.game.pacman_lives, self.is_game_won()
+
+    def get_mask_state(self) -> np.ndarray:
+        """Return the state of the game with a mask"""
+        length = self.config.neural_mask.mask_size
+        env = np.zeros((length, length), dtype=np.uint8)
+        pac_x, pac_y = self.pacman.get_position()
+        pac_x = round(pac_x)
+        pac_y = round(pac_y)
+        # Set the path
+        env[self.maze.get_wall_size_matrix(
+            pac_x, pac_y, length // 2) == 0] = 1
+        # Set the dots
+        env[self.maze.get_dot_size_matrix(
+            pac_x, pac_y, length // 2) == 1] = 2
+        # Set the super dots
+        env[self.maze.get_superdot_size_matrix(
+            pac_x, pac_y, length // 2) == 1] = 3
+        # Set the ghosts
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            ghost_x = round(ghost_x)
+            ghost_y = round(ghost_y)
+            if abs(ghost_x - pac_x) <= length // 2 and abs(ghost_y - pac_y) <= length // 2:
+                env[length // 2 + ghost_y - pac_y, length // 2 +
+                    ghost_x - pac_x] = 4
+
+        return env
+
+    def get_policy_agent_state(self, radius: int = 3) -> np.ndarray:
+        """return a matrix representing the game for policy_agent"""
+        ghostvalue = 5
+        x, y = np.array(
+            np.floor(np.array(self.pacman.get_position()) + 0.5), dtype=int)
+        # Changer default_value entre Components.WALL et Components.EMPTY
+        # pour changer le comportement
+        state = self.maze.get_area(
+            x, y, radius, default_value=Components.EMPTY) - 1
+        for i in self.ghosts:
+            if i.state not in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
+                gx, gy = np.array(
+                    np.floor(np.array(i.get_position()) + 0.5), dtype=int)
+                if np.abs(gx - x) <= radius and np.abs(gy - y) <= radius:
+                    state[gy - y + radius, gx - x + radius] = -ghostvalue
+        return state
+
+    def play_policy_agent_move(self) -> None:
+        """Play a move with the policy agent"""
+        move = get_policy_agent_move(self.get_policy_agent_state())
+        self.pacman.set_next_direction(move)
+
+    # A* methods
+    def get_neighbours(self, pos: Tuple[int, int]) -> List[Tuple[int, int]]:
+        """Return the neighbours of a position"""
+        neighbours = self.maze.get_area(
+            pos[0], pos[1], 1, default_value=Components.EMPTY)
+        for ghost in self.ghosts:
+            if ghost.state not in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
+                ghost_x, ghost_y = ghost.get_position()
+                ghost_x = round(ghost_x)
+                ghost_y = round(ghost_y)
+                if abs(ghost_x - pos[0]) <= 1 and abs(ghost_y - pos[1]) <= 1:
+                    neighbours[ghost_y - pos[1] + 1, ghost_x - pos[0] + 1] = 0
+        four_neighbours = []
+        if neighbours[0, 1] != 0:
+            four_neighbours.append((pos[0], pos[1] - 1))
+        if neighbours[2, 1] != 0:
+            four_neighbours.append((pos[0], pos[1] + 1))
+        if neighbours[1, 0] != 0:
+            four_neighbours.append((pos[0] - 1, pos[1]))
+        if neighbours[1, 2] != 0:
+            four_neighbours.append((pos[0] + 1, pos[1]))
+        return four_neighbours
+
+    def get_move_by_pos(self, pos: Tuple[int, int]) -> Direction:
+        """Return the direction to go to a position"""
+        if pos[0] < self.pacman.get_position()[0]:
+            return Direction.WEST
+        elif pos[0] > self.pacman.get_position()[0]:
+            return Direction.EAST
+        elif pos[1] < self.pacman.get_position()[1]:
+            return Direction.NORTH
+        else:
+            return Direction.SOUTH
+        
+
+    def get_nearest_point(self, pac_x: int, pac_y: int) -> Tuple[int, int]:
+        """Return the nearest dot if there is no ghost around in a radius of 3 else return a random dot"""
+        dots = self.maze.get_dot_position()
+        if len(dots) == 0:
+            return (-1, -1)
+        dots.sort(key=lambda x: np.sqrt((x[0] - pac_x) ** 2 + (x[1] - pac_y) ** 2))
+        for dot in dots:
+            distances = [np.sqrt((dot[0] - ghost.get_position()[0]) ** 2 + (dot[1] - ghost.get_position()[1]) ** 2) for ghost in self.ghosts]
+            if min(distances) > 3:
+                return dot
+        return random.choice(dots)
+
+    def choose_point(self, pac_x: int, pac_y: int) -> None:
+        self.current_dot = self.get_nearest_point(pac_x, pac_y)
+
+    def play_a_star_move(self) -> None:
+        pac_x, pac_y = self.pacman.get_position()
+        pac_x, pac_y = round(pac_x), round(pac_y)
+        self.choose_point(pac_x, pac_y)
+        new_pos = a_star((pac_x, pac_y), self.current_dot, self)
+        if len(new_pos) <= 1:
+            return
+        move = self.get_move_by_pos(new_pos[1])
+        self.pacman.set_next_direction(move)

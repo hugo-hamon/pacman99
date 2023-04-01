@@ -72,6 +72,7 @@ def train_conv(config: Config, sound, maze = None):
     #agent.load(config.neural.output_dir + config.neural.weights_path)
     mean_life_time = []
     mean_score = []
+    max_score = 0
     t1 = time()
     action = Direction.WEST
 

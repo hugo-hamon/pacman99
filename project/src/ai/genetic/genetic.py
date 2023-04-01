@@ -1,9 +1,8 @@
 from ...graphics.sounds import Sounds
+from ...game.maze.maze import Maze
 from .population import Population
 from .clone_pop import Clone_pop
 from ...config import Config
-from ...game.maze.maze import Maze
-from typing import List
 from time import time
 
 class Genetic:
@@ -26,7 +25,6 @@ class Genetic:
         start_time = time()
         while not self.population.is_solution_found() and \
                     gen_left != 0:
-            
             self.population.evolve_population()
             print("Generation: ", self.population.get_generation())
             gen_left -= 1

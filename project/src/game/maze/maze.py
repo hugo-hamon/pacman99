@@ -1,6 +1,7 @@
 from .components import Components
 from functools import lru_cache
 from typing import Tuple
+from typing import List
 import numpy as np
 import itertools
 
@@ -166,15 +167,20 @@ class Maze():
     def get_wall_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
         """Return a np.array of the wall matrix"""
         return self.get_area(c_x, c_y, radius, Components.WALL) == Components.WALL.value
-    
+
     def get_dot_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
         """Return a np.array of the dot matrix"""
         return self.get_area(c_x, c_y, radius) == Components.DOT.value
-    
+
     def get_superdot_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
         """Return a np.array of the superdot matrix"""
         return self.get_area(c_x, c_y, radius) == Components.SUPERDOT.value
-    
+
     def get_path_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
         """Return a np.array of the path matrix"""
         return self.get_area(c_x, c_y, radius) == Components.EMPTY.value
+
+    def get_dot_position(self) -> List[Tuple[int, int]]:
+        """Return a list of the dot position"""
+        return [(x, y) for x, y in itertools.product(range(self.width), range(self.height))
+                if self.maze[y, x] == Components.DOT or self.maze[y, x] == Components.SUPERDOT]

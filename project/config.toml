@@ -1,13 +1,13 @@
 [user]
 enable_graphics = true
-enable_random_maze = false
-menu_enable = false
+enable_random_maze = true
+menu_enable = true
 sound_enable = false
 
 [graphics]
 width = 720
 height = 720
-fps = 60
+fps = 120
 title = "PacMan"
 maze_path = "assets/data/maze.txt"
 
@@ -22,13 +22,13 @@ chase_duration = 20
 width = 15
 height = 15
 density = 0.8
-seed = -1
+seed = 1
 intersection_step = 3
 is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = false
+genetic_enable = true
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.3
@@ -38,7 +38,7 @@ addition_chance = 0.80
 replacement_chance = 0.25
 selection_type = "tournament"
 population_type = ""
-max_generation = -1
+max_generation = 50
 
 [neural]
 train_enable = true
@@ -54,7 +54,7 @@ learning_rate = 0.008
 [policy]
 train_enable = false
 play_enable = false
-alpha = 0.0001
+alpha = 0.001
 gamma = 0.997
 n_actions = 4
 episodes = 100001
