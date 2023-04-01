@@ -4,6 +4,8 @@ from ..graphics.graphic_game import GraphicGame
 from ..ai.genetic.genetic import Genetic
 from ..graphics.sounds import Sounds
 from .geneticGame import GeneticGame
+from ..ai.dqn.function import train
+from .dqn_game import DQNGame
 from .maze.maze import Maze
 from ..config import Config
 from .game import Game
@@ -28,10 +30,14 @@ class App:
 
         if self.config.genetic.genetic_enable:
             self.run_genetic_game(maze, sounds)
-
+        
         # TODO: Changer ca par une classe qui gere les mouvements du joueur
         genetic_iterator = GeneticIterator()
         genetic_iterator.set_moves("eeeennnn")
+
+        if self.config.dqn.dqn_enable:
+            self.run_dqn_game(maze, sounds)
+        
         if self.config.user.enable_graphics:
             game = GraphicGame(
                 config=self.config, sounds=sounds, maze=maze, control_func=genetic_iterator.getNextMove
@@ -52,11 +58,15 @@ class App:
         else:
             genetic = Genetic(self.config, maze)
         genetic.run()
-
+    
     def read_movement(self) -> str:
         with open(self.config.genetic.move_path, "r") as f:
             return f.read()
 
-    def reset(self) -> None:
-        """Reset the app"""
-        pass
+    # DQN
+    def run_dqn_game(self, maze: Maze, sounds: Sounds) -> None:
+        if self.config.user.enable_graphics:
+            dqn = DQNGame(self.config, maze, sounds)
+            dqn.run()
+        else:
+            train(self.config, maze)

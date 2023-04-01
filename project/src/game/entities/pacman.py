@@ -92,7 +92,20 @@ class Pacman(Entities):
         return Direction.NONE
 
     def _get_next_direction(self):
-        return self.control_func()
+        # === A verifier ===
+        position = self.get_position()
+        area = self.maze.get_neighbors(round(position[0]), round(position[1]))
+        new_direction = self.control_func()
+        check = tuple(
+            map(operator.add, new_direction.to_vector(), (1, 1)))
+        if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and new_direction != Direction.NONE:
+            return new_direction
+        elif self.is_wall(new_direction):
+            self.next_direction = Direction.NONE
+            return Direction.NONE
+
+        # === A verifier ===
+        return new_direction
 
     # TODO Déplacer dans playerGame
     """

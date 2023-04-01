@@ -11,9 +11,9 @@ from .maze.maze import Maze
 from ..config import Config
 import math
 
-DOT_SCORE = 100
-SUPER_DOT_SCORE = 500
-GHOST_SCORE = 200
+DOT_SCORE = 1
+SUPER_DOT_SCORE = 2
+GHOST_SCORE = 2
 
 
 class Game(EventBroadcast):
@@ -203,4 +203,10 @@ class Game(EventBroadcast):
             self.update()
 
     def get_direction(self):
+        """Return the direction for pacman"""
         return self.control_func(self)
+
+    def step(self, step: int) -> None:
+        """Update the game step times"""
+        for _ in range(step):
+            self.update()

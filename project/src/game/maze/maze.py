@@ -1,6 +1,5 @@
 from .components import Components
-from functools import lru_cache
-from typing import Tuple
+from typing import Tuple, List
 import numpy as np
 import itertools
 
@@ -131,3 +130,57 @@ class Maze():
         """Reset the maze to the initial state"""
         self.maze = self.begin_maze.copy()
         self.remain_dots = self.total_dots
+
+    def get_area(self, x: int, y: int, radius: int, default_value: Components = Components.EMPTY) -> np.ndarray:
+        """Return a np.array of the area of the cell (x,y)"""
+        area = np.zeros((radius * 2 + 1, radius * 2 + 1), dtype=int)
+        for j, i in itertools.product(range(-radius, radius + 1), range(-radius, radius + 1)):
+            area[i + radius, j + radius] = (
+                default_value.value
+                if x + j < 0
+                or x + j >= self.width
+                or y + i < 0
+                or y + i >= self.height
+                else self.maze[y + i, x + j].value
+            )
+        return area
+
+    # for the convolutional neural network
+    def get_wall_matrix(self) -> np.ndarray:
+        """Return a np.array of the wall matrix"""
+        return np.array(self.maze == Components.WALL, dtype=int)
+
+    def get_dot_matrix(self) -> np.ndarray:
+        """Return a np.array of the dot matrix"""
+        return np.array(self.maze == Components.DOT, dtype=int)
+
+    def get_superdot_matrix(self) -> np.ndarray:
+        """Return a np.array of the superdot matrix"""
+        return np.array(self.maze == Components.SUPERDOT, dtype=int)
+
+    def get_path_matrix(self) -> np.ndarray:
+        """Return a np.array of the path matrix"""
+        return np.array(self.maze == Components.EMPTY, dtype=int)
+
+    def get_wall_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
+        """Return a np.array of the wall matrix"""
+        return self.get_area(c_x, c_y, radius, Components.WALL) == Components.WALL.value
+
+    def get_dot_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
+        """Return a np.array of the dot matrix"""
+        return self.get_area(c_x, c_y, radius) == Components.DOT.value
+
+    def get_superdot_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
+        """Return a np.array of the superdot matrix"""
+        return self.get_area(c_x, c_y, radius) == Components.SUPERDOT.value
+
+    def get_path_size_matrix(self, c_x: int, c_y: int, radius: int) -> np.ndarray:
+        """Return a np.array of the path matrix"""
+        return self.get_area(c_x, c_y, radius) == Components.EMPTY.value
+
+    def get_dot_position(self) -> List[Tuple[int, int]]:
+        """Return a list of the dot position"""
+        return [
+            (x, y) for x, y in itertools.product(range(self.width), range(self.height))
+            if self.maze[y, x] in [Components.DOT, Components.SUPERDOT]
+        ]

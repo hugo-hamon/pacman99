@@ -50,7 +50,18 @@ class Genetic:
     addition_chance: float
     replacement_chance: float
     selection_type: str
-    
+
+@dataclass
+class dqn:
+    dqn_enable : bool
+    output_dir: str
+    weights_path: str
+    state_size: int
+    action_size: int
+    batch_size: int
+    episodes: int
+    learning_rate: float
+
 @dataclass
 class Config:
     user: UserConfig
@@ -58,6 +69,7 @@ class Config:
     game: GameConfig
     maze: MazeGenerationConfig
     genetic: Genetic
+    dqn: dqn
 
 
 def load_config(config_path: str) -> Config:
