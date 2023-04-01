@@ -90,7 +90,7 @@ def play(config: Config, sound):
         n_actions=config.policy.n_actions
     )
 
-    agent.policy.load_weights("assets/model_output/policy_last.h5")
+    agent.policy.load_weights("assets/model_output/policy_50.h5")
 
     game = create_game(config, sound)
     done = False

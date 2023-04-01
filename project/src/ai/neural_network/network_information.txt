@@ -2,58 +2,32 @@ Parametres du reseau de neurones:
 
 Episode max: 100001
 Batch size: 64
-<<<<<<< HEAD
-Learning rate: 0.0015
-Epsilon decay: 0.9995
-=======
-Learning rate: 0.03
+Learning rate: 0.008
 Epsilon decay: 0.999
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
 Epsilon min: 0.01
-Model: "sequential_1"
+Model: "sequential"
 _________________________________________________________________
  Layer (type)                Output Shape              Param #   
 =================================================================
-<<<<<<< HEAD
- conv2d_4 (Conv2D)           (None, 11, 11, 64)        4864      
+ conv2d (Conv2D)             (None, 10, 10, 32)        416       
                                                                  
- conv2d_5 (Conv2D)           (None, 10, 10, 128)       32896     
+ conv2d_1 (Conv2D)           (None, 9, 9, 128)         16512     
                                                                  
- conv2d_6 (Conv2D)           (None, 9, 9, 256)         131328    
-=======
- conv2d_4 (Conv2D)           (None, 10, 10, 32)        416       
+ conv2d_2 (Conv2D)           (None, 8, 8, 256)         131328    
                                                                  
- conv2d_5 (Conv2D)           (None, 9, 9, 128)         16512     
+ max_pooling2d (MaxPooling2D  (None, 4, 4, 256)        0         
+ )                                                               
                                                                  
- conv2d_6 (Conv2D)           (None, 8, 8, 256)         131328    
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
+ conv2d_3 (Conv2D)           (None, 3, 3, 64)          65600     
                                                                  
- max_pooling2d_1 (MaxPooling  (None, 4, 4, 256)        0         
- 2D)                                                             
+ flatten (Flatten)           (None, 576)               0         
                                                                  
-<<<<<<< HEAD
- conv2d_7 (Conv2D)           (None, 3, 3, 128)         131200    
+ dense (Dense)               (None, 64)                36928     
                                                                  
- flatten_1 (Flatten)         (None, 1152)              0         
-                                                                 
- dense_2 (Dense)             (None, 64)                73792     
-=======
- conv2d_7 (Conv2D)           (None, 3, 3, 64)          65600     
-                                                                 
- flatten_1 (Flatten)         (None, 576)               0         
-                                                                 
- dense_2 (Dense)             (None, 64)                36928     
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
-                                                                 
- dense_3 (Dense)             (None, 4)                 260       
+ dense_1 (Dense)             (None, 4)                 260       
                                                                  
 =================================================================
-<<<<<<< HEAD
-Total params: 374,340
-Trainable params: 374,340
-=======
 Total params: 251,044
 Trainable params: 251,044
->>>>>>> 6f81a4663292e419673ecb7af6353d90b60339f2
 Non-trainable params: 0
 _________________________________________________________________

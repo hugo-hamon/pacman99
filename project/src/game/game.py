@@ -14,7 +14,7 @@ from .maze.maze import Maze
 from ..config import Config
 from PIL import Image
 import numpy as np
-
+from math import dist
 DOT_SCORE = 1
 SUPER_DOT_SCORE = 2
 GHOST_SCORE = 2
@@ -314,17 +314,78 @@ class Game:
 
         return Image.fromarray(env, 'RGB')
 
+    def get_crop_image2(self, size: int):
+        """Return the image of the game with a size centered on the pacman"""
+        length = size * 2 + 1
+        env = np.zeros((length, length, 5), dtype=np.uint8)
+        pac_x, pac_y = self.pacman.get_position()
+        pac_x = round(pac_x)
+        pac_y = round(pac_y)
+        # Set the path to white
+        env[self.maze.get_wall_size_matrix(
+            pac_x, pac_y, size) == 0] = (1, 0, 0, 0, 0)
+        # Set the dots to yellow
+        env[self.maze.get_dot_size_matrix(
+            pac_x, pac_y, size) == 1] = (0, 1, 0, 0, 0)
+        # Set the super dots to blue
+        env[self.maze.get_superdot_size_matrix(
+            pac_x, pac_y, size) == 1] = (0, 1, 1, 0, 0)
+        # Set the pacman to red
+        env[size, size] = (0, 0, 0, 1, 0)
+        # Set the ghosts to green
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            ghost_x = round(ghost_x)
+            ghost_y = round(ghost_y)
+            if abs(ghost_x - pac_x) <= size and abs(ghost_y - pac_y) <= size:
+                env[size + ghost_y - pac_y, size +
+                    ghost_x - pac_x] = [0, 0, 0, 0, 1]
+        return np.array(env)
+    
+    def get_state(self) -> np.ndarray:
+        """Return various information about the game
+        Position of Pacman,
+        direction of pacman,
+        position, direction and distance of the four ghosts,
+        nb of remaining dots,
+        superdot mode timer,
+        Total parameters : 2 + 4 * 4 + 2 = 18
+        """
+        state = []
+        pac_x, pac_y = self.pacman.get_position()
+        state.append(self.pacman.get_direction().value)
+        state.append(pac_x)
+        state.append(pac_y)
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            state.append(ghost_x)
+            state.append(ghost_y)
+            state.append(ghost.get_direction().value)
+            state.append(dist((pac_x, pac_y), (ghost_x, ghost_y)))
+        state.append(self.maze.remain_dots)
+        state.append(self.super_mode_timer)
+        return np.array(state, dtype=np.float32)
+
+
     def get_reward(self) -> int:
-        """Return the reward of the game"""
-        return self.score - self.previous_score + 1
+        """Return the reward of the game
+        A good reward is between -1 and 1"""
+        pac_x, pac_y = self.pacman.get_position()
+        distance = 0
+        for ghost in self.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            distance += dist((pac_x, pac_y), (ghost_x, ghost_y))
+        if self.score - self.previous_score > 0:
+            return 1
+        return distance / 100
 
     def step(self, action: Direction):
         """Update the game with an action and return the next state, the reward and if the game is over"""
         self.previous_score = self.score
         self.pacman.set_next_direction(action)
-        for _ in range(self.config.graphics.fps // 3):
+        for _ in range(self.config.graphics.fps // 4):
             self.update()
-        next_state = self.get_conv_state()
+        next_state = self.get_state()
         reward = self.get_reward()
         done = self.pacman.get_lives() != self.config.game.pacman_lives or self.is_game_won()
         return next_state, reward, done

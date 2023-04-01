@@ -2,6 +2,7 @@ from ...game.maze.random_maze_factory import RandomMazeFactory
 from .test_conv2d import visualize_array
 from ...game.direction import Direction
 from .test_conv2d import ConvDQNAgent
+# from .DQNAgent import DQNAgent
 from ...game.maze.maze import Maze
 import matplotlib.pyplot as plt
 from ...game.game import Game
@@ -11,13 +12,13 @@ import numpy as np
 import random
 import tqdm
 
+# MEMORY LEAKED LIBRARIES
+import sys
+import gc
+from pympler import summary, muppy
 
-def create_game(config: Config, sound):
-    path = config.graphics.maze_path
-    if config.user.enable_random_maze:
-        RandomMazeFactory(config).create()
-        path = config.maze.random_maze_path
-    maze = Maze(path)
+
+def create_game(config: Config, sound, maze):
     return Game(config, sound, maze)
 
 
@@ -30,6 +31,17 @@ def save_all_information(config: Config, agent):
         f.write(f"Epsilon decay: {agent.epsilon_decay}\n")
         f.write(f"Epsilon min: {agent.epsilon_min}\n")
         agent.summary(f)
+
+
+def save_plot_data(mean_life_time, mean_score):
+    '''Save data about score and life time in text files'''
+    with open("src/ai/neural_network/mean_score_data.txt", "a") as f:
+        for i in mean_score:
+            f.write(f"{i}\n")
+
+    with open("src/ai/neural_network/mean_life_time_data.txt", "a") as f:
+        for i in mean_life_time:
+            f.write(f"{i}\n")
 
 
 def save_plot(mean_life_time, mean_score):
@@ -48,33 +60,33 @@ def save_plot(mean_life_time, mean_score):
     plt.clf()
 
 
-def train(config: Config, sound):
+def train(config: Config, sound, maze):
     train_conv(config, sound)
 
 
-def train_conv(config: Config, sound):
+def train_conv(config: Config, sound, maze = None):
     done = False
     agent = ConvDQNAgent(config)
     save_all_information(config, agent)
-    # agent.epsilon = 0.01
-    # agent.load(config.neural.output_dir + config.neural.weights_path)
+    #agent.epsilon = 0.36
+    #agent.load(config.neural.output_dir + config.neural.weights_path)
     mean_life_time = []
     mean_score = []
     t1 = time()
     action = Direction.WEST
 
     for e in tqdm.tqdm(range(config.neural.episodes)):
-        game = create_game(config, sound)
+        game = create_game(config, sound, maze)
         state = game.get_conv_state()
+        # state = game.get_conv_state()          
         for t in range(2000):
             action = agent.act(state)
-            # visualize_array(state)
+            
             next_state, reward, done = game.step(action)
-
-            reward = -10 if done else reward
+            reward = -1 if done else reward
             if game.is_game_won():
                 reward = 100
-
+            # visualize_array(state)
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             if done:
@@ -83,7 +95,6 @@ def train_conv(config: Config, sound):
                 mean_life_time.append(t)
                 mean_score.append(game.get_score())
                 break
-
         if mean_life_time and mean_score:
             print(mean_life_time[-10:])
             print(
@@ -92,13 +103,11 @@ def train_conv(config: Config, sound):
                 f"Score moyen sur les 10 derniers episodes: {sum(mean_score[-10:])/len(mean_score[-10:])}"
             )
         print(f"Temps écoulé: {round(time() - t1, 2)}s")
-        # save matplotlib graph
-        if e % 10 == 0:
-            save_plot(mean_life_time, mean_score)
         if len(agent.memory) > config.neural.batch_size:
             agent.replay()
-
-        if e % 50 == 0:
+        if e % 100 == 0:
+            # Save model and training data
+            save_plot_data(mean_life_time, mean_score)
             agent.save(f"{config.neural.output_dir}weights_" +
                        '{:04d}'.format(e) + ".hdf5")
 
@@ -108,6 +117,7 @@ def play(config: Config, sound, maze):
     agent.load(config.neural.output_dir + config.neural.weights_path)
     game = Game(config, sound, maze)
     state = game.get_conv_state()
+    # state = game.get_conv_state()
     done = False
     while not done:
         action = agent.act(state)
