@@ -77,52 +77,19 @@ class Pacman(Entities):
         self.move_list = move_list
         self.move_list_index = 0
 
-    # TODO Déplacer dans geneticManager
-    def get_next_valid_move(self) -> Direction:
-        """retourne la prochaine direction valide"""
-        while self.move_list_index < len(self.move_list):
-            self.direction = Direction.from_string(
-                self.move_list[self.move_list_index])
-            if self.is_wall(self.direction):
-                self.direction = Direction.NONE
-            self.move_list_index += 1
-            if self.direction != Direction.NONE:
-                self.distance += 1
-                return self.direction
-        return Direction.NONE
-
     def _get_next_direction(self):
-        # === A verifier ===
-        position = self.get_position()
-        area = self.maze.get_neighbors(round(position[0]), round(position[1]))
-        new_direction = self.control_func()
+        next_dir = self.control_func()
+        return self.valid_move(next_dir)
+    
+    def valid_move(self, dir: Direction) -> Direction:
+        pac_position = self.get_position()
+        pac_x = round(pac_position[0])
+        pac_y = round(pac_position[1])
+        area = self.maze.get_neighbors(pac_x, pac_y)
         check = tuple(
-            map(operator.add, new_direction.to_vector(), (1, 1)))
-        if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and new_direction != Direction.NONE:
-            return new_direction
-        elif self.is_wall(new_direction):
-            self.next_direction = Direction.NONE
+            map(operator.add, dir.to_vector(), (1, 1)))
+        if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and dir != Direction.NONE:
+            return dir
+        elif self.is_wall(dir):
             return Direction.NONE
-
-        # === A verifier ===
-        return new_direction
-
-    # TODO Déplacer dans playerGame
-    """
-    def _get_next_direction(self) -> Direction:
-        Get the next direction of the entity
-        position = self.get_position()
-        area = self.maze.get_neighbors(round(position[0]), round(position[1]))
-        check = tuple(
-            map(operator.add, self.next_direction.to_vector(), (1, 1)))
-        if self.move_list:
-            return self.get_next_valid_move()
-        if area[check[1]][check[0]] not in [Components.DOOR, Components.WALL] and self.next_direction != Direction.NONE:
-            self.direction = self.next_direction
-        elif self.is_wall(self.direction):
-            self.direction = Direction.NONE
-            self.next_direction = Direction.NONE
-        if self.direction != Direction.NONE:
-            self.distance += 1
-        return self.direction
-    """
+        return dir

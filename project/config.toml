@@ -1,5 +1,5 @@
 [user]
-enable_graphics = false
+enable_graphics = true
 enable_random_maze = true
 menu_enable = false
 sound_enable = true
@@ -39,11 +39,14 @@ replacement_chance = 0.15
 selection_type = "rank"
 
 [dqn]
-dqn_enable = true
+dqn_enable = false
 output_dir = "assets/model_output/pacman"
-weights_path = ""
+weights_path = "weights_0100.hdf5"
 state_size = 230
 action_size = 4
 batch_size = 64
 episodes = 100001
 learning_rate = 0.001
+
+[policy]
+policy_enable = true

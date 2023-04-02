@@ -5,6 +5,7 @@ from ..ai.genetic.genetic import Genetic
 from ..graphics.sounds import Sounds
 from .geneticGame import GeneticGame
 from ..ai.dqn.function import train
+from .policy_game import PolicyGame
 from .dqn_game import DQNGame
 from .maze.maze import Maze
 from ..config import Config
@@ -37,6 +38,9 @@ class App:
 
         if self.config.dqn.dqn_enable:
             self.run_dqn_game(maze, sounds)
+
+        if self.config.policy.policy_enable:
+            self.run_policy(maze, sounds)
         
         if self.config.user.enable_graphics:
             game = GraphicGame(
@@ -46,7 +50,7 @@ class App:
             game = Game(
                 config=self.config, maze=maze, control_func=genetic_iterator.getNextMove
             )
-
+            
         if self.config.user.enable_graphics:
             game.run()
 
@@ -70,3 +74,8 @@ class App:
             dqn.run()
         else:
             train(self.config, maze)
+
+    # Policy
+    def run_policy(self, maze: Maze, sounds: Sounds) -> None:
+        policy = PolicyGame(self.config, maze, sounds)
+        policy.run()

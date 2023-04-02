@@ -1,5 +1,6 @@
 from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from ...utils.dqn_function import get_conv_state
+from ...game.maze.components import Components
 from ...game.direction import Direction
 from keras.models import Sequential
 from keras.optimizers import Adam
@@ -9,6 +10,7 @@ from ...config import Config
 import tensorflow as tf
 from time import time
 import numpy as np
+import operator
 import random
 import os
 import gc
@@ -115,6 +117,4 @@ class ConvDQNAgent:
 
     def get_move(self, game: Game) -> Direction:
         state = get_conv_state(game)
-        move = self.act(state)
-        print(f"Move: {move}")
-        return move
+        return self.act(state)

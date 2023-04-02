@@ -1,4 +1,3 @@
-from ..game.direction import Direction
 from ..game.game import Game
 from math import dist
 import numpy as np

@@ -63,6 +63,10 @@ class dqn:
     learning_rate: float
 
 @dataclass
+class policy:
+    policy_enable: bool
+
+@dataclass
 class Config:
     user: UserConfig
     graphics: GraphicConfig
@@ -70,6 +74,7 @@ class Config:
     maze: MazeGenerationConfig
     genetic: Genetic
     dqn: dqn
+    policy: policy
 
 
 def load_config(config_path: str) -> Config:
