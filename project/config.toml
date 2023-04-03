@@ -1,8 +1,8 @@
 [user]
 enable_graphics = true
-enable_random_maze = true
+enable_random_maze = false
 menu_enable = false
-sound_enable = true
+sound_enable = false
 
 [graphics]
 width = 720
@@ -49,4 +49,7 @@ episodes = 100001
 learning_rate = 0.001
 
 [policy]
-policy_enable = true
+policy_enable = false
+
+[aplus]
+aplus_enable = true

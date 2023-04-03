@@ -17,7 +17,7 @@ GHOST_SCORE = 2
 
 
 class Game(EventBroadcast):
-    def __init__(self, config: Config, maze, control_func: Callable) -> None:
+    def __init__(self, config: Config, maze: Maze, control_func: Callable) -> None:
         super().__init__()
         self.validEvent += ["dotPickup", "superDotPickup", "lostLife"]
         self.config = config
@@ -180,7 +180,7 @@ class Game(EventBroadcast):
         """update the ghosts state"""
         if self.ghost_scatter_nbr < 2:
             self.switch_ghost_state_timer -= 1
-        if self.switch_ghost_state_timer == 0:
+        if self.switch_ghost_state_timer <= 0:
             if self.ghost_state == Ghoststate.CHASE:
                 self.switch_ghost_state_timer = self.config.game.scatter_duration * \
                     self.config.graphics.fps
@@ -210,3 +210,6 @@ class Game(EventBroadcast):
         """Update the game step times"""
         for _ in range(step):
             self.update()
+
+    def set_control_func(self, control_func: Callable):
+        self.control_func = control_func

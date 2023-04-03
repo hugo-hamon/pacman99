@@ -67,6 +67,10 @@ class policy:
     policy_enable: bool
 
 @dataclass
+class aplus:
+    aplus_enable: bool
+
+@dataclass
 class Config:
     user: UserConfig
     graphics: GraphicConfig
@@ -75,6 +79,7 @@ class Config:
     genetic: Genetic
     dqn: dqn
     policy: policy
+    aplus: aplus
 
 
 def load_config(config_path: str) -> Config:

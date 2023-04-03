@@ -6,6 +6,7 @@ from ..graphics.sounds import Sounds
 from .geneticGame import GeneticGame
 from ..ai.dqn.function import train
 from .policy_game import PolicyGame
+from .aplus_game import APlusGame
 from .dqn_game import DQNGame
 from .maze.maze import Maze
 from ..config import Config
@@ -35,6 +36,9 @@ class App:
         # TODO: Changer ca par une classe qui gere les mouvements du joueur
         genetic_iterator = GeneticIterator()
         genetic_iterator.set_moves("eeeennnn")
+
+        if self.config.aplus.aplus_enable:
+            self.run_aplus_game(maze, sounds)
 
         if self.config.dqn.dqn_enable:
             self.run_dqn_game(maze, sounds)
@@ -79,3 +83,8 @@ class App:
     def run_policy(self, maze: Maze, sounds: Sounds) -> None:
         policy = PolicyGame(self.config, maze, sounds)
         policy.run()
+
+    # A+
+    def run_aplus_game(self, maze: Maze, sounds: Sounds) -> None:
+        aplus = APlusGame(self.config, maze, sounds)
+        aplus.run()
