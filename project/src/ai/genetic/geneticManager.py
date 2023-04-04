@@ -71,7 +71,7 @@ class GeneticManager():
     def run(self) -> None:
         self.reset()
         # TODO mettre en paramètre le nombre de processus
-        n = 2
+        n = 8
         with multiprocessing.Pool(processes=n) as pool:
             self.games = pool.map(
                 self.run_single_game, self.movesList, int(self.game_nb / n / 2) + 1)
@@ -133,6 +133,7 @@ class GeneticManager():
         if len(parents) < 2:
             raise ValueError("graded_retain_percentage is too low.")
         while len(children) < desired_length:
+            
             mother = choice(parents)
             father = choice(parents)
             if mother != father:
@@ -146,6 +147,7 @@ class GeneticManager():
             father = choice(parents)
             children.append(clone(father))
             """
+            
         self.movesList.extend(children)
 
     def mutate_population(self) -> None:
@@ -154,7 +156,7 @@ class GeneticManager():
             new_moves = choice(MOVES)
             # Mutate the individual.
             if random() <= self.config.genetic.mutation_chance:
-                moves = self.mutate_individual(moves)
+                moves = self.mutate_individual(moves) + new_moves
             self.movesList[k] = moves
 
     def mutate_individual(self, individual: str) -> str:
@@ -183,9 +185,11 @@ class GeneticManager():
     def evolve_population(self) -> None:
         """Evolve the population."""
         self.run()
+        fitness = self.get_fitness()
+        sort = sorted(zip(fitness, self.movesList), key=lambda x: x[0], reverse=True)
+        print("Best moves: ", sort[0][1])
         self.select_population()
-        print("The best individual has a fitness of: ", self.get_fitness()[0])
-        print("This move are", self.movesList[0])
+        print("The best individual has a fitness of: ", max(self.get_fitness()))
         self.crossover_population()
         self.mutate_population()
         self.generation += 1
