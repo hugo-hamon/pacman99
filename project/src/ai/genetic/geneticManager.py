@@ -6,6 +6,7 @@ from typing import List, Union
 from ...game.game import Game
 from ...config import Config
 import multiprocessing
+import time
 
 
 def breed(mother: str, father: str) -> str:
@@ -132,12 +133,11 @@ class GeneticManager():
         if len(parents) < 2:
             raise ValueError("graded_retain_percentage is too low.")
         while len(children) < desired_length:
-            """breed3
             mother = choice(parents)
             father = choice(parents)
             if mother != father:
-                slice_idx1 = randint(0, len(mother.moves))
-                slice_idx2 = randint(0, len(mother.moves))
+                slice_idx1 = randint(0, len(mother))
+                slice_idx2 = randint(0, len(mother))
                 children.extend((
                     breed3(mother, father, slice_idx1, slice_idx2),
                     breed3(mother, father, slice_idx1, slice_idx2),
@@ -145,34 +145,40 @@ class GeneticManager():
             """
             father = choice(parents)
             children.append(clone(father))
+            """
         self.movesList.extend(children)
 
     def mutate_population(self) -> None:
         """Mutate the population according to the mutation chance."""
-        for moves in self.movesList:
-            moves += choice(MOVES)
+        for k, moves in enumerate(self.movesList):
+            new_moves = choice(MOVES)
             # Mutate the individual.
             if random() <= self.config.genetic.mutation_chance:
-                self.mutate_individual(moves)
+                moves = self.mutate_individual(moves)
+            self.movesList[k] = moves
 
-    def mutate_individual(self, individual: str) -> None:
+    def mutate_individual(self, individual: str) -> str:
         """Mutate the individual according to the mutation chance."""
         # Mutate the individual.
         if not individual:
-            return
+            return individual
         mutation = randint(1, 2)
         index1 = randint(0, len(individual) - 1)
         index2 = randint(0, len(individual) - 1)
         if mutation == 1:
             gene1 = individual[index1]
             gene2 = individual[index2]
-            individual = individual[:index1] + gene2 + individual[index1 + 1:index2] + \
-                gene1 + individual[index2 + 1:]
+            return (
+                individual[:index1] + gene2 + individual[index1 + 1: index2]
+                + gene1 + individual[index2 + 1:]
+            )
         else:
             if index1 > index2:
                 index1, index2 = index2, index1
-            individual = individual[:index1] + individual[index1:index2][::-1] + \
-                individual[index2:]
+            return (
+                individual[:index1] +
+                individual[index1:index2][::-1] + individual[index2:]
+            )
 
     def evolve_population(self) -> None:
         """Evolve the population."""

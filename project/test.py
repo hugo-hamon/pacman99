@@ -10,7 +10,7 @@ def gaussian(x, y, mu0, mu1, sigma=1):
 coords = np.array([0, 0])
 mu = np.array([0, 0])
 
-factor = 0.01
+factor = 0.1
 
 print(gaussian(coords[0], coords[1], mu[0], mu[1], 1) / factor)
 

@@ -33,7 +33,7 @@ class GeneticBuffer:
         
         for data in self.buffer:
             for key in data:
-                if moves.startswith(key) and len(key.moves) > 0:
+                if moves.startswith(key) and len(key) > 0:
                     game = deepcopy(data[key])
                     return game, moves[len(key):]
         return Game(self.config, deepcopy(self.maze), lambda _: NotImplemented), moves
