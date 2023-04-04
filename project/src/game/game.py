@@ -1,8 +1,7 @@
-from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from ..utils.eventBroadcast import EventBroadcast
 from .entities.ghost.ghoststate import Ghoststate
-from typing import List, Tuple, Union, Callable
+from typing import List, Callable
 from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
 from .entities.pacman import Pacman
