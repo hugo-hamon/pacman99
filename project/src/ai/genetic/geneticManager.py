@@ -70,7 +70,7 @@ class GeneticManager():
     def run(self) -> None:
         self.reset()
         # TODO mettre en paramètre le nombre de processus
-        n = 8
+        n = 2
         with multiprocessing.Pool(processes=n) as pool:
             self.games = pool.map(
                 self.run_single_game, self.movesList, int(self.game_nb / n / 2) + 1)

@@ -1,4 +1,3 @@
-from ...maze.components import Components
 from ...direction import Direction
 from ..entities import Entities
 from ...maze.maze import Maze
