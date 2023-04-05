@@ -1,4 +1,4 @@
-from ..ai.aplus.aplus_agent import get_next_move
+from ..ai.aplus.aplus_agent import AplusAgent
 from ..graphics.graphic_game import GraphicGame
 from ..graphics.sounds import Sounds
 from .maze.maze import Maze
@@ -14,11 +14,12 @@ class APlusGame:
         """If sounds is set creates a graphic game otherwise creates a normal game"""
         self.config = config
         self.maze = maze
+        aplus_agent = AplusAgent(config, maze)
         if sounds is None:
-            self.game = Game(config, self.maze, get_next_move)
+            self.game = Game(config, self.maze, aplus_agent.get_next_move)
         else:
             self.game = GraphicGame(
-                config, sounds, self.maze, get_next_move
+                config, sounds, self.maze, aplus_agent.get_next_move
             )
 
     def run(self):

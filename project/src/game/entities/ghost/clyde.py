@@ -19,10 +19,13 @@ class Clyde(GeneralGhost):
             return self.get_outside_ghostbox_direction()
         position = self.get_position()
         pac_pos = self.pac.get_position()
+        clyde_decision = self.distance_euclidienne(position, pac_pos) < 8
         prefered_direction = Direction.NONE
         dist = np.inf
+        if clyde_decision:
+            return self.get_scatter_direction()
         for direction in self.get_possible_direction():
-            if direction != Direction.NONE and direction == self.direction.opposite():
+            if self.get_direction() != Direction.NONE and direction == self.direction.opposite():
                 continue
             dir_ghost_pos = round(
                 position[0] + direction.to_vector()[0]), round(position[1] + direction.to_vector()[1])

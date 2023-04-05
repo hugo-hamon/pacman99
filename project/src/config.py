@@ -52,6 +52,13 @@ class Genetic:
     selection_type: str
 
 @dataclass
+class policy:
+    policy_enable: bool
+    population_size: int
+    graded_retain_percentage : float
+    mutation_chance: float
+
+@dataclass
 class dqn:
     dqn_enable : bool
     output_dir: str
@@ -61,10 +68,6 @@ class dqn:
     batch_size: int
     episodes: int
     learning_rate: float
-
-@dataclass
-class policy:
-    policy_enable: bool
 
 @dataclass
 class aplus:

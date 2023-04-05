@@ -187,6 +187,9 @@ class GeneticManager():
         self.run()
         fitness = self.get_fitness()
         sort = sorted(zip(fitness, self.movesList), key=lambda x: x[0], reverse=True)
+        # get the best game by remaining dots
+        best_game = min(self.games, key=lambda x: x.maze.get_remain_dots())
+        print("Total remaining dots:", best_game.maze.get_remain_dots())
         print("Best moves: ", sort[0][1])
         self.select_population()
         print("The best individual has a fitness of: ", max(self.get_fitness()))

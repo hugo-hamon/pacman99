@@ -41,7 +41,6 @@ class App:
 
 
     def run_genetic_game(self, maze: Maze, sounds) -> None:
-    #def run_genetic_game(self, maze: Maze, sounds: Union[None, Sounds]) -> None:
         moves = self.read_movement()
         if self.config.user.enable_graphics:
             from .geneticGame import GeneticGame
@@ -59,7 +58,6 @@ class App:
     # DQN
 
     def run_dqn_game(self, maze: Maze, sounds) -> None:
-    #def run_dqn_game(self, maze: Maze, sounds: Union[None, Sounds]) -> None:
         if self.config.user.enable_graphics:
             from .dqn_game import DQNGame
             dqn = DQNGame(self.config, maze, sounds)
@@ -70,14 +68,17 @@ class App:
 
     # Policy
     def run_policy(self, maze: Maze, sounds) -> None:
-    #def run_policy(self, maze: Maze, sounds: Union[None, Sounds]) -> None:
-        from .policy_game import PolicyGame
-        policy = PolicyGame(self.config, maze, sounds)
+        if self.config.user.enable_graphics:
+            from .policy_game import PolicyGame
+            policy = PolicyGame(self.config, maze, sounds)
+        else:
+            from ..ai.policy.policy_train import PolicyTrainManager
+            policy = PolicyTrainManager(self.config, maze)
         policy.run()
+       
 
     # A+
     def run_aplus_game(self, maze: Maze, sounds) -> None:
-    #def run_aplus_game(self, maze: Maze, sounds: Union[None, Sounds]) -> None:
         from .aplus_game import APlusGame
         aplus = APlusGame(self.config, maze, sounds)
         aplus.run()

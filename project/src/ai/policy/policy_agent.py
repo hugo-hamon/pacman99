@@ -1,32 +1,36 @@
 from ...utils.policy_function import get_policy_agent_state
 from ...game.direction import Direction
 from ...game.game import Game
+from typing import List
 import numpy as np
 
-BASIC_FILTER = np.array(
-    [[1, 2, 3, 4, 3, 2, 1],
-     [2, 3, 4, 5, 4, 3, 2],
-     [3, 4, 5, 20, 5, 4, 3],
-     [0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0]]
-)
-
-FILTER_NORTH = BASIC_FILTER
-
-FILTER_EAST = np.rot90(BASIC_FILTER, 3)
-
-FILTER_WEST = np.rot90(BASIC_FILTER, 1)
-
-FILTER_SOUTH = np.rot90(BASIC_FILTER, 2)
+DIRECTION = [Direction.NORTH, Direction.EAST, Direction.WEST, Direction.SOUTH]
 
 
-def get_policy_agent_move(game: Game) -> Direction:
-    """Return the best move for the agent given the state of the maze"""
-    direction = [Direction.NORTH, Direction.EAST,
-                 Direction.WEST, Direction.SOUTH]
-    filters = [FILTER_NORTH, FILTER_EAST, FILTER_WEST, FILTER_SOUTH]
-    state = get_policy_agent_state(game)
-    values = [np.sum(state * filters[i]) for i in range(4)]
-    return direction[np.argmax(values)]
+class PolicyAgent:
+    def __init__(self, vector: List[float]) -> None:
+        self.vector = vector
+        self.filters = self.init_filters()
+
+    def init_filters(self) -> List[np.ndarray]:
+        """Initialize the filters"""
+        a, b, c, d, e, f = self.vector
+        basic_filter = np.array(
+            [[a, b, c, d, c, b, a],
+             [b, c, d, e, d, c, b],
+             [c, d, e, f, e, d, c],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]]
+        )
+        return [
+            basic_filter, np.rot90(basic_filter, 3),
+            np.rot90(basic_filter, 1), np.rot90(basic_filter, 2)
+        ]
+
+    def get_policy_agent_move(self, game: Game) -> Direction:
+        """Return the best move for the agent given the state of the maze"""
+        state = get_policy_agent_state(game)
+        values = [np.sum(state * self.filters[i]) for i in range(4)]
+        return DIRECTION[np.argmax(values)]

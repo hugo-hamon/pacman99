@@ -13,7 +13,9 @@ def get_policy_agent_state(game: Game, radius: int = 3) -> np.ndarray:
     # Changer default_value entre Components.WALL et Components.EMPTY
     # pour changer le comportement
     state = game.maze.get_area(
-        x, y, radius, default_value=Components.EMPTY) - 1
+        x, y, radius, default_value=Components.EMPTY)
+    state[state == Components.DOOR.value] = Components.WALL.value
+    state -= 1
     for ghost in game.ghosts:
         if ghost.state not in [Ghoststate.FRIGHTENED, Ghoststate.EATEN]:
             gx, gy = np.array(

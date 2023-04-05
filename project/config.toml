@@ -12,11 +12,11 @@ title = "PacMan"
 maze_path = "assets/data/maze.txt"
 
 [game]
-game_speed = 1.5
+game_speed = 3
 pacman_lives = 1
-super_mode_duration = 10
-scatter_duration = 6
-chase_duration = 20
+super_mode_duration = 1000
+scatter_duration = 360
+chase_duration = 1200
 
 [maze]
 width = 21
@@ -28,15 +28,21 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = true
+genetic_enable = false
 move_path = "assets/data/moves.txt"
 population_size = 100
 graded_retain_percentage = 0.4
-mutation_chance = 0.40
+mutation_chance = 0.1
 deletion_chance = 0.05
 addition_chance = 0.80
 replacement_chance = 0.15
 selection_type = "rank"
+
+[policy]
+policy_enable = true
+population_size = 100
+graded_retain_percentage = 0.4
+mutation_chance = 0.1
 
 [dqn]
 dqn_enable = false
@@ -47,9 +53,6 @@ action_size = 4
 batch_size = 64
 episodes = 100001
 learning_rate = 0.001
-
-[policy]
-policy_enable = false
 
 [aplus]
 aplus_enable = false
