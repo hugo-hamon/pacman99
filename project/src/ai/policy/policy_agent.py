@@ -21,6 +21,12 @@ FILTER_WEST = np.rot90(BASIC_FILTER, 1)
 
 FILTER_SOUTH = np.rot90(BASIC_FILTER, 2)
 
+def get_filters_values(game : Game) -> np.ndarray:
+    """Return the values of the filters applied to the state"""
+    filters = [FILTER_NORTH, FILTER_EAST, FILTER_WEST, FILTER_SOUTH]
+    state = get_policy_agent_state(game)
+    values = [np.sum(state * filters[i]) for i in range(4)]
+    return values
 
 def get_policy_agent_move(game: Game) -> Direction:
     """Return the best move for the agent given the state of the maze"""

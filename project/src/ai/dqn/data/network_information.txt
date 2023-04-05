@@ -1,36 +1,7 @@
 Parametres du reseau de neurones:
 
 Episode max: 100001
-Batch size: 128
-Learning rate: 0.00035
+Batch size: 64
+Learning rate: 8e-05
 Epsilon decay: 0.999
-Epsilon min: 0.0
-Model: "sequential"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #   
-=================================================================
- conv2d (Conv2D)             (None, 13, 13, 64)        2944      
-                                                                 
- conv2d_1 (Conv2D)           (None, 11, 11, 128)       73856     
-                                                                 
- max_pooling2d (MaxPooling2D  (None, 5, 5, 128)        0         
- )                                                               
-                                                                 
- conv2d_2 (Conv2D)           (None, 4, 4, 256)         131328    
-                                                                 
- max_pooling2d_1 (MaxPooling  (None, 2, 2, 256)        0         
- 2D)                                                             
-                                                                 
- conv2d_3 (Conv2D)           (None, 1, 1, 64)          65600     
-                                                                 
- flatten (Flatten)           (None, 64)                0         
-                                                                 
- dense (Dense)               (None, 64)                4160      
-                                                                 
- dense_1 (Dense)             (None, 4)                 260       
-                                                                 
-=================================================================
-Total params: 278,148
-Trainable params: 278,148
-Non-trainable params: 0
-_________________________________________________________________
+Epsilon min: 0.001

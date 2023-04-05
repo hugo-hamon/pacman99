@@ -1,5 +1,6 @@
 from ..game.game import Game
 from ..game.direction import Direction
+from ..ai.policy.policy_agent import get_filters_values
 from math import dist
 import numpy as np
 
@@ -28,7 +29,7 @@ def get_reward(game: Game, previous_score: float, wrong_direction) -> float:
                 return 0.2
             return -0.4
         # Si score augmente
-        return 1.0 if game.score - previous_score > 0 else distance / 500
+        return 0.7 if game.score - previous_score > 0 else 0.15
 
 def get_conv_state(game: Game, size: int = 7):
         """Return the image of the game with a size centered on the pacman"""
@@ -69,8 +70,37 @@ def step(game: Game, action):
         previous_score = game.score
         wrong_direction = game.pacman.is_wall(action)
         game.step(game.config.graphics.fps // 4)
-        next_state = get_conv_state(game)
+        next_state = get_state(game)
         reward = get_reward(game, previous_score, wrong_direction)
         done = game.pacman.get_lives() == 0 or game.is_game_won() or game.pacman.get_direction() == Direction.NONE
         return next_state, reward, done
 
+def get_state(game : Game) -> np.ndarray:
+        """Return various information about the game
+        Position of Pacman,
+        direction of pacman,
+        position, direction and distance of the four ghosts,
+        nb of remaining dots,
+        superdot mode timer,
+        Total parameters : 2 + 4 * 4 + 2 + 4 = 18
+        """
+        state = []
+        pac_x, pac_y = game.pacman.get_position()
+        state.append(game.pacman.get_direction().value)
+        state.append(pac_x)
+        state.append(pac_y)
+        for ghost in game.ghosts:
+            ghost_x, ghost_y = ghost.get_position()
+            state.append(ghost_x)
+            state.append(ghost_y)
+            state.append(ghost.get_direction().value)
+            state.append(dist((pac_x, pac_y), (ghost_x, ghost_y)))
+        state.append(game.maze.remain_dots)
+        state.append(game.super_mode_timer)
+        neighbors = game.maze.get_neighbors(round(pac_x), round(pac_y))
+        for dir in [Direction.NORTH.to_vector(), Direction.SOUTH.to_vector(), Direction.EAST.to_vector(), Direction.WEST.to_vector()]:
+            state.append(neighbors[dir[0]][dir[1]].value)
+        policy = get_filters_values(game)
+        for filter in policy:
+            state.append(filter)
+        return np.array(state)

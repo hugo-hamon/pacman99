@@ -4,7 +4,7 @@ from ..graphics.graphic_game import GraphicGame
 from ..ai.genetic.genetic import Genetic
 from ..graphics.sounds import Sounds
 from .geneticGame import GeneticGame
-from ..ai.dqn.function import train
+from ..ai.dqn.function2 import train
 from .policy_game import PolicyGame
 from .dqn_game import DQNGame
 from .maze.maze import Maze
