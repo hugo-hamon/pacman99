@@ -50,14 +50,16 @@ class Pacman(Entities):
     # Commandes
     def set_next_direction(self, dir: Direction) -> None:
         """Enregistre la prochaine direction que pac-man doit prendre dès que possible"""
-        if self.direction.opposite() == dir:
+        is_wall_in_dir = self.is_wall(dir)
+        if not is_wall_in_dir:
             self.direction = dir
-            self.next_direction = Direction.NONE
-        elif self.direction == Direction.NONE and not self.is_wall(dir):
-            self.direction = dir
-            self.next_direction = Direction.NONE
-        else:
             self.next_direction = dir
+        elif is_wall_in_dir:
+            if self.is_wall(self.direction):
+                self.direction = Direction.NONE
+                self.next_direction = Direction.NONE
+            else:
+                self.next_direction = dir
 
     def change_state(self) -> None:
         """Switch l'état de pac-man pour les super pac-gum"""

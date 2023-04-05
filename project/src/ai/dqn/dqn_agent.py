@@ -27,11 +27,11 @@ class ConvDQNAgent:
         if config.user.enable_random_maze:
             self.state_size = (config.maze.height, config.maze.width, 5)
         self.state_size = (15, 15, 5)
-        self.memory = deque(maxlen=60000)
-        self.gamma = 0.5
+        self.memory = deque(maxlen=480000)
+        self.gamma = 0.2
         self.epsilon = 0.0 if config.user.enable_graphics else 1.0
         self.epsilon_decay = 0.999
-        self.epsilon_min = 0.01
+        self.epsilon_min = 0.0
 
         self.learning_rate = config.dqn.learning_rate
 
@@ -58,9 +58,15 @@ class ConvDQNAgent:
 
         return model
 
-    def remember(self, state, action, reward, next_state, done) -> None:
+    def remember(self, state, action : Direction, reward, next_state, done) -> None:
         """Remember the state, action, reward, next_state and done"""
-        self.memory.append((state, action, reward, next_state, done))
+        # On ajoute à la mémoire 4 fois la même chose mais rotationnée de 90° car le jeu est symétrique
+        # On souhaite que l'agent prenne la même décision peut importe la rotation de la grille
+        # On a déjà eu des problèmes de Pacman qui ne souhaitait pas aller vers le haut à cause de trop
+        # d'exemples d'entrainement où les fantômes arrivait en haut de la grille
+        for i in range(4):
+            self.memory.append((np.rot90(state, -i), Direction((action.value + i) % 4), reward,
+                                np.rot90(next_state, -i), done))
 
     def act(self, state) -> Direction:
         """Act with the dqn network"""
@@ -117,4 +123,11 @@ class ConvDQNAgent:
 
     def get_move(self, game: Game) -> Direction:
         state = get_conv_state(game)
-        return self.act(state)
+        action = self.act(state)
+        is_wall_in_dir = game.pacman.is_wall(action)
+        if not is_wall_in_dir:
+            return action
+        elif is_wall_in_dir:
+            if game.pacman.is_wall(game.pacman.direction):
+                return Direction.NONE
+            return game.pacman.direction

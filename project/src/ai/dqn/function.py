@@ -59,7 +59,7 @@ def train_conv(config: Config, maze):
     agent = ConvDQNAgent(config)
     save_all_information(config, agent)
     #agent.epsilon = 0.01
-    #agent.load(config.dqn.output_dir + config.dqn.weights_path)
+    # agent.load(config.dqn.output_dir + config.dqn.weights_path)
     mean_life_time = []
     mean_score = []
     mean_reward = []
@@ -69,8 +69,8 @@ def train_conv(config: Config, maze):
 
     for e in range(config.dqn.episodes):
         # Choose a different maze every 100 episodes
-        '''if e % 100 == 0:
-            maze = Maze(f"{MAZES_PATH}maze{str(e // 100)}.txt")'''
+        if e % 100 == 0:
+            maze = Maze(f"{MAZES_PATH}maze{str(e // 100)}.txt")
         game = create_game(config, maze=maze, control_func=agent.get_move)
         state = get_conv_state(game)
         reward_sum = 0
@@ -78,7 +78,6 @@ def train_conv(config: Config, maze):
             action = agent.act(state)
             next_state, reward, done = step(game, action)
             reward_sum += reward
-
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             if done:
@@ -104,7 +103,7 @@ def train_conv(config: Config, maze):
         if len(agent.memory) > config.dqn.batch_size:
             agent.replay()
 
-        if e % 50 == 0:
+        if e % 100 == 0:
             save_plot_data(mean_life_time, mean_score, mean_reward)
             agent.save(f"{config.dqn.output_dir}weights_" +
                        '{:04d}'.format(e) + ".hdf5")

@@ -128,7 +128,7 @@ class Game(EventBroadcast):
                 case Components.SUPERDOT:
                     if pacman.is_boosted():
                         pacman.change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration / \
+                    self.super_mode_timer = self.config.game.super_mode_duration // \
                         self.config.game.game_speed
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:

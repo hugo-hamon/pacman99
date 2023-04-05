@@ -2,7 +2,7 @@
 enable_graphics = true
 enable_random_maze = true
 menu_enable = false
-sound_enable = true
+sound_enable = false
 
 [graphics]
 width = 720
@@ -19,10 +19,10 @@ scatter_duration = 6
 chase_duration = 20
 
 [maze]
-width = 21
-height = 21
-density = 0.8
-seed = 6
+width = 15
+height = 15
+density = 0.85
+seed = -1
 intersection_step = 3
 is_symetric = false
 random_maze_path = "assets/data/random.txt"
@@ -39,14 +39,14 @@ replacement_chance = 0.15
 selection_type = "rank"
 
 [dqn]
-dqn_enable = false
+dqn_enable = true
 output_dir = "assets/model_output/pacman"
-weights_path = "weights_0100.hdf5"
+weights_path = "weights_21500.hdf5"
 state_size = 230
 action_size = 4
-batch_size = 64
+batch_size = 128
 episodes = 100001
-learning_rate = 0.001
+learning_rate = 0.00035
 
 [policy]
-policy_enable = true
+policy_enable = false

@@ -34,8 +34,8 @@ class App:
         
         # TODO: Changer ca par une classe qui gere les mouvements du joueur
         genetic_iterator = GeneticIterator()
-        genetic_iterator.set_moves("eeeennnn")
-
+        genetic_iterator.set_moves("")
+        
         if self.config.dqn.dqn_enable:
             self.run_dqn_game(maze, sounds)
 
@@ -79,3 +79,13 @@ class App:
     def run_policy(self, maze: Maze, sounds: Sounds) -> None:
         policy = PolicyGame(self.config, maze, sounds)
         policy.run()
+
+    # Random maze
+    def generate_mazes(self, n: int) -> None:
+        """Generate n random mazes with same configuration but different seeds
+        To configurate random mazes, see config.toml and random_maze_factory.py"""
+        generator = RandomMazeFactory(self.config)
+        for i in range(n):
+            self.config.maze.random_maze_path = f'assets/data/mazes/maze{i}.txt'
+            generator.new_seed()
+            generator.create()

@@ -18,7 +18,7 @@ class RandomMazeFactory():
     GHOST_BOX = [[2, 2, 2, 2, 2, 2, 2, 2, 2], [2, 0, 0, 0, 5, 0, 0, 0, 2],
                  [2, 0, 1, 1, 1, 1, 1, 0, 2], [2, 0, 1, 1, 1, 1, 1, 0, 2],
                  [2, 0, 1, 1, 1, 1, 1, 0, 2], [2, 0, 0, 0, 0, 0, 0, 0, 2],
-                 [2, 2, 2, 2, 2, 2, 2, 2, 2]]
+                 [2, 1, 1, 1, 1, 1, 1, 1, 2]]
 
    # CONSTRUCTOR
     def __init__(self, config: Config) -> None:
@@ -165,12 +165,13 @@ class RandomMazeFactory():
     def __graph_to_maze(self, g) -> np.ndarray:
         ''' Convert the graph representation of the maze into a text file representation'''
         maze = np.zeros((self.height + 1, self.width + 1), dtype=Components)
+        proba_of_dot = random.random()
         for k, v in g.items():
             # Place the intersection
             x = ((self.intersection_step * (k - 1)) % self.width) + 1
             y = (((k - 1) * self.intersection_step) //
                  self.width) * self.intersection_step + 1
-            maze[y, x] = Components.DOT
+            maze[y, x] = self.__get_random_dot(x, y, proba_of_dot)
             for i, direction in v:
                 # Compute the position of the next intersection
                 xi = ((self.intersection_step * (i - 1)) % self.width) + 1
@@ -179,7 +180,7 @@ class RandomMazeFactory():
                 xv = x
                 yv = y
                 while (xi, yi) != (xv, yv):
-                    maze[yv, xv] = Components.DOT
+                    maze[yv, xv] = self.__get_random_dot(x, y, proba_of_dot)
                     xv += direction.to_vector()[0]
                     yv += direction.to_vector()[1]
         return maze
@@ -242,3 +243,33 @@ class RandomMazeFactory():
                 parent[r1] += parent[r2]
                 parent[r2] = r1
         return parent
+
+    def __get_random_dot(self, x, y, proba=0.5):
+        '''Place a dot at position (x, y) or nothing depending on a predefined ruled
+        This function is made to generate example of maze with less dots for dqn training'''
+        # 25% of chance to place dots in a corner of the maze
+        if proba < 0.25:
+            if proba < 0.0625:
+                if x < self.width // 4 and y < self.height // 4:
+                    return Components.DOT
+                return Components.EMPTY
+            elif proba < 0.125:
+                if x > 3 * self.width // 4 and y < self.height // 4:
+                    return Components.DOT
+                return Components.EMPTY
+            elif proba < 0.1875:
+                if x < self.width // 4 and y > 3 * self.height // 4:
+                    return Components.DOT
+                return Components.EMPTY
+            elif proba < 0.25:
+                if x > 3 * self.width // 4 and y > 3 * self.height // 4:
+                    return Components.DOT
+                return Components.EMPTY
+        # 50% of chance to place dots everywhere like a usual maze
+        elif proba > 0.5:
+            return Components.DOT
+        # 25% of chance to place dots randomly with 50% chance to place a dot
+        elif random.random() < 0.5:
+            return Components.DOT
+        else:
+            return Components.EMPTY

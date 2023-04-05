@@ -1,10 +1,10 @@
 Parametres du reseau de neurones:
 
 Episode max: 100001
-Batch size: 64
-Learning rate: 0.001
+Batch size: 128
+Learning rate: 0.00035
 Epsilon decay: 0.999
-Epsilon min: 0.01
+Epsilon min: 0.0
 Model: "sequential"
 _________________________________________________________________
  Layer (type)                Output Shape              Param #   
