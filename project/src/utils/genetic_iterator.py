@@ -5,8 +5,8 @@ from ..game.game import Game
 
 class GeneticIterator:
 
-    def __init__(self) -> None:
-        self.moves = ""
+    def __init__(self, moves="") -> None:
+        self.moves = moves
         self.index = 0
 
     def set_moves(self, moves: str) -> None:

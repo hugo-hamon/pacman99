@@ -17,8 +17,8 @@ class Genetic:
             print("Generation: ", self.genetic_manager.get_generation())
         winner = self.genetic_manager.get_winner()
         if winner is not None:
-            print("Solution found: ", winner.moves)
-            self.write_solution(solution=winner.moves)
+            print("Solution found: ", winner)
+            self.write_solution(solution=winner)
         else:
             print("No solution found.")
 

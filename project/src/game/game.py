@@ -1,8 +1,7 @@
-from .maze.random_maze_factory import RandomMazeFactory
 from .entities.ghost import Blinky, Pinky, Clyde, Inky
 from ..utils.eventBroadcast import EventBroadcast
 from .entities.ghost.ghoststate import Ghoststate
-from typing import List, Tuple, Union, Callable
+from typing import List, Callable
 from .entities.ghost.ghost import GeneralGhost
 from .maze.components import Components
 from .entities.pacman import Pacman
@@ -17,7 +16,7 @@ GHOST_SCORE = 2
 
 
 class Game(EventBroadcast):
-    def __init__(self, config: Config, maze, control_func: Callable) -> None:
+    def __init__(self, config: Config, maze: Maze, control_func: Callable) -> None:
         super().__init__()
         self.validEvent += ["dotPickup", "superDotPickup", "lostLife"]
         self.config = config
@@ -27,8 +26,8 @@ class Game(EventBroadcast):
         self.super_mode_timer = 0
         self.score = 0
         self.ghost_scatter_nbr = 0
-        self.switch_ghost_state_timer = self.config.game.chase_duration * \
-            60 / self.config.game.game_speed
+        self.switch_ghost_state_timer = int(self.config.game.chase_duration
+         / self.config.game.game_speed)
         self.ghost_state = Ghoststate.CHASE
         self.control_func = control_func
 
@@ -72,14 +71,14 @@ class Game(EventBroadcast):
         """Initialize the ghosts and return them"""
         ghosts: List[GeneralGhost] = [Blinky(self.maze, self.pacman, self.config.game.game_speed * 0.7,
                                              Direction.NORTH, (self.maze.get_width(
-                                             ) / 2, self.maze.get_height() / 2),
+                                             ) // 2, self.maze.get_height() // 2),
                                              (self.maze.get_width(), 0))]
         ghosts.append(Pinky(self.maze, self.pacman, self.config.game.game_speed * 0.5,
-                      Direction.NORTH, (self.maze.get_width() / 2 + 1, self.maze.get_height() / 2), (self.maze.get_width(), self.maze.get_height())))
+                      Direction.NORTH, (self.maze.get_width() // 2 + 1, self.maze.get_height() // 2), (self.maze.get_width(), self.maze.get_height())))
         ghosts.append(Clyde(self.maze, self.pacman, self.config.game.game_speed * 0.6,
-                      Direction.NORTH, (self.maze.get_width() / 2 - 1, self.maze.get_height() / 2), (0, self.maze.get_height())))
-        ghosts.append(Inky(self.maze, self.pacman, self.config.game.game_speed * 0.6,
-                      Direction.NORTH, (self.maze.get_width() / 2, self.maze.get_height() / 2 - 1), (0, 0)))
+                      Direction.NORTH, (self.maze.get_width() // 2 - 1, self.maze.get_height() // 2), (0, self.maze.get_height())))
+        ghosts.append(Inky(self.maze, self.pacman, ghosts[0], self.config.game.game_speed * 0.6,
+                      Direction.NORTH, (self.maze.get_width() // 2, self.maze.get_height() // 2 - 1), (0, 0)))
         return ghosts
 
     def update(self) -> None:
@@ -128,8 +127,8 @@ class Game(EventBroadcast):
                 case Components.SUPERDOT:
                     if pacman.is_boosted():
                         pacman.change_state()
-                    self.super_mode_timer = self.config.game.super_mode_duration // \
-                        self.config.game.game_speed
+                    self.super_mode_timer = int((self.config.game.super_mode_duration) / \
+                        self.config.game.game_speed)
                     for ghost in self.ghosts:
                         if ghost.state != Ghoststate.EATEN:
                             ghost.set_state(Ghoststate.FRIGHTENED)
@@ -167,7 +166,10 @@ class Game(EventBroadcast):
 
     def __check_super_dot_timer(self) -> None:
         """Check if the super dot timer is over"""
+        if self.super_mode_timer <= 0:
+            return
         self.super_mode_timer -= 1
+        
         if self.super_mode_timer == 0:
             for ghost in self.ghosts:
                 if ghost.state == Ghoststate.EATEN:
@@ -178,20 +180,20 @@ class Game(EventBroadcast):
 
     def __update_ghosts_state(self) -> None:
         """update the ghosts state"""
-        if self.ghost_scatter_nbr < 2:
+        if self.ghost_scatter_nbr < 4:
             self.switch_ghost_state_timer -= 1
-        if self.switch_ghost_state_timer == 0:
+        if self.switch_ghost_state_timer <= 0:
             if self.ghost_state == Ghoststate.CHASE:
-                self.switch_ghost_state_timer = self.config.game.scatter_duration * \
-                    self.config.graphics.fps
+                self.switch_ghost_state_timer = int(self.config.game.scatter_duration / \
+                    self.config.game.game_speed)
                 self.ghost_state = Ghoststate.SCATTER
                 if self.ghosts[0].state == Ghoststate.CHASE:
                     for ghost in self.ghosts:
                         ghost.set_state(Ghoststate.SCATTER)
             else:
                 self.ghost_scatter_nbr += 1
-                self.switch_ghost_state_timer = self.config.game.chase_duration * \
-                    self.config.graphics.fps
+                self.switch_ghost_state_timer = int(self.config.game.chase_duration / \
+                    self.config.game.game_speed)
                 self.ghost_state = Ghoststate.CHASE
                 if self.ghosts[0].state == Ghoststate.SCATTER:
                     for ghost in self.ghosts:
@@ -210,3 +212,6 @@ class Game(EventBroadcast):
         """Update the game step times"""
         for _ in range(step):
             self.update()
+
+    def set_control_func(self, control_func: Callable):
+        self.control_func = control_func

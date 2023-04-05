@@ -52,6 +52,13 @@ class Genetic:
     selection_type: str
 
 @dataclass
+class policy:
+    policy_enable: bool
+    population_size: int
+    graded_retain_percentage : float
+    mutation_chance: float
+
+@dataclass
 class dqn:
     dqn_enable : bool
     output_dir: str
@@ -63,8 +70,8 @@ class dqn:
     learning_rate: float
 
 @dataclass
-class policy:
-    policy_enable: bool
+class aplus:
+    aplus_enable: bool
 
 @dataclass
 class Config:
@@ -75,6 +82,7 @@ class Config:
     genetic: Genetic
     dqn: dqn
     policy: policy
+    aplus: aplus
 
 
 def load_config(config_path: str) -> Config:

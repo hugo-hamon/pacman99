@@ -1,5 +1,5 @@
 [user]
-enable_graphics = true
+enable_graphics = false
 enable_random_maze = false
 menu_enable = true
 sound_enable = false
@@ -28,9 +28,9 @@ is_symetric = false
 random_maze_path = "assets/data/random.txt"
 
 [genetic]
-genetic_enable = false
+genetic_enable = true
 move_path = "assets/data/moves.txt"
-population_size = 20
+population_size = 200
 graded_retain_percentage = 0.40
 mutation_chance = 0.25
 deletion_chance = 0.05
@@ -39,7 +39,7 @@ replacement_chance = 0.15
 selection_type = "rank"
 
 [dqn]
-dqn_enable = true
+dqn_enable = false
 output_dir = "assets/model_output/pacman"
 weights_path = "weights_2000.hdf5"
 state_size = 230
@@ -50,3 +50,6 @@ learning_rate = 0.001
 
 [policy]
 policy_enable = false
+
+[aplus]
+aplus_enable = false
