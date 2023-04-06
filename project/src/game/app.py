@@ -1,16 +1,10 @@
 from .maze.random_maze_factory import RandomMazeFactory
-from ..utils.genetic_iterator import GeneticIterator
-from ..graphics.graphic_game import GraphicGame
-from ..ai.genetic.genetic import Genetic
-from ..graphics.sounds import Sounds
-from .geneticGame import GeneticGame
-from ..ai.dqn.function2 import train
-from .policy_game import PolicyGame
-from .dqn_game import DQNGame
+#from ..utils.genetic_iterator import GeneticIterator
+#from ..graphics.sounds import Sounds
 from .maze.maze import Maze
 from ..config import Config
-from typing import Union
-
+#from typing import Union
+    
 MOVE_PATH = "moves.txt"
 
 
@@ -18,7 +12,8 @@ class App:
 
     def __init__(self, config: Config) -> None:
         self.config = config
-
+        if config.user.enable_graphics:
+            from ..graphics.graphic_game import GraphicGame
     # TODO
     def run(self) -> None:
         """Run the app"""

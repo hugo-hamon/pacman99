@@ -1,6 +1,6 @@
 from ..game.game import Game
 from ..game.direction import Direction
-from ..ai.policy.policy_agent import get_filters_values
+from ..ai.policy.policy_agent import PolicyAgent
 from math import dist
 import numpy as np
 
@@ -75,6 +75,8 @@ def step(game: Game, action):
         done = game.pacman.get_lives() == 0 or game.is_game_won() or game.pacman.get_direction() == Direction.NONE
         return next_state, reward, done
 
+POLICY_VECTOR = [0.09778819052551435, 0.09989681577019194, 0.04868909708212599, 0.04184447494269783, 0.3766001614364952, 0.8886113822145756]
+
 def get_state(game : Game) -> np.ndarray:
         """Return various information about the game
         Position of Pacman,
@@ -100,7 +102,8 @@ def get_state(game : Game) -> np.ndarray:
         neighbors = game.maze.get_neighbors(round(pac_x), round(pac_y))
         for dir in [Direction.NORTH.to_vector(), Direction.SOUTH.to_vector(), Direction.EAST.to_vector(), Direction.WEST.to_vector()]:
             state.append(neighbors[dir[0]][dir[1]].value)
-        policy = get_filters_values(game)
-        for filter in policy:
+
+        policy_agent = PolicyAgent([0.09778819052551435, 0.09989681577019194, 0.04868909708212599, 0.04184447494269783, 0.3766001614364952, 0.8886113822145756])
+        for filter in policy_agent.get_filters_values(game):
             state.append(filter)
         return np.array(state)

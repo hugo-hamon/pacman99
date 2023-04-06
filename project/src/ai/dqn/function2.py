@@ -103,7 +103,7 @@ def train_conv(config: Config, maze):
         if len(agent.memory) > config.dqn.batch_size:
             agent.replay()
 
-        if e % 100 == 0:
+        if e % 100 == 0 and e != 0:
             save_plot_data(mean_life_time, mean_score, mean_reward)
             agent.save(f"{config.dqn.output_dir}weights_" +
                        '{:04d}'.format(e) + ".hdf5")

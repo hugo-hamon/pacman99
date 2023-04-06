@@ -6,13 +6,6 @@ import numpy as np
 
 DIRECTION = [Direction.NORTH, Direction.EAST, Direction.WEST, Direction.SOUTH]
 
-def get_filters_values(game : Game) -> np.ndarray:
-    """Return the values of the filters applied to the state"""
-    filters = [FILTER_NORTH, FILTER_EAST, FILTER_WEST, FILTER_SOUTH]
-    state = get_policy_agent_state(game)
-    values = [np.sum(state * filters[i]) for i in range(4)]
-    return values
-
 class PolicyAgent:
     def __init__(self, vector: List[float]) -> None:
         self.vector = vector
@@ -40,3 +33,9 @@ class PolicyAgent:
         state = get_policy_agent_state(game)
         values = [np.sum(state * self.filters[i]) for i in range(4)]
         return DIRECTION[np.argmax(values)]
+    
+    def get_filters_values(self, game : Game) -> np.ndarray:
+        """Return the values of the filters applied to the state"""
+        state = get_policy_agent_state(game)
+        values = [np.sum(state * self.filters[i]) for i in range(4)]
+        return values
